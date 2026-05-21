@@ -1218,7 +1218,7 @@
           <div class="step"><b>03</b> Aprovação</div>
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Candidatura recebida — em breve nossa equipe entra em contato.');">
+        <form id="apply-form">
           <div class="form-grid2">
             <div class="form-row">
               <label for="nome">Nome completo</label>
@@ -1344,8 +1344,51 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Reveal on scroll
+  // ── Supabase ──────────────────────────────────────────────
+  const SUPA_URL  = 'https://uuzuyiydkfugccgpjwnl.supabase.co';
+  const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1enV5aXlka2Z1Z2NjZ3Bqd25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMTY4NjYsImV4cCI6MjA5NDg5Mjg2Nn0.SNFwLyRAdaDS3XJifpXezTjv9qLZatPBsHZVAgC1h9k';
+  const supabase  = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  const form      = document.getElementById('apply-form');
+  const btnSubmit = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      nome:        document.getElementById('nome').value.trim(),
+      email:       document.getElementById('email').value.trim(),
+      empresa:     document.getElementById('empresa').value.trim(),
+      cargo:       document.getElementById('cargo').value.trim(),
+      faturamento: document.getElementById('fat').value,
+      mensagem:    document.getElementById('msg').value.trim(),
+    };
+
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando…';
+
+    const { error } = await supabase.from('candidaturas').insert([payload]);
+
+    if (error) {
+      console.error(error);
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Enviar candidatura →';
+      alert('Ocorreu um erro ao enviar. Tente novamente ou entre em contato pelo email.');
+    } else {
+      form.reset();
+      btnSubmit.textContent = '✓ Candidatura enviada!';
+      btnSubmit.style.background = '#15803d';
+      setTimeout(() => {
+        btnSubmit.disabled    = false;
+        btnSubmit.textContent = 'Enviar candidatura →';
+        btnSubmit.style.background = '';
+      }, 5000);
+    }
+  });
+
+  // ── Reveal on scroll ──────────────────────────────────────
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
