@@ -111,7 +111,17 @@
 
   /* ═══ PERFIL ═══ */
   .perfil-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:28px;max-width:520px;transition:background .25s}
-  .perfil-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy-3));display:grid;place-items:center;font-size:28px;font-weight:700;color:#fff;margin-bottom:16px}
+  .perfil-avatar-wrap{position:relative;width:80px;height:80px;margin-bottom:14px;flex-shrink:0}
+  .perfil-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy-3));display:grid;place-items:center;font-size:28px;font-weight:700;color:#fff;overflow:hidden;transition:opacity .2s}
+  .perfil-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .perfil-avatar-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transition:opacity .2s;cursor:pointer}
+  .perfil-avatar-wrap:hover .perfil-avatar-overlay{opacity:1}
+  .avatar-actions{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .btn-av{padding:6px 14px;border-radius:7px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid var(--border);background:none;color:var(--muted);display:flex;align-items:center;gap:5px}
+  .btn-av:hover{border-color:var(--blue);color:var(--blue)}
+  .btn-av.danger{border-color:rgba(220,38,38,.4);color:#dc2626}
+  .btn-av.danger:hover{background:rgba(220,38,38,.08)}
+  .av-uploading{opacity:.5;pointer-events:none}
   .perfil-name{font-family:'Fraunces',serif;font-size:22px;color:var(--text);margin-bottom:4px}
   .perfil-email{font-size:14px;color:var(--muted);margin-bottom:24px}
   .perfil-fields{display:flex;flex-direction:column;gap:14px}
@@ -274,6 +284,10 @@ function applyTheme(t) {
 }
 function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'); }
 
+/* ── Estado global do perfil ── */
+let _currentUserId    = null;
+let _currentAvatarUrl = null;
+
 /* ── Formata nome ── */
 function formatNome(raw='') {
   return raw.replace(/\./g,' ').trim().split(/\s+/)
@@ -293,7 +307,7 @@ function initials(nome) {
   const user = session.user;
 
   const [perfilRes, apostilasRes] = await Promise.all([
-    sb.from('perfis').select('nome,cpf,role,plano,email').eq('id',user.id).single(),
+    sb.from('perfis').select('nome,cpf,role,plano,email,avatar_url').eq('id',user.id).single(),
     sb.from('apostilas').select('*').order('ordem')
   ]);
 
@@ -313,9 +327,12 @@ function initials(nome) {
   const email    = user.email;
   const role     = perfil?.role  || 'user';
   const plano    = perfil?.plano || 'basico';
+  const avatarUrl = perfil?.avatar_url || null;
   const isAdmin  = role === 'admin';
   const ini      = initials(nome);
   const firstName= nome.split(' ')[0];
+  _currentUserId   = user.id;
+  _currentAvatarUrl = avatarUrl;
   const tIcon    = savedTheme==='dark'?'☀️':'🌙';
   const tLabel   = savedTheme==='dark'?'Tema claro':'Tema escuro';
 
@@ -330,7 +347,7 @@ function initials(nome) {
         <div class="brand-text"><strong>Executive Import</strong><span>Program · HKTC</span></div>
       </a>
       <div class="user-chip">
-        <div class="avatar">${ini}</div>
+        <div class="avatar" id="sidebar-av" style="overflow:hidden">${avatarUrl?`<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${ini}`}</div>
         <div class="user-info">
           <div class="user-name">${nome}</div>
           <div class="user-email">${email}</div>
@@ -450,7 +467,17 @@ function initials(nome) {
             <div class="section-header-text"><h2>Meu Perfil</h2><p>Seus dados cadastrais no programa.</p></div>
           </div>
           <div class="perfil-card">
-            <div class="perfil-avatar" id="pf-av">${ini}</div>
+            <div class="perfil-avatar-wrap">
+              <div class="perfil-avatar" id="pf-av">
+                ${avatarUrl ? `<img src="${avatarUrl}?t=${Date.now()}" alt="Foto de perfil">` : ini}
+              </div>
+              <div class="perfil-avatar-overlay" onclick="document.getElementById('avatar-input').click()">📷</div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadAvatar(event)" />
+            <div class="avatar-actions">
+              <button class="btn-av" onclick="document.getElementById('avatar-input').click()">📷 Alterar foto</button>
+              <button class="btn-av danger" id="btn-remover-foto" onclick="removerFoto()" ${avatarUrl?'':'style="display:none"'}>🗑️ Remover foto</button>
+            </div>
             <div class="perfil-name"  id="pf-nm">${nome}</div>
             <div class="perfil-email" id="pf-em">${email}</div>
             <div class="perfil-fields" style="margin-top:16px">
@@ -709,6 +736,72 @@ function initials(nome) {
 })();
 
 /* ══════════════════════════════════════
+   PERFIL — FOTO
+══════════════════════════════════════ */
+function _setAllAvatars(html) {
+  ['pf-av','sidebar-av'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+async function uploadAvatar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 3 * 1024 * 1024) { alert('Imagem muito grande. Máximo 3 MB.'); return; }
+
+  const ext   = file.name.split('.').pop().toLowerCase();
+  const valid = ['jpg','jpeg','png','webp'];
+  if (!valid.includes(ext)) { alert('Use JPG, PNG ou WEBP.'); return; }
+
+  /* Loading visual */
+  const wrap = document.querySelector('.perfil-avatar-wrap');
+  if (wrap) wrap.classList.add('av-uploading');
+
+  const path = `${_currentUserId}/avatar.${ext}`;
+  const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+
+  if (upErr) {
+    alert('Erro ao enviar foto: ' + upErr.message);
+    wrap?.classList.remove('av-uploading');
+    event.target.value = '';
+    return;
+  }
+
+  const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path);
+  await sb.from('perfis').update({ avatar_url: publicUrl }).eq('id', _currentUserId);
+  _currentAvatarUrl = publicUrl;
+
+  const urlTs = publicUrl + '?t=' + Date.now();
+  _setAllAvatars(`<img src="${urlTs}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`);
+
+  const btnRem = document.getElementById('btn-remover-foto');
+  if (btnRem) btnRem.style.display = '';
+
+  wrap?.classList.remove('av-uploading');
+  event.target.value = '';
+}
+
+async function removerFoto() {
+  if (!confirm('Remover foto de perfil?')) return;
+
+  /* Tenta deletar do storage */
+  if (_currentAvatarUrl) {
+    const stored = _currentAvatarUrl.split('/avatars/')[1]?.split('?')[0];
+    if (stored) await sb.storage.from('avatars').remove([stored]);
+  }
+
+  await sb.from('perfis').update({ avatar_url: null }).eq('id', _currentUserId);
+  _currentAvatarUrl = null;
+
+  const ini = initials(formatNome(document.getElementById('pf-nm')?.textContent || ''));
+  _setAllAvatars(ini);
+
+  const btnRem = document.getElementById('btn-remover-foto');
+  if (btnRem) btnRem.style.display = 'none';
+}
+
+/* ══════════════════════════════════════
    PERFIL — EDIÇÃO
 ══════════════════════════════════════ */
 function maskCPF_pf(v) {
@@ -794,11 +887,11 @@ async function salvarPerfil() {
   if (pfAv) pfAv.textContent = av;
   if (pfNm) pfNm.textContent = nf;
   if (pfEm) pfEm.textContent = novoEmail;
-  /* Atualiza também o avatar/nome da sidebar */
-  const sideAvatar = document.querySelector('.user-chip .avatar');
-  const sideName   = document.querySelector('.user-chip .user-name');
-  if (sideAvatar) sideAvatar.textContent = av;
-  if (sideName)   sideName.textContent   = nf;
+  /* Atualiza nome e avatar da sidebar */
+  const sideName = document.querySelector('.user-chip .user-name');
+  if (sideName) sideName.textContent = nf;
+  /* Atualiza iniciais apenas se não tiver foto */
+  if (!_currentAvatarUrl) _setAllAvatars(av);
 
   btn.disabled=false; btn.textContent='Salvar alterações';
   status.className='perfil-status ok';
