@@ -4,24 +4,59 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Login · Executive Import Program</title>
+<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('eip-theme')||'light');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
 <style>
+  /* ── Tokens ── */
   :root {
-    --navy: #0a1f3a; --blue: #2b6fb5; --accent: #c8102e;
+    --blue: #2b6fb5; --accent: #c8102e;
+    --green: #15803d; --red: #dc2626;
+    /* Light mode (default) */
+    --body-bg: #e8eef7;
+    --card-bg: #ffffff;
     --ink: #0e1620; --muted: #5b6b7d; --line: #e3e8ef;
-    --paper: #fff; --green: #15803d; --red: #dc2626;
+    --input-bg: #ffffff;
+    --logo-text: #0a1f3a;
+    --logo-sub: rgba(10,31,58,.45);
   }
+  [data-theme="dark"] {
+    --body-bg: #08172a;
+    --card-bg: #0f2a4a;
+    --ink: #dde6f0; --muted: #7a97b6; --line: rgba(255,255,255,.1);
+    --input-bg: #091829;
+    --logo-text: #ffffff;
+    --logo-sub: rgba(255,255,255,.45);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Manrope', sans-serif;
-    background: var(--navy);
+    background: var(--body-bg);
     min-height: 100vh;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 32px 16px;
+    transition: background .25s;
   }
+
+  /* ── Theme toggle ── */
+  .theme-btn {
+    position: fixed; top: 16px; right: 16px; z-index: 99;
+    width: 38px; height: 38px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 16px;
+    cursor: pointer; border: 1.5px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.15); backdrop-filter: blur(6px);
+    transition: background .2s, border-color .2s;
+  }
+  [data-theme="light"] .theme-btn {
+    background: rgba(10,31,58,.08);
+    border-color: rgba(10,31,58,.15);
+  }
+  .theme-btn:hover { opacity: .8; }
+
+  /* ── Logo ── */
   .logo {
     display: flex; align-items: center; gap: 12px;
     text-decoration: none; margin-bottom: 28px;
@@ -33,22 +68,28 @@
     font-family: 'Fraunces', serif; font-size: 13px;
     font-weight: 700; color: #fff; letter-spacing: .05em;
   }
-  .logo-name { color: #fff; }
+  .logo-name { color: var(--logo-text); }
   .logo-name strong { display: block; font-size: 14px; font-weight: 700; }
-  .logo-name span { font-size: 11px; color: rgba(255,255,255,.45); letter-spacing: .08em; text-transform: uppercase; }
+  .logo-name span { font-size: 11px; color: var(--logo-sub); letter-spacing: .08em; text-transform: uppercase; }
 
+  /* ── Card ── */
   .card {
-    background: var(--paper); border-radius: 20px;
+    background: var(--card-bg); border-radius: 20px;
     padding: 40px 36px; width: 100%; max-width: 420px;
-    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    box-shadow: 0 24px 60px rgba(0,0,0,.25);
+    transition: background .25s;
   }
   .card-title { font-family: 'Fraunces', serif; font-size: 26px; color: var(--ink); margin-bottom: 4px; }
   .card-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
 
+  /* ── Alerts ── */
   .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: none; }
   .alert.err { background: #fef2f2; color: var(--red);   border: 1px solid #fecaca; display: block; }
   .alert.ok  { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; display: block; }
+  [data-theme="dark"] .alert.err { background: rgba(220,38,38,.12); border-color: rgba(220,38,38,.3); }
+  [data-theme="dark"] .alert.ok  { background: rgba(21,128,61,.12);  border-color: rgba(21,128,61,.3); }
 
+  /* ── Fields ── */
   .row { margin-bottom: 16px; }
   label {
     display: block; font-size: 11px; font-weight: 700;
@@ -60,8 +101,8 @@
     width: 100%; padding: 12px 14px;
     border: 1.5px solid var(--line); border-radius: 10px;
     font-family: 'Manrope', sans-serif; font-size: 15px;
-    color: var(--ink); background: var(--paper);
-    transition: border-color .15s, box-shadow .15s; outline: none;
+    color: var(--ink); background: var(--input-bg);
+    transition: border-color .15s, box-shadow .15s, background .25s, color .25s; outline: none;
   }
   input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,111,181,.12); }
   input.ok    { border-color: var(--green); }
@@ -76,6 +117,7 @@
   .fmsg { font-size: 12px; margin-top: 5px; min-height: 16px; }
   .fmsg.err { color: var(--red); }
 
+  /* ── Misc ── */
   .forgot { display: block; text-align: right; font-size: 12px; color: var(--blue); text-decoration: none; margin-top: -8px; margin-bottom: 16px; }
   .forgot:hover { text-decoration: underline; }
 
@@ -99,6 +141,8 @@
 </style>
 </head>
 <body>
+
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Alternar tema"></button>
 
 <a href="Landing.html" class="logo">
   <div class="logo-badge">EIP</div>
@@ -178,6 +222,26 @@ document.getElementById('eye-btn').addEventListener('click', () => {
   inp.type=inp.type==='password'?'text':'password';
   document.getElementById('eye-btn').textContent=inp.type==='password'?'👁':'🔒';
 });
+
+/* ── Theme ── */
+(function(){
+  const t = localStorage.getItem('eip-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  updateThemeBtn(t);
+})();
+function updateThemeBtn(t) {
+  const btn = document.getElementById('theme-btn');
+  if(!btn) return;
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.title = t === 'dark' ? 'Tema claro' : 'Tema escuro';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('eip-theme', next);
+  updateThemeBtn(next);
+}
 
 document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();

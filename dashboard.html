@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,44 +8,72 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
 <style>
+  /* ═══ TEMA CLARO (padrão) ═══ */
   :root {
-    --navy:    #0a1f3a;
-    --navy-2:  #0f2a4a;
-    --navy-3:  #15396b;
-    --blue:    #2b6fb5;
-    --accent:  #c8102e;
-    --gold:    #b58840;
-    --ink:     #0e1620;
-    --muted:   #5b6b7d;
-    --line:    #e3e8ef;
-    --paper:   #ffffff;
-    --paper-2: #f6f8fb;
-    --green:   #15803d;
+    --navy:   #0a1f3a;
+    --navy-2: #0f2a4a;
+    --navy-3: #15396b;
+    --blue:   #2b6fb5;
+    --accent: #c8102e;
+    --green:  #15803d;
     --sidebar-w: 260px;
+
+    /* tokens de tema */
+    --bg:         #f6f8fb;
+    --bg2:        #eef2f7;
+    --card:       #ffffff;
+    --border:     #e3e8ef;
+    --text:       #0e1620;
+    --text2:      #1c2733;
+    --muted:      #5b6b7d;
+    --topbar-bg:  #ffffff;
+    --input-bg:   #f6f8fb;
+    --badge-lock-bg:  #f1f5f9;
+    --badge-lock-clr: #5b6b7d;
+    --badge-open-bg:  #eff6ff;
+    --badge-open-clr: #2b6fb5;
+    --btn-ap-hover-bg: #eff6ff;
   }
+
+  /* ═══ TEMA ESCURO ═══ */
+  [data-theme="dark"] {
+    --bg:         #08172a;
+    --bg2:        #0a1f3a;
+    --card:       #0f2a4a;
+    --border:     rgba(255,255,255,.09);
+    --text:       #dde6f0;
+    --text2:      #b8cfe8;
+    --muted:      #7a97b6;
+    --topbar-bg:  #091829;
+    --input-bg:   #0a1f3a;
+    --badge-lock-bg:  rgba(255,255,255,.06);
+    --badge-lock-clr: #7a97b6;
+    --badge-open-bg:  rgba(43,111,181,.2);
+    --badge-open-clr: #7eb8f5;
+    --btn-ap-hover-bg: rgba(43,111,181,.15);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Manrope', sans-serif;
-    background: var(--paper-2);
-    color: var(--ink);
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     display: flex;
+    transition: background .25s, color .25s;
   }
 
-  /* ═══ SIDEBAR ═══ */
+  /* ═══ SIDEBAR (sempre escura) ═══ */
   .sidebar {
     width: var(--sidebar-w);
     background: var(--navy);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; bottom: 0;
     z-index: 100;
     transition: transform .25s ease;
   }
-
   .sidebar-brand {
     display: flex; align-items: center; gap: 11px;
     padding: 24px 20px 20px;
@@ -54,238 +82,232 @@
   }
   .brand-badge {
     width: 38px; height: 38px; border-radius: 10px;
-    background: linear-gradient(135deg, #2b6fb5, #15396b);
+    background: linear-gradient(135deg,#2b6fb5,#15396b);
     display: grid; place-items: center; flex-shrink: 0;
-    font-family: 'Fraunces', serif; font-size: 12px;
-    font-weight: 700; color: #fff; letter-spacing: .04em;
+    font-family:'Fraunces',serif; font-size:12px;
+    font-weight:700; color:#fff; letter-spacing:.04em;
   }
-  .brand-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; line-height: 1.2; }
-  .brand-text span   { font-size: 10px; color: rgba(255,255,255,.4); letter-spacing: .07em; text-transform: uppercase; }
+  .brand-text strong { display:block; font-size:13px; font-weight:700; color:#fff; line-height:1.2; }
+  .brand-text span   { font-size:10px; color:rgba(255,255,255,.4); letter-spacing:.07em; text-transform:uppercase; }
 
-  /* User chip */
   .user-chip {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
+    display:flex; align-items:center; gap:10px;
+    padding:14px 20px;
+    border-bottom:1px solid rgba(255,255,255,.07);
   }
   .avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue), var(--navy-3));
-    display: grid; place-items: center; flex-shrink: 0;
-    font-size: 13px; font-weight: 700; color: #fff;
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--navy-3));
+    display:grid; place-items:center; flex-shrink:0;
+    font-size:13px; font-weight:700; color:#fff;
   }
-  .user-info { overflow: hidden; }
-  .user-name  { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .user-email { font-size: 11px; color: rgba(255,255,255,.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-info { overflow:hidden; }
+  .user-name  { font-size:13px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .user-email { font-size:11px; color:rgba(255,255,255,.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  /* Navigation */
-  .nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
-
-  .nav-section { margin-bottom: 24px; }
+  .nav { flex:1; padding:16px 12px; overflow-y:auto; }
+  .nav-section { margin-bottom:24px; }
   .nav-section-label {
-    font-size: 10px; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: rgba(255,255,255,.3);
-    padding: 0 8px; margin-bottom: 6px;
+    font-size:10px; font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase; color:rgba(255,255,255,.3);
+    padding:0 8px; margin-bottom:6px;
   }
-
   .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: 10px;
-    cursor: pointer; text-decoration: none;
-    color: rgba(255,255,255,.65);
-    font-size: 14px; font-weight: 500;
-    transition: background .15s, color .15s;
-    user-select: none;
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:10px;
+    cursor:pointer; text-decoration:none;
+    color:rgba(255,255,255,.65);
+    font-size:14px; font-weight:500;
+    transition:background .15s, color .15s;
+    user-select:none;
   }
-  .nav-item:hover   { background: rgba(255,255,255,.07); color: #fff; }
-  .nav-item.active  { background: rgba(43,111,181,.35); color: #fff; }
-  .nav-item .icon   { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+  .nav-item:hover  { background:rgba(255,255,255,.07); color:#fff; }
+  .nav-item.active { background:rgba(43,111,181,.35); color:#fff; }
+  .nav-item .icon  { font-size:17px; width:22px; text-align:center; flex-shrink:0; }
 
-  /* Sidebar footer */
   .sidebar-footer {
-    padding: 12px;
-    border-top: 1px solid rgba(255,255,255,.07);
+    padding:12px;
+    border-top:1px solid rgba(255,255,255,.07);
   }
   .btn-logout {
-    width: 100%; display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: 10px;
-    background: none; border: none; cursor: pointer;
-    color: rgba(255,255,255,.45); font-family: 'Manrope', sans-serif;
-    font-size: 14px; font-weight: 500;
-    transition: background .15s, color .15s;
+    width:100%; display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:10px;
+    background:none; border:none; cursor:pointer;
+    color:rgba(255,255,255,.45); font-family:'Manrope',sans-serif;
+    font-size:14px; font-weight:500;
+    transition:background .15s, color .15s;
   }
-  .btn-logout:hover { background: rgba(200,16,46,.2); color: #f87171; }
-  .btn-logout .icon { font-size: 17px; width: 22px; text-align: center; }
+  .btn-logout:hover { background:rgba(200,16,46,.2); color:#f87171; }
+  .btn-logout .icon { font-size:17px; width:22px; text-align:center; }
 
-  /* Mobile toggle */
+  /* Mobile */
   .menu-toggle {
-    display: none;
-    position: fixed; top: 16px; left: 16px; z-index: 200;
-    background: var(--navy); color: #fff; border: none;
-    border-radius: 8px; padding: 8px 10px; font-size: 20px;
-    cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    display:none;
+    position:fixed; top:16px; left:16px; z-index:200;
+    background:var(--navy); color:#fff; border:none;
+    border-radius:8px; padding:8px 10px; font-size:20px;
+    cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.3);
   }
   .overlay {
-    display: none;
-    position: fixed; inset: 0; background: rgba(0,0,0,.5);
-    z-index: 99;
+    display:none;
+    position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:99;
   }
 
   /* ═══ MAIN ═══ */
   .main {
-    margin-left: var(--sidebar-w);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    margin-left:var(--sidebar-w);
+    flex:1; display:flex; flex-direction:column;
+    min-height:100vh;
   }
 
-  /* Top bar */
+  /* Topbar */
   .topbar {
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-    padding: 0 32px;
-    height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 50;
+    background:var(--topbar-bg);
+    border-bottom:1px solid var(--border);
+    padding:0 32px; height:60px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:50;
+    transition:background .25s, border-color .25s;
   }
-  .page-title { font-size: 17px; font-weight: 700; color: var(--ink); }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .topbar-user  { font-size: 13px; color: var(--muted); }
+  .page-title { font-size:17px; font-weight:700; color:var(--text); }
+  .topbar-right { display:flex; align-items:center; gap:12px; }
+  .topbar-user  { font-size:13px; color:var(--muted); }
+
+  /* ── Theme toggle ── */
+  .theme-toggle {
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:99px;
+    padding:5px 12px;
+    cursor:pointer;
+    font-family:'Manrope',sans-serif;
+    font-size:13px; font-weight:600;
+    color:var(--text);
+    transition:background .2s, border-color .2s, color .2s;
+    user-select:none;
+  }
+  .theme-toggle:hover { border-color:var(--blue); color:var(--blue); }
+  .theme-toggle .t-icon { font-size:15px; line-height:1; }
 
   /* Content */
-  .content { padding: 32px; flex: 1; }
+  .content { padding:32px; flex:1; }
 
-  /* ═══ SECTIONS ═══ */
-  .section { display: none; }
-  .section.active { display: block; }
+  /* Sections */
+  .section { display:none; }
+  .section.active { display:block; }
 
   /* Welcome */
-  .welcome-header { margin-bottom: 28px; }
-  .welcome-header h1 {
-    font-family: 'Fraunces', serif; font-size: 28px; color: var(--ink); margin-bottom: 6px;
-  }
-  .welcome-header p { font-size: 15px; color: var(--muted); }
+  .welcome-header { margin-bottom:28px; }
+  .welcome-header h1 { font-family:'Fraunces',serif; font-size:28px; color:var(--text); margin-bottom:6px; }
+  .welcome-header p  { font-size:15px; color:var(--muted); }
 
-  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
   .dash-card {
-    background: var(--paper); border-radius: 14px;
-    border: 1px solid var(--line); padding: 22px;
-    cursor: pointer; transition: box-shadow .15s, transform .15s;
+    background:var(--card); border-radius:14px;
+    border:1px solid var(--border); padding:22px;
+    cursor:pointer; transition:box-shadow .15s, transform .15s, background .25s;
   }
-  .dash-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.08); transform: translateY(-2px); }
-  .dash-card .card-icon { font-size: 28px; margin-bottom: 12px; }
-  .dash-card .card-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-  .dash-card .card-desc  { font-size: 12px; color: var(--muted); }
+  .dash-card:hover { box-shadow:0 8px 24px rgba(0,0,0,.1); transform:translateY(-2px); }
+  .dash-card .card-icon  { font-size:28px; margin-bottom:12px; }
+  .dash-card .card-label { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .dash-card .card-desc  { font-size:12px; color:var(--muted); }
 
   /* Section header */
-  .section-header { margin-bottom: 24px; }
-  .section-header h2 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--ink); margin-bottom: 4px; }
-  .section-header p  { font-size: 14px; color: var(--muted); }
+  .section-header { margin-bottom:24px; }
+  .section-header h2 { font-family:'Fraunces',serif; font-size:24px; color:var(--text); margin-bottom:4px; }
+  .section-header p  { font-size:14px; color:var(--muted); }
 
   /* Apostilas */
-  .apostilas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .apostilas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
   .apostila-card {
-    background: var(--paper); border-radius: 14px;
-    border: 1px solid var(--line); padding: 20px;
-    display: flex; flex-direction: column; gap: 12px;
-    transition: box-shadow .15s, transform .15s;
+    background:var(--card); border-radius:14px;
+    border:1px solid var(--border); padding:20px;
+    display:flex; flex-direction:column; gap:12px;
+    transition:box-shadow .15s, transform .15s, background .25s;
   }
-  .apostila-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.08); transform: translateY(-2px); }
+  .apostila-card:hover { box-shadow:0 8px 24px rgba(0,0,0,.1); transform:translateY(-2px); }
   .apostila-cover {
-    aspect-ratio: 3/2; border-radius: 8px;
-    background: linear-gradient(135deg, var(--navy-2), var(--navy-3));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
+    aspect-ratio:3/2; border-radius:8px;
+    background:linear-gradient(135deg,var(--navy-2),var(--navy-3));
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px;
   }
-  .apostila-fase {
-    font-size: 10px; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--blue);
-  }
-  .apostila-title { font-size: 15px; font-weight: 700; color: var(--ink); }
-  .apostila-desc  { font-size: 13px; color: var(--muted); flex: 1; }
+  .apostila-fase  { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue); }
+  .apostila-title { font-size:15px; font-weight:700; color:var(--text); }
   .apostila-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 600; padding: 4px 10px;
-    border-radius: 99px; width: fit-content;
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11px; font-weight:600; padding:4px 10px;
+    border-radius:99px; width:fit-content;
   }
-  .badge-locked  { background: #f1f5f9; color: var(--muted); }
-  .badge-open    { background: #eff6ff; color: var(--blue); }
-  .btn-apostila  {
-    padding: 10px 14px; border-radius: 8px;
-    font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
-    border: 1.5px solid var(--line); background: none;
-    color: var(--ink); cursor: pointer; text-align: center;
-    transition: border-color .15s, background .15s;
-    text-decoration: none; display: block;
+  .badge-locked { background:var(--badge-lock-bg); color:var(--badge-lock-clr); }
+  .badge-open   { background:var(--badge-open-bg); color:var(--badge-open-clr); }
+  .btn-apostila {
+    padding:10px 14px; border-radius:8px;
+    font-family:'Manrope',sans-serif; font-size:13px; font-weight:600;
+    border:1.5px solid var(--border); background:none;
+    color:var(--text); cursor:pointer; text-align:center;
+    transition:border-color .15s, background .15s, color .15s;
+    text-decoration:none; display:block;
   }
-  .btn-apostila:hover  { border-color: var(--blue); background: #eff6ff; color: var(--blue); }
-  .btn-apostila.locked { opacity: .5; cursor: not-allowed; }
+  .btn-apostila:hover  { border-color:var(--blue); background:var(--btn-ap-hover-bg); color:var(--blue); }
+  .btn-apostila.locked { opacity:.5; cursor:not-allowed; pointer-events:none; }
 
   /* Perfil */
   .perfil-card {
-    background: var(--paper); border-radius: 14px;
-    border: 1px solid var(--line); padding: 28px;
-    max-width: 520px;
+    background:var(--card); border-radius:14px;
+    border:1px solid var(--border); padding:28px;
+    max-width:520px; transition:background .25s;
   }
   .perfil-avatar {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue), var(--navy-3));
-    display: grid; place-items: center;
-    font-size: 28px; font-weight: 700; color: #fff;
-    margin-bottom: 16px;
+    width:72px; height:72px; border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--navy-3));
+    display:grid; place-items:center;
+    font-size:28px; font-weight:700; color:#fff;
+    margin-bottom:16px;
   }
-  .perfil-name  { font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink); margin-bottom: 4px; }
-  .perfil-email { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
-  .perfil-fields { display: flex; flex-direction: column; gap: 14px; }
-  .perfil-field label { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 5px; }
+  .perfil-name  { font-family:'Fraunces',serif; font-size:22px; color:var(--text); margin-bottom:4px; }
+  .perfil-email { font-size:14px; color:var(--muted); margin-bottom:24px; }
+  .perfil-fields { display:flex; flex-direction:column; gap:14px; }
+  .perfil-field label {
+    font-size:11px; font-weight:700; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--muted); display:block; margin-bottom:5px;
+  }
   .perfil-field .value {
-    padding: 11px 14px; background: var(--paper-2);
-    border: 1px solid var(--line); border-radius: 8px;
-    font-size: 15px; color: var(--ink);
+    padding:11px 14px; background:var(--input-bg);
+    border:1px solid var(--border); border-radius:8px;
+    font-size:15px; color:var(--text);
+    transition:background .25s, border-color .25s;
   }
-
-  /* Empty state */
-  .empty {
-    text-align: center; padding: 60px 20px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; }
-  .empty h3   { font-size: 18px; color: var(--ink); margin-bottom: 8px; }
-  .empty p    { font-size: 14px; }
 
   /* Loading */
   .loading {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh;
-    background: var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; background:var(--navy);
   }
   .spinner {
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 3px solid rgba(255,255,255,.15);
-    border-top-color: var(--blue);
-    animation: spin .7s linear infinite;
+    width:40px; height:40px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.15);
+    border-top-color:var(--blue);
+    animation:spin .7s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
   /* Responsive */
-  @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); }
-    .sidebar.open { transform: translateX(0); }
-    .overlay.open { display: block; }
-    .main { margin-left: 0; }
-    .menu-toggle { display: block; }
-    .topbar { padding: 0 16px 0 56px; }
-    .content { padding: 20px 16px; }
-    .topbar-user { display: none; }
+  @media (max-width:768px) {
+    .sidebar { transform:translateX(-100%); }
+    .sidebar.open { transform:translateX(0); }
+    .overlay.open { display:block; }
+    .main { margin-left:0; }
+    .menu-toggle { display:block; }
+    .topbar { padding:0 16px 0 56px; }
+    .content { padding:20px 16px; }
+    .topbar-user { display:none; }
   }
 </style>
 </head>
-
-<!-- Loading screen -->
-<body id="loading-screen" class="loading">
+<body class="loading">
   <div class="spinner"></div>
-</body>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -293,26 +315,45 @@ const SUPA_URL = 'https://uuzuyiydkfugccgpjwnl.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1enV5aXlka2Z1Z2NjZ3Bqd25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMTY4NjYsImV4cCI6MjA5NDg5Mjg2Nn0.SNFwLyRAdaDS3XJifpXezTjv9qLZatPBsHZVAgC1h9k';
 const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// ── Auth guard ────────────────────────────────────────────
+/* ── Tema: aplica antes de renderizar ── */
+const savedTheme = localStorage.getItem('eip-theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('eip-theme', theme);
+  const btn = document.getElementById('theme-btn');
+  if (btn) {
+    btn.querySelector('.t-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+    btn.querySelector('.t-label').textContent = theme === 'dark' ? 'Tema claro' : 'Tema escuro';
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+/* ── Auth guard + render ── */
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return; }
 
-  const user = session.user;
+  const user  = session.user;
+  const { data: perfil } = await sb.from('perfis').select('nome,cpf').eq('id', user.id).single();
+  const nome     = perfil?.nome || user.user_metadata?.nome || user.email.split('@')[0];
+  const cpf      = perfil?.cpf  || user.user_metadata?.cpf  || '';
+  const email    = user.email;
+  const initials = nome.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  const firstName = nome.split(' ')[0];
+  const themeIcon  = savedTheme === 'dark' ? '☀️' : '🌙';
+  const themeLabel = savedTheme === 'dark' ? 'Tema claro' : 'Tema escuro';
 
-  // fetch perfil
-  const { data: perfil } = await sb.from('perfis').select('nome, cpf').eq('id', user.id).single();
-  const nome  = perfil?.nome || user.user_metadata?.nome || user.email.split('@')[0];
-  const cpf   = perfil?.cpf  || user.user_metadata?.cpf  || '';
-  const email = user.email;
-  const initials = nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-
-  // ── Render dashboard ──────────────────────────────────
+  document.body.className = '';
   document.body.innerHTML = `
     <button class="menu-toggle" id="menu-toggle">☰</button>
     <div class="overlay" id="overlay"></div>
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <a href="Landing.html" class="sidebar-brand">
         <div class="brand-badge">EIP</div>
@@ -321,7 +362,6 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
           <span>Program · HKTC</span>
         </div>
       </a>
-
       <div class="user-chip">
         <div class="avatar">${initials}</div>
         <div class="user-info">
@@ -329,17 +369,13 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
           <div class="user-email">${email}</div>
         </div>
       </div>
-
       <nav class="nav">
-        <!-- Estudos -->
         <div class="nav-section">
           <div class="nav-section-label">Estudos</div>
           <a class="nav-item" data-section="apostilas">
             <span class="icon">📚</span> Apostilas
           </a>
         </div>
-
-        <!-- Perfil -->
         <div class="nav-section">
           <div class="nav-section-label">Perfil</div>
           <a class="nav-item" data-section="perfil">
@@ -347,7 +383,6 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
           </a>
         </div>
       </nav>
-
       <div class="sidebar-footer">
         <button class="btn-logout" id="btn-logout">
           <span class="icon">🚪</span> Sair
@@ -355,12 +390,15 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
       </div>
     </aside>
 
-    <!-- MAIN -->
     <div class="main">
       <header class="topbar">
         <span class="page-title" id="page-title">Início</span>
         <div class="topbar-right">
-          <span class="topbar-user">Olá, ${nome.split(' ')[0]} 👋</span>
+          <span class="topbar-user">Olá, ${firstName} 👋</span>
+          <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+            <span class="t-icon">${themeIcon}</span>
+            <span class="t-label">${themeLabel}</span>
+          </button>
         </div>
       </header>
 
@@ -369,7 +407,7 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
         <!-- HOME -->
         <div class="section active" id="sec-home">
           <div class="welcome-header">
-            <h1>Bem-vindo, ${nome.split(' ')[0]}! 👋</h1>
+            <h1>Bem-vindo, ${firstName}! 👋</h1>
             <p>Acesse seu conteúdo do Executive Import Program.</p>
           </div>
           <div class="cards-grid">
@@ -392,9 +430,7 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
             <h2>Apostilas</h2>
             <p>Material didático dos 12 módulos do programa.</p>
           </div>
-          <div class="apostilas-grid">
-            ${gerarApostilas()}
-          </div>
+          <div class="apostilas-grid">${gerarApostilas()}</div>
         </div>
 
         <!-- PERFIL -->
@@ -418,39 +454,33 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
               </div>
               <div class="perfil-field">
                 <label>CPF</label>
-                <div class="value">${cpf ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4') : '—'}</div>
+                <div class="value">${cpf ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : '—'}</div>
               </div>
             </div>
           </div>
         </div>
 
-      </div><!-- /content -->
-    </div><!-- /main -->
+      </div>
+    </div>
   `;
 
-  // ── Navigation ────────────────────────────────────────
+  /* ── Navegação ── */
   function navigate(section) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
     const titles = { home:'Início', apostilas:'Apostilas', perfil:'Meu Perfil' };
     document.getElementById('page-title').textContent = titles[section] || 'Início';
-    document.getElementById('sec-'+(section||'home')).classList.add('active');
+    document.getElementById('sec-' + (section || 'home')).classList.add('active');
     document.querySelector(`[data-section="${section}"]`)?.classList.add('active');
-
-    // close mobile sidebar
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
   }
 
   document.querySelectorAll('[data-section]').forEach(el =>
-    el.addEventListener('click', () => navigate(el.dataset.section))
-  );
+    el.addEventListener('click', () => navigate(el.dataset.section)));
   document.querySelectorAll('[data-goto]').forEach(el =>
-    el.addEventListener('click', () => navigate(el.dataset.goto))
-  );
+    el.addEventListener('click', () => navigate(el.dataset.goto)));
 
-  // mobile sidebar
   document.getElementById('menu-toggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
@@ -460,32 +490,29 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
     document.getElementById('overlay').classList.remove('open');
   });
 
-  // logout
   document.getElementById('btn-logout').addEventListener('click', async () => {
     await sb.auth.signOut();
     window.location.href = 'login.html';
   });
-
 })();
 
-// ── Apostilas data ────────────────────────────────────────
+/* ── Apostilas ── */
 function gerarApostilas() {
-  const modulos = [
-    { num:'M01', fase:'Fase 1', titulo:'Fundamentos Estratégicos',   emoji:'🌐', open:true  },
-    { num:'M02', fase:'Fase 1', titulo:'Estrutura Brasileira',        emoji:'🏛️', open:true  },
-    { num:'M03', fase:'Fase 1', titulo:'Modalidades de Importação',   emoji:'📦', open:true  },
-    { num:'M04', fase:'Fase 2', titulo:'Documentação Internacional',  emoji:'📄', open:false },
-    { num:'M05', fase:'Fase 2', titulo:'Logística Internacional',     emoji:'🚢', open:false },
-    { num:'M06', fase:'Fase 2', titulo:'Custo Nacionalizado',         emoji:'💰', open:false },
-    { num:'M07', fase:'Fase 2', titulo:'Exportação na Prática',       emoji:'✈️', open:false },
-    { num:'M08', fase:'Fase 3', titulo:'China como Hub Global',       emoji:'🇨🇳', open:false },
-    { num:'M09', fase:'Fase 3', titulo:'Trading Company',             emoji:'🏢', open:false },
-    { num:'M10', fase:'Fase 3', titulo:'Reforma Tributária',          emoji:'⚖️', open:false },
-    { num:'M11', fase:'Fase 3', titulo:'Risco e Compliance',          emoji:'🔒', open:false },
-    { num:'M12', fase:'Capstone', titulo:'Operação Real',             emoji:'🎯', open:false },
+  const mods = [
+    { num:'M01', fase:'Fase 1',   titulo:'Fundamentos Estratégicos',  emoji:'🌐', open:true  },
+    { num:'M02', fase:'Fase 1',   titulo:'Estrutura Brasileira',       emoji:'🏛️', open:true  },
+    { num:'M03', fase:'Fase 1',   titulo:'Modalidades de Importação',  emoji:'📦', open:true  },
+    { num:'M04', fase:'Fase 2',   titulo:'Documentação Internacional', emoji:'📄', open:false },
+    { num:'M05', fase:'Fase 2',   titulo:'Logística Internacional',    emoji:'🚢', open:false },
+    { num:'M06', fase:'Fase 2',   titulo:'Custo Nacionalizado',        emoji:'💰', open:false },
+    { num:'M07', fase:'Fase 2',   titulo:'Exportação na Prática',      emoji:'✈️', open:false },
+    { num:'M08', fase:'Fase 3',   titulo:'China como Hub Global',      emoji:'🇨🇳', open:false },
+    { num:'M09', fase:'Fase 3',   titulo:'Trading Company',            emoji:'🏢', open:false },
+    { num:'M10', fase:'Fase 3',   titulo:'Reforma Tributária',         emoji:'⚖️', open:false },
+    { num:'M11', fase:'Fase 3',   titulo:'Risco e Compliance',         emoji:'🔒', open:false },
+    { num:'M12', fase:'Capstone', titulo:'Operação Real',              emoji:'🎯', open:false },
   ];
-
-  return modulos.map(m => `
+  return mods.map(m => `
     <div class="apostila-card">
       <div class="apostila-cover">${m.emoji}</div>
       <div>
@@ -498,8 +525,7 @@ function gerarApostilas() {
       <a class="btn-apostila ${m.open ? '' : 'locked'}" ${m.open ? 'href="#"' : ''}>
         ${m.open ? 'Acessar apostila' : 'Aguardando liberação'}
       </a>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 </script>
 </html>
