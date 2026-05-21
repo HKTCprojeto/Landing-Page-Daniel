@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cadastro · Executive Import Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1f3a; --blue: #2b6fb5; --accent: #c8102e;
+    --ink: #0e1620; --muted: #5b6b7d; --line: #e3e8ef;
+    --paper: #fff; --paper2: #f6f8fb;
+    --green: #15803d; --red: #dc2626; --amber: #f59e0b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 16px;
+  }
+  /* Logo */
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; margin-bottom: 28px;
+  }
+  .logo-badge {
+    width: 42px; height: 42px; border-radius: 11px;
+    background: linear-gradient(135deg,#2b6fb5,#15396b);
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif; font-size: 13px;
+    font-weight: 700; color: #fff; letter-spacing: .05em;
+  }
+  .logo-name { color: #fff; }
+  .logo-name strong { display: block; font-size: 14px; font-weight: 700; }
+  .logo-name span { font-size: 11px; color: rgba(255,255,255,.45); letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Card */
+  .card {
+    background: var(--paper); border-radius: 20px;
+    padding: 40px 36px; width: 100%; max-width: 460px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  }
+  .card-title { font-family: 'Fraunces', serif; font-size: 26px; color: var(--ink); margin-bottom: 4px; }
+  .card-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+  /* Alert */
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: none; }
+  .alert.err  { background: #fef2f2; color: var(--red);   border: 1px solid #fecaca; display: block; }
+  .alert.ok   { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; display: block; }
+
+  /* Fields */
+  .row { margin-bottom: 16px; }
+  label {
+    display: block; font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .inp-wrap { position: relative; }
+  input {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    font-family: 'Manrope', sans-serif; font-size: 15px;
+    color: var(--ink); background: var(--paper);
+    transition: border-color .15s, box-shadow .15s; outline: none;
+  }
+  input:focus  { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,111,181,.12); }
+  input.ok     { border-color: var(--green); }
+  input.err    { border-color: var(--red); }
+  .eye {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 17px; padding: 4px; line-height: 1;
+  }
+  input.has-eye { padding-right: 42px; }
+
+  /* Field message */
+  .fmsg { font-size: 12px; margin-top: 5px; min-height: 16px; }
+  .fmsg.ok  { color: var(--green); }
+  .fmsg.err { color: var(--red); }
+
+  /* Password strength */
+  .bars { display: flex; gap: 4px; margin-top: 7px; }
+  .bar  { height: 3px; flex: 1; border-radius: 99px; background: var(--line); transition: background .2s; }
+  .bar.weak   { background: var(--red); }
+  .bar.medium { background: var(--amber); }
+  .bar.strong { background: var(--green); }
+
+  .reqs { margin-top: 7px; display: flex; flex-direction: column; gap: 3px; }
+  .req  { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .req::before { content: "○"; font-size: 10px; }
+  .req.met     { color: var(--green); }
+  .req.met::before { content: "●"; }
+
+  /* Submit */
+  .btn {
+    width: 100%; padding: 14px; margin-top: 8px;
+    background: var(--accent); color: #fff;
+    font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 700;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: background .15s; letter-spacing: .02em;
+  }
+  .btn:hover:not(:disabled) { background: #a40d26; }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .btn.success  { background: var(--green) !important; }
+
+  .footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .footer a { color: var(--blue); text-decoration: none; font-weight: 600; }
+  .footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<a href="Landing.html" class="logo">
+  <div class="logo-badge">EIP</div>
+  <div class="logo-name">
+    <strong>Executive Import Program</strong>
+    <span>by Daniel Cassetari · HKTC</span>
+  </div>
+</a>
+
+<div class="card">
+  <h1 class="card-title">Criar conta</h1>
+  <p class="card-sub">Preencha os dados para se cadastrar.</p>
+
+  <div id="alert" class="alert"></div>
+
+  <form id="form" novalidate>
+
+    <!-- Nome -->
+    <div class="row">
+      <label for="nome">Nome completo</label>
+      <input id="nome" type="text" placeholder="Seu nome completo" autocomplete="name" />
+      <div class="fmsg" id="m-nome"></div>
+    </div>
+
+    <!-- Email -->
+    <div class="row">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" placeholder="voce@email.com" autocomplete="email" />
+      <div class="fmsg" id="m-email"></div>
+    </div>
+
+    <!-- CPF -->
+    <div class="row">
+      <label for="cpf">CPF</label>
+      <input id="cpf" type="text" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" />
+      <div class="fmsg" id="m-cpf"></div>
+    </div>
+
+    <!-- Senha -->
+    <div class="row">
+      <label for="senha">Senha</label>
+      <div class="inp-wrap">
+        <input id="senha" type="password" placeholder="Mínimo 8 caracteres" class="has-eye" autocomplete="new-password" />
+        <button type="button" class="eye" data-t="senha">👁</button>
+      </div>
+      <div class="bars">
+        <div class="bar" id="b1"></div><div class="bar" id="b2"></div>
+        <div class="bar" id="b3"></div><div class="bar" id="b4"></div>
+      </div>
+      <div class="reqs">
+        <span class="req" id="r-len">Mínimo 8 caracteres</span>
+        <span class="req" id="r-let">Pelo menos uma letra</span>
+        <span class="req" id="r-num">Pelo menos um número</span>
+      </div>
+      <div class="fmsg" id="m-senha"></div>
+    </div>
+
+    <!-- Confirmar -->
+    <div class="row">
+      <label for="conf">Confirmar senha</label>
+      <div class="inp-wrap">
+        <input id="conf" type="password" placeholder="Repita a senha" class="has-eye" autocomplete="new-password" />
+        <button type="button" class="eye" data-t="conf">👁</button>
+      </div>
+      <div class="fmsg" id="m-conf"></div>
+    </div>
+
+    <button type="submit" class="btn" id="btn">Criar conta</button>
+  </form>
+
+  <div class="footer">Já tem conta? <a href="login.html">Entrar</a></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://uuzuyiydkfugccgpjwnl.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1enV5aXlka2Z1Z2NjZ3Bqd25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMTY4NjYsImV4cCI6MjA5NDg5Mjg2Nn0.SNFwLyRAdaDS3XJifpXezTjv9qLZatPBsHZVAgC1h9k';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+/* ── CPF ── */
+function maskCPF(v) {
+  return v.replace(/\D/g,'').slice(0,11)
+    .replace(/(\d{3})(\d)/,'$1.$2')
+    .replace(/(\d{3})(\d)/,'$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+}
+function cpfOk(c) {
+  c = c.replace(/\D/g,'');
+  if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false;
+  let s=0; for(let i=0;i<9;i++) s += +c[i]*(10-i);
+  let r=(s*10)%11; if(r>=10)r=0; if(r!==+c[9]) return false;
+  s=0; for(let i=0;i<10;i++) s += +c[i]*(11-i);
+  r=(s*10)%11; if(r>=10)r=0; return r===+c[10];
+}
+
+/* ── helpers ── */
+function set(id, mid, ok, msg) {
+  const el=document.getElementById(id), m=document.getElementById(mid);
+  el.classList.toggle('ok',  ok===true);
+  el.classList.toggle('err', ok===false);
+  m.className='fmsg '+(ok===true?'ok':ok===false?'err':'');
+  m.textContent=msg||'';
+}
+function alert_(msg, type) {
+  const el=document.getElementById('alert');
+  el.textContent=msg; el.className='alert '+type;
+}
+
+/* ── password strength ── */
+function pwStrength(v) {
+  const len=v.length>=8, let_=(/[a-zA-Z]/).test(v), num=(/\d/).test(v);
+  document.getElementById('r-len').classList.toggle('met',len);
+  document.getElementById('r-let').classList.toggle('met',let_);
+  document.getElementById('r-num').classList.toggle('met',num);
+  const sc=[len,let_,num,v.length>=12].filter(Boolean).length;
+  ['b1','b2','b3','b4'].forEach((id,i)=>{
+    const b=document.getElementById(id);
+    b.className='bar';
+    if(i<sc) b.classList.add(sc<=1?'weak':sc<=2?'medium':'strong');
+  });
+  return len && let_ && num;
+}
+
+/* ── events ── */
+document.getElementById('cpf').addEventListener('input', e => e.target.value = maskCPF(e.target.value));
+
+document.getElementById('nome').addEventListener('blur', () => {
+  const v=document.getElementById('nome').value.trim();
+  if(!v) return set('nome','m-nome',false,'Nome obrigatório.');
+  if(v.split(/\s+/).length<2) return set('nome','m-nome',false,'Informe nome e sobrenome.');
+  if(!/^[\p{L}\s]+$/u.test(v)) return set('nome','m-nome',false,'Apenas letras e espaços.');
+  set('nome','m-nome',true,'');
+});
+
+document.getElementById('email').addEventListener('blur', () => {
+  const v=document.getElementById('email').value.trim();
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  set('email','m-email',ok?true:false,ok?'':'E-mail inválido.');
+});
+
+document.getElementById('cpf').addEventListener('blur', () => {
+  const v=document.getElementById('cpf').value;
+  if(!v) return set('cpf','m-cpf',false,'CPF obrigatório.');
+  set('cpf','m-cpf',cpfOk(v)?true:false,cpfOk(v)?'':'CPF inválido. Verifique os dígitos.');
+});
+
+document.getElementById('senha').addEventListener('input', () => {
+  pwStrength(document.getElementById('senha').value);
+  if(document.getElementById('conf').value) validateConf();
+});
+document.getElementById('senha').addEventListener('blur', () => {
+  const ok=pwStrength(document.getElementById('senha').value);
+  set('senha','m-senha',ok?true:false,ok?'':'Senha não atende os requisitos acima.');
+});
+
+function validateConf() {
+  const pw=document.getElementById('senha').value;
+  const cf=document.getElementById('conf').value;
+  if(!cf) return;
+  pw===cf ? set('conf','m-conf',true,'Senhas conferem ✓') : set('conf','m-conf',false,'As senhas não coincidem.');
+}
+document.getElementById('conf').addEventListener('input',validateConf);
+document.getElementById('conf').addEventListener('blur', () => {
+  if(!document.getElementById('conf').value) set('conf','m-conf',false,'Confirme sua senha.');
+  else validateConf();
+});
+
+/* ── toggle eye ── */
+document.querySelectorAll('.eye').forEach(btn => btn.addEventListener('click', () => {
+  const inp=document.getElementById(btn.dataset.t);
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🔒';
+}));
+
+/* ── submit ── */
+document.getElementById('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  document.getElementById('alert').className='alert';
+
+  const nome  = document.getElementById('nome').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const cpf   = document.getElementById('cpf').value;
+  const senha = document.getElementById('senha').value;
+  const conf  = document.getElementById('conf').value;
+
+  let ok=true;
+  if(!nome||nome.split(/\s+/).length<2)           { set('nome','m-nome',false,'Nome completo obrigatório.'); ok=false; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))  { set('email','m-email',false,'E-mail inválido.'); ok=false; }
+  if(!cpfOk(cpf))                                  { set('cpf','m-cpf',false,'CPF inválido.'); ok=false; }
+  if(!pwStrength(senha))                           { set('senha','m-senha',false,'Senha não atende os requisitos.'); ok=false; }
+  if(senha!==conf)                                 { set('conf','m-conf',false,'As senhas não coincidem.'); ok=false; }
+  if(!ok) return;
+
+  const btn=document.getElementById('btn');
+  btn.disabled=true; btn.textContent='Criando conta…';
+
+  const { data, error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, cpf: cpf.replace(/\D/g,'') } } });
+
+  if(error) {
+    btn.disabled=false; btn.textContent='Criar conta';
+    const map = {
+      'User already registered': 'Este e-mail já está cadastrado.',
+      'Email rate limit exceeded': 'Muitas tentativas. Tente novamente em alguns minutos.',
+    };
+    return alert_(map[error.message]||'Erro: '+error.message,'err');
+  }
+
+  if(data.user) {
+    await sb.from('perfis').upsert([{ id: data.user.id, nome, cpf: cpf.replace(/\D/g,'') }]);
+  }
+
+  btn.classList.add('success'); btn.textContent='✓ Conta criada!';
+  alert_('Cadastro realizado! Verifique seu e-mail para confirmar a conta, depois faça login.','ok');
+  setTimeout(() => window.location.href='login.html', 4000);
+});
+</script>
+</body>
+</html>
