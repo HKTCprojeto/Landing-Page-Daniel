@@ -150,8 +150,22 @@
   .av-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#15396b);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
   .sel-field{padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;cursor:pointer;outline:none}
   .sel-field:focus{border-color:var(--blue)}
-  .btn-reset{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;white-space:nowrap}
+  .btn-reset{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;white-space:nowrap}
   .btn-reset:hover{border-color:var(--blue);color:var(--blue)}
+  .btn-desativar{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;white-space:nowrap}
+  .btn-desativar:hover{border-color:#dc2626;color:#dc2626}
+  .btn-ativar{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid rgba(21,128,61,.4);background:none;color:var(--green);cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;white-space:nowrap}
+  .btn-ativar:hover{background:rgba(21,128,61,.08)}
+  .row-inativo td{opacity:.45}
+  .row-inativo td:last-child{opacity:1}
+  .status-ativo{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(21,128,61,.12);color:#15803d}
+  .status-ativo::before{content:'';width:5px;height:5px;border-radius:50%;background:#15803d}
+  .status-inativo{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(220,38,38,.1);color:#dc2626}
+  .status-inativo::before{content:'';width:5px;height:5px;border-radius:50%;background:#dc2626}
+  [data-theme="dark"] .status-ativo{background:rgba(74,222,128,.12);color:#4ade80}
+  [data-theme="dark"] .status-ativo::before{background:#4ade80}
+  .btn-cad-user{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+  .btn-cad-user:hover{background:#1d5fa0}
   .plano-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
   .plano-basico{background:var(--badge-lock-bg);color:var(--badge-lock-clr)}
   .plano-premium{background:rgba(234,179,8,.15);color:#d97706}
@@ -285,6 +299,13 @@ function initials(nome) {
 
   const perfil    = perfilRes.data;
   const apostilas = apostilasRes.data || [];
+
+  /* ── Usuário desativado? ── */
+  if (perfil && perfil.ativo === false) {
+    await sb.auth.signOut();
+    window.location.href = 'login.html?conta=desativada';
+    return;
+  }
 
   const nomeRaw  = perfil?.nome || user.user_metadata?.nome || user.email.split('@')[0];
   const nome     = formatNome(nomeRaw);
@@ -474,18 +495,53 @@ function initials(nome) {
 
           <!-- Painel: Usuários -->
           <div class="config-pane active" id="cpane-usuarios">
-            <div class="config-section-title">Lista de Usuários</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+              <div class="config-section-title" style="margin-bottom:0">Lista de Usuários</div>
+              <button class="btn-cad-user" onclick="abrirModalCadUser()">＋ Cadastrar usuário</button>
+            </div>
             <div class="table-wrap">
               <table class="users-table">
                 <thead>
                   <tr>
-                    <th>Usuário</th><th>E-mail</th><th>Tipo</th><th>Plano</th><th>Ações</th>
+                    <th>Usuário</th><th>E-mail</th><th>Status</th><th>Tipo</th><th>Plano</th><th>Ações</th>
                   </tr>
                 </thead>
                 <tbody id="users-tbody">
-                  <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
+                  <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- Modal: Cadastrar Usuário -->
+            <div class="modal-overlay" id="modal-cad-user">
+              <div class="modal-box">
+                <div class="modal-title">Cadastrar Usuário</div>
+                <div class="mrow"><label>Nome completo</label><input class="minp" id="cu-nome" type="text" placeholder="Nome e sobrenome" /></div>
+                <div class="mrow"><label>E-mail</label><input class="minp" id="cu-email" type="email" placeholder="email@exemplo.com" /></div>
+                <div class="mrow"><label>Senha</label><input class="minp" id="cu-senha" type="password" placeholder="Mínimo 8 caracteres" /></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div class="mrow">
+                    <label>Tipo de acesso</label>
+                    <select class="minp" id="cu-role">
+                      <option value="user">Usuário</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <div class="mrow">
+                    <label>Plano</label>
+                    <select class="minp" id="cu-plano">
+                      <option value="basico">Básico</option>
+                      <option value="premium">Premium</option>
+                      <option value="vitalicio">Vitalício</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pfmsg err" id="cu-erro" style="min-height:0;margin-top:4px"></div>
+                <div class="modal-footer">
+                  <button class="btn-mcancel" onclick="fecharModalCadUser()">Cancelar</button>
+                  <button class="btn-msave" id="btn-cu-save" onclick="cadastrarUsuario()">Cadastrar</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -912,19 +968,18 @@ async function carregarUsuarios() {
     return;
   }
   tbody.innerHTML = data.map(u => {
-    const n  = formatNome(u.nome || '');
-    const av = initials(n || u.email || '?');
-    const planoClass = { basico:'plano-basico', premium:'plano-premium', vitalicio:'plano-vitalicio' }[u.plano] || 'plano-basico';
-    return `<tr>
+    const n   = formatNome(u.nome || '');
+    const av  = initials(n || u.email || '?');
+    const ativo = u.ativo !== false;
+    return `<tr class="${ativo?'':'row-inativo'}">
       <td>
         <div class="user-cell">
           <div class="av-sm">${av}</div>
-          <div>
-            <div style="font-weight:600">${n||'—'}</div>
-          </div>
+          <div style="font-weight:600">${n||'—'}</div>
         </div>
       </td>
-      <td style="color:var(--muted)">${u.email||'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${u.email||'—'}</td>
+      <td><span class="${ativo?'status-ativo':'status-inativo'}">${ativo?'Ativo':'Inativo'}</span></td>
       <td>
         <select class="sel-field" onchange="updateUserField('${u.id}','role',this.value)">
           <option value="user"  ${u.role==='user' ?'selected':''}>Usuário</option>
@@ -939,7 +994,13 @@ async function carregarUsuarios() {
         </select>
       </td>
       <td>
-        <button class="btn-reset" onclick="resetSenha('${u.email}','${n}')">🔑 Reset senha</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-reset" onclick="resetSenha('${u.email}','${n}')">🔑 Reset</button>
+          ${ativo
+            ? `<button class="btn-desativar" onclick="toggleAtivoUser('${u.id}',false,'${n}')">🚫 Desativar</button>`
+            : `<button class="btn-ativar"    onclick="toggleAtivoUser('${u.id}',true,'${n}')">✅ Ativar</button>`
+          }
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -948,6 +1009,61 @@ async function carregarUsuarios() {
 async function updateUserField(userId, field, value) {
   const { error } = await sb.from('perfis').update({ [field]: value }).eq('id', userId);
   if (error) alert('Erro ao atualizar: ' + error.message);
+}
+
+async function toggleAtivoUser(userId, novoAtivo, nome) {
+  const acao = novoAtivo ? 'ativar' : 'desativar';
+  if (!confirm(`Deseja ${acao} o usuário ${nome}?`)) return;
+  const { error } = await sb.from('perfis').update({ ativo: novoAtivo }).eq('id', userId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  await carregarUsuarios();
+}
+
+/* ── Cadastrar Usuário ── */
+function abrirModalCadUser() {
+  document.getElementById('cu-nome').value  = '';
+  document.getElementById('cu-email').value = '';
+  document.getElementById('cu-senha').value = '';
+  document.getElementById('cu-role').value  = 'user';
+  document.getElementById('cu-plano').value = 'basico';
+  document.getElementById('cu-erro').textContent = '';
+  document.getElementById('modal-cad-user').classList.add('open');
+}
+function fecharModalCadUser() {
+  document.getElementById('modal-cad-user').classList.remove('open');
+}
+
+async function cadastrarUsuario() {
+  const nome  = document.getElementById('cu-nome').value.trim();
+  const email = document.getElementById('cu-email').value.trim();
+  const senha = document.getElementById('cu-senha').value;
+  const role  = document.getElementById('cu-role').value;
+  const plano = document.getElementById('cu-plano').value;
+  const erro  = document.getElementById('cu-erro');
+  const btn   = document.getElementById('btn-cu-save');
+
+  erro.textContent = '';
+  if (!nome || nome.split(/\s+/).length < 2)            { erro.textContent = 'Informe nome e sobrenome.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))        { erro.textContent = 'E-mail inválido.'; return; }
+  if (senha.length < 8)                                  { erro.textContent = 'Senha deve ter pelo menos 8 caracteres.'; return; }
+  if (!/[a-zA-Z]/.test(senha) || !/\d/.test(senha))     { erro.textContent = 'Senha deve ter letras e números.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Cadastrando…';
+
+  const { data, error } = await sb.rpc('admin_create_user', {
+    p_email: email, p_password: senha, p_nome: nome,
+    p_role: role, p_plano: plano
+  });
+
+  btn.disabled = false; btn.textContent = 'Cadastrar';
+
+  if (error) {
+    const msg = error.message.includes('já cadastrado') ? 'E-mail já cadastrado no sistema.' : 'Erro: ' + error.message;
+    erro.textContent = msg; return;
+  }
+
+  fecharModalCadUser();
+  await carregarUsuarios();
 }
 
 async function resetSenha(email, nome) {

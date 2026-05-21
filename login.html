@@ -223,6 +223,16 @@ document.getElementById('eye-btn').addEventListener('click', () => {
   document.getElementById('eye-btn').textContent=inp.type==='password'?'👁':'🔒';
 });
 
+/* ── Aviso conta desativada ── */
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('conta') === 'desativada') {
+    const el = document.getElementById('alert');
+    el.textContent = 'Sua conta foi desativada. Entre em contato com o suporte.';
+    el.className = 'alert err';
+  }
+})();
+
 /* ── Theme ── */
 (function(){
   const t = localStorage.getItem('eip-theme') || 'light';
