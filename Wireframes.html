@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wireframes — Executive Import Program · Daniel Cassetari</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Architects+Daughter&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #2a2a2a;
+    --pencil: #4a4a4a;
+    --paper: #f7f4ed;
+    --paper-2: #efe9dc;
+    --line: #2a2a2a;
+    --muted: #888178;
+    --accent: #c2410c;       /* burnt orange — Daniel/comex feel */
+    --accent-soft: #fde4d3;
+    --highlight: #fde68a;
+    --green: #166534;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    font-family: 'Kalam', 'Architects Daughter', cursive;
+    color: var(--ink);
+  }
+
+  /* Subtle paper texture using SVG noise */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .8;
+    z-index: 1;
+  }
+
+  /* ───── App shell ───── */
+  .app { position: relative; z-index: 2; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(247,244,237,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1.5px solid var(--ink);
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 24px;
+    font-family: 'Inter', sans-serif;
+  }
+  .topbar .brand {
+    font-family: 'Caveat', cursive;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: .5px;
+    color: var(--ink);
+  }
+  .topbar .brand span { color: var(--accent); }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--pencil);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .topbar .tabs {
+    display: flex; gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-family: 'Kalam', cursive;
+    font-size: 15px;
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    padding: 7px 14px;
+    border-radius: 22px 26px 24px 28px / 26px 22px 28px 24px;
+    cursor: pointer;
+    transition: all .15s;
+    line-height: 1;
+  }
+  .tab:hover { background: var(--paper-2); }
+  .tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .tab .num {
+    display: inline-block;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    margin-right: 6px;
+    color: var(--accent);
+  }
+  .tab.active .num { color: var(--highlight); }
+
+  /* ───── Stage ───── */
+  .stage {
+    padding: 36px 36px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .intro {
+    margin: 0 0 28px;
+    padding: 22px 26px;
+    border: 2px solid var(--ink);
+    border-radius: 18px 22px 18px 24px / 22px 18px 24px 18px;
+    background: #fff;
+    box-shadow: 4px 4px 0 var(--ink);
+    font-family: 'Kalam', cursive;
+  }
+  .intro h1 {
+    margin: 0 0 8px;
+    font-family: 'Caveat', cursive;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .intro h1 .marker {
+    background: var(--highlight);
+    padding: 0 6px;
+    border-radius: 4px;
+  }
+  .intro p {
+    margin: 6px 0 0;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--pencil);
+    max-width: 920px;
+  }
+  .intro .legend {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 13px; color: var(--pencil);
+    font-family: 'Inter', sans-serif;
+  }
+  .intro .legend b { color: var(--ink); }
+
+  /* ───── Wireframe paper ───── */
+  .frame {
+    display: none;
+    border: 2.5px solid var(--ink);
+    border-radius: 8px 14px 6px 12px / 12px 6px 14px 8px;
+    background: #fff;
+    box-shadow: 6px 6px 0 var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+  .frame.active { display: block; }
+
+  .frame-head {
+    border-bottom: 1.5px solid var(--ink);
+    padding: 10px 18px;
+    display: flex; align-items: center; gap: 14px;
+    background: var(--paper-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--pencil);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .dots { display: flex; gap: 6px; }
+  .dots i {
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: #fff;
+    display: block;
+  }
+  .frame-head .url {
+    flex: 1;
+    text-align: center;
+    font-family: 'Kalam', cursive;
+    color: var(--ink);
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ───── Wireframe primitives (sketchy) ───── */
+  .wf {
+    padding: 26px 30px 60px;
+    font-family: 'Kalam', cursive;
+    color: var(--ink);
+  }
+
+  /* Section title with handwritten note */
+  .secnote {
+    display: flex; align-items: baseline; gap: 14px;
+    margin: 28px 0 14px;
+  }
+  .secnote .num {
+    font-family: 'Caveat', cursive;
+    color: var(--accent);
+    font-size: 24px; font-weight: 700;
+  }
+  .secnote h3 {
+    margin: 0;
+    font-family: 'Caveat', cursive;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .secnote .tag {
+    margin-left: auto;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--pencil);
+    border: 1px dashed var(--pencil);
+    padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+
+  /* Boxes */
+  .box {
+    border: 2px solid var(--ink);
+    border-radius: 10px 14px 8px 16px / 14px 8px 16px 10px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+  .box.dashed { border-style: dashed; }
+  .box.dark { background: var(--ink); color: var(--paper); }
+  .box.cream { background: var(--paper-2); }
+  .box.accent { background: var(--accent-soft); border-color: var(--accent); }
+
+  .ph {
+    /* placeholder block — diagonal stripes */
+    background: repeating-linear-gradient(
+      135deg,
+      var(--paper-2) 0 6px,
+      transparent 6px 12px
+    );
+    border: 1.5px dashed var(--pencil);
+    color: var(--pencil);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    border-radius: 8px;
+  }
+  .ph.photo {
+    background:
+      repeating-linear-gradient(135deg, rgba(0,0,0,.04) 0 8px, transparent 8px 16px),
+      var(--paper-2);
+  }
+
+  .label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--pencil);
+  }
+
+  .scribble {
+    display: inline-block;
+    background: var(--highlight);
+    padding: 0 6px;
+    border-radius: 3px;
+  }
+
+  /* Underline doodle */
+  .ul-doodle {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'><path d='M2 5 Q 30 1, 60 4 T 120 5 T 198 4' stroke='%23c2410c' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 8px;
+    padding-bottom: 6px;
+  }
+
+  .arrow {
+    font-family: 'Caveat', cursive;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 10px 18px;
+    border-radius: 14px 18px 12px 16px / 18px 12px 16px 14px;
+    box-shadow: 3px 3px 0 var(--accent);
+  }
+  .btn.ghost {
+    background: #fff; color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  /* Annotations — sticky-note style */
+  .note {
+    position: absolute;
+    background: #fff7c2;
+    border: 1.5px solid #b78a1f;
+    color: #5a4a2a;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+    transform: rotate(-2deg);
+    max-width: 200px;
+    line-height: 1.15;
+    z-index: 5;
+  }
+  .note.r { transform: rotate(2deg); }
+  .note .arr {
+    position: absolute;
+    font-size: 22px; color: #b78a1f;
+    font-family: 'Caveat', cursive;
+  }
+
+  h2.wf-title {
+    margin: 0;
+    font-family: 'Caveat', cursive;
+    font-size: 44px;
+    line-height: 1.05;
+    font-weight: 700;
+  }
+  h2.wf-title .accent { color: var(--accent); }
+
+  /* Generic grids */
+  .row { display: flex; gap: 14px; }
+  .col { flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .stat {
+    border: 1.5px solid var(--ink);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fff;
+    text-align: center;
+  }
+  .stat .num {
+    font-family: 'Caveat', cursive;
+    font-size: 28px; font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .stat .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--pencil);
+    margin-top: 4px;
+  }
+
+  /* Module list bits */
+  .mod-line {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1.5px dashed var(--pencil);
+    font-size: 16px;
+  }
+  .mod-line:last-child { border-bottom: none; }
+  .mod-line .n {
+    font-family: 'Caveat', cursive; font-weight: 700;
+    color: var(--accent); font-size: 22px;
+    width: 28px;
+  }
+  .mod-line .t { flex: 1; }
+  .mod-line .meta {
+    font-family: 'Inter', sans-serif; font-size: 10px;
+    color: var(--pencil); letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .pill {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1.2px solid var(--ink);
+    padding: 2px 8px; border-radius: 999px;
+    background: #fff;
+  }
+  .pill.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Footer of frame */
+  .frame-foot {
+    border-top: 1.5px dashed var(--pencil);
+    padding: 12px 26px;
+    display: flex; gap: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: var(--pencil);
+    background: var(--paper-2);
+    flex-wrap: wrap;
+  }
+  .frame-foot b { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr 1fr; }
+    .topbar { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ───── Top bar ───── -->
+  <div class="topbar">
+    <div class="brand">EIP <span>·</span> Wireframes</div>
+    <div class="meta">Executive Import Program · Daniel Cassetari</div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-target="A"><span class="num">01</span>Autoridade Editorial</button>
+      <button class="tab" data-target="B"><span class="num">02</span>Boutique Institucional</button>
+      <button class="tab" data-target="C"><span class="num">03</span>Dossiê Executivo</button>
+      <button class="tab" data-target="D"><span class="num">04</span>Aplicação Seletiva</button>
+    </div>
+  </div>
+
+  <div class="stage">
+
+    <!-- ───── Intro / brief card ───── -->
+    <div class="intro">
+      <h1>Wireframes — <span class="marker">Executive Import Program</span></h1>
+      <p>
+        Quatro direções estruturais low-fi para a landing page do programa do <b>Daniel Cassetari</b>
+        (CEO HKTC, +25 anos em comex, US$28.8B em operações). Cada wireframe explora uma forma diferente
+        de organizar autoridade pessoal + processo seletivo + 12 módulos. Use as abas acima para alternar.
+      </p>
+      <div class="legend">
+        <span><b>—</b> hachura = imagem / foto a definir</span>
+        <span><b>▢</b> caixa pontilhada = bloco de conteúdo</span>
+        <span><b>✱</b> notas amarelas = decisões a confirmar</span>
+        <span><b>laranja</b> = ênfase / CTA</span>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <!-- DIREÇÃO A — AUTORIDADE EDITORIAL                               -->
+    <!-- Foco: Daniel como figura. Layout magazine, headline grande,    -->
+    <!-- foto editorial, métricas inline, citações de mídia.            -->
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <div class="frame active" data-frame="A">
+      <div class="frame-head">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">danielcassetari.com / executive-import-program</div>
+        <div>A · Editorial</div>
+      </div>
+
+      <div class="wf">
+
+        <!-- HERO -->
+        <div class="secnote">
+          <span class="num">01</span>
+          <h3>Hero — manchete editorial</h3>
+          <span class="tag">Acima da dobra</span>
+        </div>
+
+        <div class="grid-2" style="gap:26px; align-items:center;">
+          <div>
+            <div class="label">Programa Executivo · Turma 2026</div>
+            <h2 class="wf-title" style="margin-top:10px;">
+              25 anos lendo o <span class="accent ul-doodle">comércio exterior</span> antes do mercado.
+            </h2>
+            <p style="font-size:17px; margin:14px 0 18px; max-width:540px;">
+              Um programa para empresários que decidem importar com margem, governança e segurança fiscal —
+              sob a curadoria de Daniel Cassetari, CEO da HKTC.
+            </p>
+            <div style="display:flex; gap:10px;">
+              <span class="btn">Aplicar para a turma →</span>
+              <span class="btn ghost">Baixar dossiê (PDF)</span>
+            </div>
+
+            <div class="grid-4" style="margin-top:22px;">
+              <div class="stat"><div class="num">25+</div><div class="lbl">anos em comex</div></div>
+              <div class="stat"><div class="num">US$28.8B</div><div class="lbl">em operações</div></div>
+              <div class="stat"><div class="num">7</div><div class="lbl">escritórios</div></div>
+              <div class="stat"><div class="num">HK · BR</div><div class="lbl">presença direta</div></div>
+            </div>
+          </div>
+
+          <div style="position:relative;">
+            <div class="ph photo" style="height:380px; border-radius:14px;">FOTO EDITORIAL DO DANIEL — retrato, fundo neutro</div>
+            <div class="note" style="top:-12px; right:-10px;">
+              foto pro com look<br>de executivo s&ecirc;nior
+              <span class="arr" style="bottom:-22px; left:18px;">↙</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BARRA DE MÍDIA -->
+        <div class="secnote">
+          <span class="num">02</span>
+          <h3>Barra de mídia — "como visto em"</h3>
+          <span class="tag">Prova social</span>
+        </div>
+        <div class="box cream" style="display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
+          <span class="label">analisado por</span>
+          <div class="ph" style="height:32px; width:120px;">EMISSORA 1</div>
+          <div class="ph" style="height:32px; width:120px;">EMISSORA 2</div>
+          <div class="ph" style="height:32px; width:120px;">EMISSORA 3</div>
+          <div class="ph" style="height:32px; width:120px;">EMISSORA 4</div>
+          <div class="ph" style="height:32px; width:120px;">EMISSORA 5</div>
+        </div>
+
+        <!-- MANIFESTO -->
+        <div class="secnote">
+          <span class="num">03</span>
+          <h3>Manifesto — "Importar não é comprar barato"</h3>
+          <span class="tag">Posicionamento</span>
+        </div>
+        <div class="box accent">
+          <div class="label" style="color:var(--accent);">CARTA DO FUNDADOR</div>
+          <p style="font-family:'Caveat',cursive; font-size:30px; margin:8px 0 0; line-height:1.2;">
+            "Importar não é comprar barato. <span class="ul-doodle">É estruturar margem.</span>
+            E o erro nunca está no produto — está na leitura."
+          </p>
+          <div class="label" style="margin-top:10px;">— DANIEL CASSETARI · CEO HKTC</div>
+        </div>
+
+        <!-- PARA QUEM -->
+        <div class="secnote">
+          <span class="num">04</span>
+          <h3>Para quem é (ICP) — 3 perfis</h3>
+          <span class="tag">Qualificação</span>
+        </div>
+        <div class="grid-3">
+          <div class="box">
+            <div class="pill accent">PERFIL 01</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:24px; margin:8px 0 4px;">Empresário importador</h4>
+            <p style="font-size:14px; margin:0;">Já importa, mas decide no escuro. Quer custo nacionalizado real e margem estruturada.</p>
+          </div>
+          <div class="box">
+            <div class="pill accent">PERFIL 02</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:24px; margin:8px 0 4px;">Decisor C-level</h4>
+            <p style="font-size:14px; margin:0;">CEO, COO, CFO que precisam ler tributos, logística e câmbio antes de aprovar.</p>
+          </div>
+          <div class="box">
+            <div class="pill accent">PERFIL 03</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:24px; margin:8px 0 4px;">Trading / sourcing</h4>
+            <p style="font-size:14px; margin:0;">Profissional que opera com China, mas quer escalar com governança.</p>
+          </div>
+        </div>
+
+        <!-- METODOLOGIA -->
+        <div class="secnote">
+          <span class="num">05</span>
+          <h3>Metodologia — 4 pilares</h3>
+          <span class="tag">Como funciona</span>
+        </div>
+        <div class="grid-4">
+          <div class="box dashed"><div class="label">PILAR 01</div><b style="font-family:'Caveat',cursive; font-size:22px;">Visão</b><p style="font-size:13px; margin:4px 0 0;">Cadeias globais e leitura macro.</p></div>
+          <div class="box dashed"><div class="label">PILAR 02</div><b style="font-family:'Caveat',cursive; font-size:22px;">Cálculo</b><p style="font-size:13px; margin:4px 0 0;">Custo real + simulador margem.</p></div>
+          <div class="box dashed"><div class="label">PILAR 03</div><b style="font-family:'Caveat',cursive; font-size:22px;">Operação</b><p style="font-size:13px; margin:4px 0 0;">Doc., logística, desembaraço.</p></div>
+          <div class="box dashed"><div class="label">PILAR 04</div><b style="font-family:'Caveat',cursive; font-size:22px;">Governança</b><p style="font-size:13px; margin:4px 0 0;">Risco, compliance, escala.</p></div>
+        </div>
+
+        <!-- DIFERENCIAIS -->
+        <div class="secnote">
+          <span class="num">06</span>
+          <h3>Diferenciais — vs. cursos comuns</h3>
+          <span class="tag">Comparativo</span>
+        </div>
+        <div class="box">
+          <div class="grid-2" style="font-size:15px;">
+            <div>
+              <div class="label" style="color:var(--accent);">EXECUTIVE IMPORT PROGRAM</div>
+              <p>· Curadoria de quem operou US$28.8B</p>
+              <p>· Decisão > teoria</p>
+              <p>· Power BI + simuladores reais</p>
+              <p>· Acesso direto ao Daniel</p>
+            </div>
+            <div>
+              <div class="label">CURSOS COMUNS</div>
+              <p style="color:var(--pencil);">· Professor sem operação real</p>
+              <p style="color:var(--pencil);">· Teoria genérica de NCM</p>
+              <p style="color:var(--pencil);">· Planilhas básicas</p>
+              <p style="color:var(--pencil);">· Suporte por chatbot</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12 MÓDULOS -->
+        <div class="secnote">
+          <span class="num">07</span>
+          <h3>Conteúdo — 12 módulos</h3>
+          <span class="tag">Layout: lista numerada</span>
+        </div>
+        <div class="grid-2">
+          <div class="box" style="padding:0;">
+            <div class="mod-line"><span class="n">01</span><span class="t">Fundamentos Estratégicos</span><span class="meta">M1</span></div>
+            <div class="mod-line"><span class="n">02</span><span class="t">Estrutura Brasileira (Siscomex/DUIMP)</span><span class="meta">M2</span></div>
+            <div class="mod-line"><span class="n">03</span><span class="t">Modalidades de Importação</span><span class="meta">M3</span></div>
+            <div class="mod-line"><span class="n">04</span><span class="t">Documentação Internacional</span><span class="meta">M4</span></div>
+            <div class="mod-line"><span class="n">05</span><span class="t">Logística Internacional</span><span class="meta">M5</span></div>
+            <div class="mod-line"><span class="n">06</span><span class="t">Custo Nacionalizado</span><span class="meta">M6</span></div>
+          </div>
+          <div class="box" style="padding:0;">
+            <div class="mod-line"><span class="n">07</span><span class="t">Exportação na Prática</span><span class="meta">M7</span></div>
+            <div class="mod-line"><span class="n">08</span><span class="t">China como Hub Global</span><span class="meta">M8</span></div>
+            <div class="mod-line"><span class="n">09</span><span class="t">Trading Company</span><span class="meta">M9</span></div>
+            <div class="mod-line"><span class="n">10</span><span class="t">Reforma Tributária (IBS/CBS)</span><span class="meta">M10</span></div>
+            <div class="mod-line"><span class="n">11</span><span class="t">Risco e Compliance</span><span class="meta">M11</span></div>
+            <div class="mod-line"><span class="n">12</span><span class="t">Capstone — Operação Real</span><span class="meta">M12</span></div>
+          </div>
+        </div>
+
+        <!-- CASES -->
+        <div class="secnote">
+          <span class="num">08</span>
+          <h3>Cases & depoimentos</h3>
+          <span class="tag">Resultados</span>
+        </div>
+        <div class="grid-3">
+          <div class="box"><div class="ph photo" style="height:80px;">FOTO ALUNO</div><p style="font-size:13px; margin:10px 0 4px;">"Reduzi 18% no custo nacionalizado depois do M6."</p><div class="label">— EMPRESÁRIO · SETOR X</div></div>
+          <div class="box"><div class="ph photo" style="height:80px;">FOTO ALUNO</div><p style="font-size:13px; margin:10px 0 4px;">"Saí de achismo para simulação real em 8 semanas."</p><div class="label">— CEO · SETOR Y</div></div>
+          <div class="box"><div class="ph photo" style="height:80px;">FOTO ALUNO</div><p style="font-size:13px; margin:10px 0 4px;">"Estruturei minha primeira trading com o capstone."</p><div class="label">— FUNDADOR · SETOR Z</div></div>
+        </div>
+
+        <!-- INVESTIMENTO + APLICAÇÃO -->
+        <div class="secnote">
+          <span class="num">09</span>
+          <h3>Investimento + Aplicação seletiva</h3>
+          <span class="tag">CTA principal</span>
+        </div>
+        <div class="box dark" style="position:relative;">
+          <div class="grid-2" style="gap:24px;">
+            <div>
+              <div class="label" style="color:#bbb;">INVESTIMENTO EXECUTIVO</div>
+              <h4 style="font-family:'Caveat',cursive; font-size:48px; margin:6px 0; color:#fff;">R$ 12.000</h4>
+              <p style="font-size:14px; color:#cfcfcf; margin:0;">12x sugerido · pagamento corporativo mediante proposta · faturamento via HKTC.</p>
+              <div style="margin-top:14px;">
+                <span class="pill" style="background:#fff; color:#1a1a1a; border-color:#fff;">VAGAS LIMITADAS</span>
+                <span class="pill" style="background:transparent; color:#fff; border-color:#fff;">PROCESSO SELETIVO</span>
+              </div>
+            </div>
+            <div class="box" style="background:#fff; color:var(--ink);">
+              <div class="label">FORMULÁRIO DE APLICAÇÃO</div>
+              <div class="ph" style="height:36px; margin-top:8px;">NOME COMPLETO</div>
+              <div class="ph" style="height:36px; margin-top:8px;">EMAIL CORPORATIVO</div>
+              <div class="ph" style="height:36px; margin-top:8px;">EMPRESA · CARGO · FATURAMENTO</div>
+              <div class="ph" style="height:60px; margin-top:8px;">POR QUE QUERO ENTRAR (3 LINHAS)</div>
+              <div class="btn" style="margin-top:10px;">Enviar candidatura →</div>
+            </div>
+          </div>
+          <div class="note r" style="top:-10px; left:46%;">aplica&ccedil;&atilde;o, n&atilde;o checkout direto<span class="arr" style="bottom:-22px; left:30px;">↓</span></div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="secnote">
+          <span class="num">10</span>
+          <h3>FAQ + Footer</h3>
+          <span class="tag">Encerramento</span>
+        </div>
+        <div class="grid-2">
+          <div class="box dashed"><b>É para iniciantes?</b><p style="font-size:14px; margin:4px 0 0;">Sim — começa pela base, mas com profundidade executiva.</p></div>
+          <div class="box dashed"><b>Como é o processo seletivo?</b><p style="font-size:14px; margin:4px 0 0;">Aplicação → diagnóstico 1:1 → confirmação de vaga.</p></div>
+          <div class="box dashed"><b>Tem certificado?</b><p style="font-size:14px; margin:4px 0 0;">Sim — emitido pela HKTC, com validação corporativa.</p></div>
+          <div class="box dashed"><b>Posso pagar via empresa?</b><p style="font-size:14px; margin:4px 0 0;">Sim — emitimos proposta corporativa e nota fiscal.</p></div>
+        </div>
+
+      </div>
+
+      <div class="frame-foot">
+        <span><b>Tom:</b> Editorial / autoridade pessoal</span>
+        <span><b>Ritmo:</b> Hero forte → manifesto → prova → método → módulos → aplicação</span>
+        <span><b>CTA:</b> Aplicação seletiva</span>
+        <span><b>Risco:</b> depende de boa foto editorial do Daniel</span>
+      </div>
+    </div>
+
+
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <!-- DIREÇÃO B — BOUTIQUE INSTITUCIONAL                             -->
+    <!-- Tradicional, sóbrio, "MBA-style". Foto + credenciais formais.  -->
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <div class="frame" data-frame="B">
+      <div class="frame-head">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">hktc.com.br / executive-import-program</div>
+        <div>B · Boutique</div>
+      </div>
+
+      <div class="wf">
+
+        <!-- HERO institucional -->
+        <div class="secnote">
+          <span class="num">01</span>
+          <h3>Hero institucional — duas colunas equilibradas</h3>
+          <span class="tag">Sóbrio</span>
+        </div>
+        <div class="box cream" style="padding:30px;">
+          <div class="grid-2" style="align-items:center; gap:30px;">
+            <div>
+              <div class="label">PROGRAMA EXECUTIVO · CLASSE 2026 · 12 SEMANAS</div>
+              <h2 class="wf-title" style="margin-top:10px; font-size:38px;">
+                Executive Import Program
+              </h2>
+              <p style="font-family:'Inter',sans-serif; font-size:16px; line-height:1.55; margin:10px 0 14px;">
+                Formação executiva premium em comércio exterior, conduzida por Daniel Cassetari —
+                CEO da HKTC and Business (Hong Kong) e referência de mercado há mais de 25 anos.
+              </p>
+              <div style="display:flex; gap:10px;">
+                <span class="btn">Solicitar aplicação</span>
+                <span class="btn ghost">Conversar com a equipe</span>
+              </div>
+            </div>
+            <div class="ph photo" style="height:300px;">FOTO INSTITUCIONAL — Daniel + sala de reuni&otilde;es / porto</div>
+          </div>
+        </div>
+
+        <!-- Faixa de credenciais -->
+        <div class="secnote">
+          <span class="num">02</span>
+          <h3>Faixa de credenciais — números fortes</h3>
+          <span class="tag">Confiança</span>
+        </div>
+        <div class="grid-4">
+          <div class="stat"><div class="num">25+</div><div class="lbl">anos comex</div></div>
+          <div class="stat"><div class="num">US$28.8B</div><div class="lbl">operações globais</div></div>
+          <div class="stat"><div class="num">7</div><div class="lbl">escritórios BR + HK</div></div>
+          <div class="stat"><div class="num">ISO 9001 · 28000</div><div class="lbl">certificações</div></div>
+        </div>
+
+        <!-- Bio do Daniel -->
+        <div class="secnote">
+          <span class="num">03</span>
+          <h3>Bio executiva — quem é Daniel Cassetari</h3>
+          <span class="tag">Autoridade</span>
+        </div>
+        <div class="box" style="display:flex; gap:22px; align-items:flex-start;">
+          <div class="ph photo" style="width:170px; height:200px; flex-shrink:0;">RETRATO FORMAL</div>
+          <div>
+            <div class="label">DIRETOR DO PROGRAMA</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:30px; margin:4px 0 6px;">Daniel Cassetari</h4>
+            <p style="font-size:14px; margin:0 0 6px; font-family:'Inter',sans-serif;">
+              CEO · HKTC and Business Limited (Hong Kong). Especialista em importação e exportação,
+              com operações em Brasil, China e Hong Kong. Comentarista frequente em emissoras nacionais
+              sobre tarifas, política comercial e cadeias globais.
+            </p>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
+              <span class="pill">CEO HKTC</span>
+              <span class="pill">EX-CHINA LINK</span>
+              <span class="pill">GPTW</span>
+              <span class="pill">PALESTRANTE</span>
+              <span class="pill">75K SEGUIDORES</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Para quem -->
+        <div class="secnote">
+          <span class="num">04</span>
+          <h3>Para quem é + pré-requisitos</h3>
+          <span class="tag">Qualificação</span>
+        </div>
+        <div class="grid-2">
+          <div class="box">
+            <div class="label" style="color:var(--green);">✓ INDICADO PARA</div>
+            <p style="margin:6px 0 0; font-size:15px;">Empresários e diretores que importam ou planejam importar acima de R$1M/ano · CFOs · sócios de trading · gestores de sourcing internacional.</p>
+          </div>
+          <div class="box dashed">
+            <div class="label" style="color:var(--accent);">⚠ NÃO É PARA</div>
+            <p style="margin:6px 0 0; font-size:15px;">Quem busca conteúdo gratuito, importação informal de baixo volume, ou expectativa de "fórmula mágica".</p>
+          </div>
+        </div>
+
+        <!-- Metodologia em fases -->
+        <div class="secnote">
+          <span class="num">05</span>
+          <h3>Metodologia em 3 fases — timeline horizontal</h3>
+          <span class="tag">Como funciona</span>
+        </div>
+        <div class="box">
+          <div class="grid-3" style="gap:22px;">
+            <div>
+              <div class="pill accent">FASE 01 · SEM. 1-4</div>
+              <h4 style="font-family:'Caveat',cursive; font-size:26px; margin:6px 0;">Diagnóstico</h4>
+              <p style="font-size:13px; margin:0;">Leitura macro, mapeamento da operação atual, identificação de gargalos.</p>
+            </div>
+            <div>
+              <div class="pill accent">FASE 02 · SEM. 5-9</div>
+              <h4 style="font-family:'Caveat',cursive; font-size:26px; margin:6px 0;">Estruturação</h4>
+              <p style="font-size:13px; margin:0;">Custo real, documentação, logística, fiscal — com simuladores aplicados.</p>
+            </div>
+            <div>
+              <div class="pill accent">FASE 03 · SEM. 10-12</div>
+              <h4 style="font-family:'Caveat',cursive; font-size:26px; margin:6px 0;">Aplicação</h4>
+              <p style="font-size:13px; margin:0;">Capstone com operação real e governança implantada na empresa.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diferenciais (tabela) -->
+        <div class="secnote">
+          <span class="num">06</span>
+          <h3>Diferenciais — quadro comparativo</h3>
+          <span class="tag">Tabela</span>
+        </div>
+        <div class="box" style="padding:0;">
+          <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr; font-family:'Inter',sans-serif; font-size:13px;">
+            <div class="label" style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink);">CRITÉRIO</div>
+            <div class="label" style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink); color:var(--accent);">EIP</div>
+            <div class="label" style="padding:10px 14px; border-bottom:1.5px solid var(--ink);">CURSOS COMUNS</div>
+
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">Curador</div>
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">CEO com US$28.8B</div>
+            <div style="padding:10px 14px; border-bottom:1px dashed var(--pencil); color:var(--pencil);">Professor genérico</div>
+
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">Ferramentas</div>
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">Power BI + simuladores</div>
+            <div style="padding:10px 14px; border-bottom:1px dashed var(--pencil); color:var(--pencil);">PDFs e planilhas</div>
+
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">Acesso ao mentor</div>
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);">Direto, em sessões</div>
+            <div style="padding:10px 14px; border-bottom:1px dashed var(--pencil); color:var(--pencil);">Não há</div>
+
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink);">Capstone</div>
+            <div style="padding:10px 14px; border-right:1.5px solid var(--ink);">Operação real</div>
+            <div style="padding:10px 14px; color:var(--pencil);">Não há</div>
+          </div>
+        </div>
+
+        <!-- 12 módulos em grid 4x3 -->
+        <div class="secnote">
+          <span class="num">07</span>
+          <h3>12 módulos — grid 4×3 com expansão</h3>
+          <span class="tag">Cards</span>
+        </div>
+        <div class="grid-4">
+          <div class="box"><div class="label">M1</div><b style="font-family:'Caveat',cursive; font-size:20px;">Fundamentos</b></div>
+          <div class="box"><div class="label">M2</div><b style="font-family:'Caveat',cursive; font-size:20px;">Estrutura BR</b></div>
+          <div class="box"><div class="label">M3</div><b style="font-family:'Caveat',cursive; font-size:20px;">Modalidades</b></div>
+          <div class="box"><div class="label">M4</div><b style="font-family:'Caveat',cursive; font-size:20px;">Documentos</b></div>
+          <div class="box"><div class="label">M5</div><b style="font-family:'Caveat',cursive; font-size:20px;">Logística</b></div>
+          <div class="box"><div class="label">M6</div><b style="font-family:'Caveat',cursive; font-size:20px;">Custo nacional.</b></div>
+          <div class="box"><div class="label">M7</div><b style="font-family:'Caveat',cursive; font-size:20px;">Exportação</b></div>
+          <div class="box"><div class="label">M8</div><b style="font-family:'Caveat',cursive; font-size:20px;">China hub</b></div>
+          <div class="box"><div class="label">M9</div><b style="font-family:'Caveat',cursive; font-size:20px;">Trading co.</b></div>
+          <div class="box"><div class="label">M10</div><b style="font-family:'Caveat',cursive; font-size:20px;">Reforma trib.</b></div>
+          <div class="box"><div class="label">M11</div><b style="font-family:'Caveat',cursive; font-size:20px;">Compliance</b></div>
+          <div class="box accent"><div class="label" style="color:var(--accent);">M12 · CAPSTONE</div><b style="font-family:'Caveat',cursive; font-size:20px;">Operação real</b></div>
+        </div>
+
+        <!-- Investimento + reserva -->
+        <div class="secnote">
+          <span class="num">08</span>
+          <h3>Investimento + processo seletivo</h3>
+          <span class="tag">CTA</span>
+        </div>
+        <div class="grid-2">
+          <div class="box">
+            <div class="label">INVESTIMENTO</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:42px; margin:6px 0; color:var(--accent);">R$ 12.000</h4>
+            <p style="font-size:14px; margin:0;">À vista, 12x corporativo, ou faturamento via HKTC. Vaga garantida apenas após aprovação.</p>
+          </div>
+          <div class="box dark">
+            <div class="label" style="color:#cfcfcf;">PRÓXIMOS PASSOS</div>
+            <p style="font-size:14px; margin:6px 0 0; color:#fff;">
+              <b>1.</b> Você envia a candidatura<br>
+              <b>2.</b> Time HKTC faz diagnóstico em call de 30min<br>
+              <b>3.</b> Vaga confirmada + onboarding
+            </p>
+            <div class="btn" style="margin-top:12px;">Iniciar aplicação →</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="frame-foot">
+        <span><b>Tom:</b> Boutique institucional, sóbrio</span>
+        <span><b>Ritmo:</b> Constante, sem altos picos emocionais</span>
+        <span><b>CTA:</b> Aplicação seletiva com 3 etapas claras</span>
+        <span><b>Bom para:</b> público mais conservador / corporate</span>
+      </div>
+    </div>
+
+
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <!-- DIREÇÃO C — DOSSIÊ EXECUTIVO                                   -->
+    <!-- Long-form leitura. Estilo "documento confidencial / dossier"   -->
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <div class="frame" data-frame="C">
+      <div class="frame-head">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">danielcassetari.com / dossie / eip</div>
+        <div>C · Dossiê</div>
+      </div>
+
+      <div class="wf">
+
+        <!-- Capa do dossiê -->
+        <div class="secnote">
+          <span class="num">01</span>
+          <h3>Capa do dossiê — narrativa, não vitrine</h3>
+          <span class="tag">Hero alternativo</span>
+        </div>
+        <div class="box dark" style="padding:32px; position:relative;">
+          <div class="label" style="color:#bbb;">DOSSIÊ CONFIDENCIAL · EDIÇÃO 2026 · APENAS 30 VAGAS</div>
+          <h2 class="wf-title" style="color:#fff; margin-top:14px; max-width:760px;">
+            Como empresários estão deixando de perder <span class="accent ul-doodle">15 a 22%</span> de margem em cada importação.
+          </h2>
+          <p style="font-family:'Inter',sans-serif; font-size:15px; color:#dcdcdc; margin:14px 0 0; max-width:680px;">
+            Um relatório executivo + programa de 12 semanas conduzido por Daniel Cassetari, CEO da HKTC.
+            Voltado a decisores que querem operar sem achismo, com leitura tributária, logística e cambial estruturada.
+          </p>
+          <div style="display:flex; gap:10px; margin-top:18px;">
+            <span class="btn">Ler o dossiê + aplicar</span>
+            <span class="btn ghost">Apenas baixar PDF</span>
+          </div>
+          <div class="note" style="top:18px; right:18px;">tom de relat&oacute;rio,<br>n&atilde;o de venda direta</div>
+        </div>
+
+        <!-- Sumário executivo -->
+        <div class="secnote">
+          <span class="num">02</span>
+          <h3>Sumário executivo — índice clicável</h3>
+          <span class="tag">Navegação</span>
+        </div>
+        <div class="box cream" style="padding:0;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; font-family:'Inter',sans-serif; font-size:14px;">
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil); border-right:1px dashed var(--pencil);"><b>I.</b> O problema dos R$ ocultos &nbsp;<span class="arrow">→</span></div>
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil);"><b>II.</b> O autor — Daniel Cassetari</div>
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil); border-right:1px dashed var(--pencil);"><b>III.</b> Para quem este dossiê foi escrito</div>
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil);"><b>IV.</b> Metodologia HKTC em 4 pilares</div>
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil); border-right:1px dashed var(--pencil);"><b>V.</b> Os 12 capítulos do programa</div>
+            <div style="padding:10px 16px; border-bottom:1px dashed var(--pencil);"><b>VI.</b> Casos: antes / depois</div>
+            <div style="padding:10px 16px; border-right:1px dashed var(--pencil);"><b>VII.</b> Investimento e termos</div>
+            <div style="padding:10px 16px;"><b>VIII.</b> Como aplicar</div>
+          </div>
+        </div>
+
+        <!-- Capítulo I -->
+        <div class="secnote">
+          <span class="num">03</span>
+          <h3>Capítulo I — O problema dos R$ ocultos</h3>
+          <span class="tag">Long-form</span>
+        </div>
+        <div class="grid-2">
+          <div class="box">
+            <div class="label">CAPÍTULO I</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:26px; margin:6px 0;">A ilusão do "preço de fábrica"</h4>
+            <p style="font-size:15px; margin:6px 0 0; font-family:'Inter',sans-serif; line-height:1.55;">
+              Em 9 de cada 10 operações, o erro de margem acontece <b>antes</b> da compra — na leitura tributária e logística.
+              Este capítulo desmonta o cálculo com 3 exemplos reais (eletrônicos · químico · maquinário).
+            </p>
+          </div>
+          <div class="box dashed">
+            <div class="label">VISUALIZAÇÃO</div>
+            <div class="ph" style="height:160px; margin-top:8px;">GRÁFICO — preço FOB vs. custo nacionalizado real</div>
+          </div>
+        </div>
+
+        <!-- Capítulo II — autor -->
+        <div class="secnote">
+          <span class="num">04</span>
+          <h3>Capítulo II — O autor</h3>
+          <span class="tag">Bio narrativa</span>
+        </div>
+        <div class="box" style="display:flex; gap:24px;">
+          <div class="ph photo" style="width:200px; height:240px; flex-shrink:0;">FOTO + assinatura abaixo</div>
+          <div>
+            <div class="label">SOBRE O AUTOR</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:30px; margin:6px 0;">Daniel Cassetari</h4>
+            <p style="font-family:'Inter',sans-serif; font-size:14px; line-height:1.6;">
+              CEO da HKTC and Business (Hong Kong). 25+ anos em comércio internacional. Operações somadas
+              acima de US$28.8B. Passagem por trading com presença em SP, GO, SC e HK. Comentarista
+              frequente em emissoras nacionais sobre tarifas, China e cadeias globais.
+            </p>
+            <div class="ph" style="height:60px; margin-top:10px; max-width:240px;">ASSINATURA MANUSCRITA</div>
+          </div>
+        </div>
+
+        <!-- Capítulo V — 12 capítulos do programa -->
+        <div class="secnote">
+          <span class="num">05</span>
+          <h3>Capítulo V — Os 12 capítulos do programa</h3>
+          <span class="tag">Lista de leitura</span>
+        </div>
+        <div class="box">
+          <div style="font-family:'Inter',sans-serif; font-size:14px; line-height:1.9;">
+            <div><b>Cap. 01</b> · Fundamentos Estratégicos · <span style="color:var(--pencil);">cadeias globais, leitura macro</span></div>
+            <div><b>Cap. 02</b> · Estrutura Brasileira · <span style="color:var(--pencil);">Siscomex, Receita, DUIMP, anuentes</span></div>
+            <div><b>Cap. 03</b> · Modalidades de Importação · <span style="color:var(--pencil);">própria, conta e ordem, encomenda</span></div>
+            <div><b>Cap. 04</b> · Documentação Internacional · <span style="color:var(--pencil);">Invoice, BL, certificados, antifraude</span></div>
+            <div><b>Cap. 05</b> · Logística Internacional · <span style="color:var(--pencil);">Incoterms, frete, seguro, transit time</span></div>
+            <div><b>Cap. 06</b> · Custo Nacionalizado · <span style="color:var(--pencil);">II, IPI, ICMS, PIS/COFINS, margem real</span></div>
+            <div><b>Cap. 07</b> · Exportação na Prática · <span style="color:var(--pencil);">preço, incentivos, contratos</span></div>
+            <div><b>Cap. 08</b> · China como Hub Global · <span style="color:var(--pencil);">sourcing, due diligence, cultura</span></div>
+            <div><b>Cap. 09</b> · Trading Company · <span style="color:var(--pencil);">estrutura, modelos escaláveis</span></div>
+            <div><b>Cap. 10</b> · Reforma Tributária · <span style="color:var(--pencil);">IBS, CBS, redesenho estratégico</span></div>
+            <div><b>Cap. 11</b> · Risco e Compliance · <span style="color:var(--pencil);">fraude, seguros, governança</span></div>
+            <div><b>Cap. 12</b> · Capstone · <span style="color:var(--pencil);">simulação executiva completa</span></div>
+          </div>
+        </div>
+
+        <!-- Casos antes/depois -->
+        <div class="secnote">
+          <span class="num">06</span>
+          <h3>Casos — antes / depois</h3>
+          <span class="tag">Prova</span>
+        </div>
+        <div class="grid-3">
+          <div class="box">
+            <div class="label">CASO 01 · ELETRÔNICOS</div>
+            <p style="font-size:13px; margin:6px 0 0;"><b>Antes:</b> margem real -3% (operava no prejuízo)<br><b>Depois:</b> +14% após M6 + simulador.</p>
+          </div>
+          <div class="box">
+            <div class="label">CASO 02 · MAQUINÁRIO</div>
+            <p style="font-size:13px; margin:6px 0 0;"><b>Antes:</b> doc. errada, multa de R$120k<br><b>Depois:</b> checklist HKTC, 0 multas em 11 op.</p>
+          </div>
+          <div class="box">
+            <div class="label">CASO 03 · QUÍMICO</div>
+            <p style="font-size:13px; margin:6px 0 0;"><b>Antes:</b> dependia de despachante 100%<br><b>Depois:</b> decisão própria + governança.</p>
+          </div>
+        </div>
+
+        <!-- Termos & investimento -->
+        <div class="secnote">
+          <span class="num">07</span>
+          <h3>Termos &amp; investimento — formato contrato</h3>
+          <span class="tag">Confiança</span>
+        </div>
+        <div class="box" style="padding:0;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; font-family:'Inter',sans-serif; font-size:14px;">
+            <div style="padding:14px 18px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);"><b>Investimento</b></div>
+            <div style="padding:14px 18px; border-bottom:1px dashed var(--pencil);">R$ 12.000 · 12x corporativo</div>
+            <div style="padding:14px 18px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);"><b>Duração</b></div>
+            <div style="padding:14px 18px; border-bottom:1px dashed var(--pencil);">12 semanas · 30 vagas</div>
+            <div style="padding:14px 18px; border-right:1.5px solid var(--ink); border-bottom:1px dashed var(--pencil);"><b>Formato</b></div>
+            <div style="padding:14px 18px; border-bottom:1px dashed var(--pencil);">Online ao vivo + materiais + simuladores</div>
+            <div style="padding:14px 18px; border-right:1.5px solid var(--ink);"><b>Garantia</b></div>
+            <div style="padding:14px 18px;">7 dias de teste após início</div>
+          </div>
+        </div>
+
+        <!-- CTA final -->
+        <div class="secnote">
+          <span class="num">08</span>
+          <h3>Aplicação — assinatura final</h3>
+          <span class="tag">CTA</span>
+        </div>
+        <div class="box accent" style="text-align:center; padding:30px;">
+          <h4 style="font-family:'Caveat',cursive; font-size:32px; margin:0;">Você leu o dossiê. <span class="ul-doodle">Próximo passo: aplicar.</span></h4>
+          <p style="font-family:'Inter',sans-serif; font-size:14px; margin:10px 0 14px;">As 30 vagas serão preenchidas por ordem de aprovação no diagnóstico.</p>
+          <div class="btn">Iniciar minha aplicação →</div>
+        </div>
+
+      </div>
+
+      <div class="frame-foot">
+        <span><b>Tom:</b> Dossiê / relatório executivo (long-form)</span>
+        <span><b>Ritmo:</b> Leitura sequencial — capítulos numerados</span>
+        <span><b>CTA:</b> Aplicar após "ler"</span>
+        <span><b>Diferencial:</b> não parece página de vendas — parece relatório</span>
+      </div>
+    </div>
+
+
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <!-- DIREÇÃO D — APLICAÇÃO SELETIVA (FORM-FIRST)                    -->
+    <!-- Curto, direto, "private banking". Foco no funil de aplicação.  -->
+    <!-- ═════════════════════════════════════════════════════════════ -->
+    <div class="frame" data-frame="D">
+      <div class="frame-head">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="url">eip.hktc.com / aplicacao</div>
+        <div>D · Aplicação</div>
+      </div>
+
+      <div class="wf">
+
+        <!-- Hero curto -->
+        <div class="secnote">
+          <span class="num">01</span>
+          <h3>Hero curto — split com formulário visível</h3>
+          <span class="tag">1 tela acima da dobra</span>
+        </div>
+        <div class="grid-2" style="gap:24px;">
+          <div>
+            <div class="label">EXECUTIVE IMPORT PROGRAM · 30 VAGAS · 2026</div>
+            <h2 class="wf-title" style="margin-top:10px;">
+              Não é uma matrícula. <br>É um <span class="accent ul-doodle">processo seletivo</span>.
+            </h2>
+            <p style="font-family:'Inter',sans-serif; font-size:15px; line-height:1.55; margin:14px 0 0;">
+              Daniel Cassetari (CEO HKTC, +25 anos, US$28.8B) recebe candidaturas de empresários
+              decisores. Cada candidato passa por diagnóstico antes da aprovação.
+            </p>
+            <div style="display:flex; gap:14px; margin-top:18px;">
+              <div class="stat" style="flex:1;"><div class="num">3 etapas</div><div class="lbl">processo</div></div>
+              <div class="stat" style="flex:1;"><div class="num">30 vagas</div><div class="lbl">classe 2026</div></div>
+              <div class="stat" style="flex:1;"><div class="num">~7 dias</div><div class="lbl">para resposta</div></div>
+            </div>
+          </div>
+
+          <div class="box" style="background:var(--paper-2); position:relative;">
+            <div class="label">FORMULÁRIO · ETAPA 1 DE 3</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:26px; margin:8px 0 12px;">Comece sua candidatura</h4>
+            <div class="ph" style="height:38px;">NOME COMPLETO *</div>
+            <div class="ph" style="height:38px; margin-top:8px;">EMAIL CORPORATIVO *</div>
+            <div class="ph" style="height:38px; margin-top:8px;">EMPRESA · CARGO *</div>
+            <div class="ph" style="height:38px; margin-top:8px;">FATURAMENTO ANUAL (FAIXA)</div>
+            <div class="ph" style="height:38px; margin-top:8px;">JÁ IMPORTA HOJE? (SIM/NÃO/PLANEJANDO)</div>
+            <div class="btn" style="margin-top:12px; width:100%; justify-content:center;">Continuar para etapa 2 →</div>
+            <p class="label" style="margin-top:8px;">tempo médio: 90 segundos</p>
+            <div class="note r" style="top:-14px; right:-10px;">form vis&iacute;vel desde<br>o primeiro scroll</div>
+          </div>
+        </div>
+
+        <!-- Daniel rápido -->
+        <div class="secnote">
+          <span class="num">02</span>
+          <h3>"Quem te avalia" — bio compacta lateral</h3>
+          <span class="tag">Confiança rápida</span>
+        </div>
+        <div class="box" style="display:flex; gap:18px; align-items:center;">
+          <div class="ph photo" style="width:90px; height:90px; border-radius:50%; flex-shrink:0;">FOTO</div>
+          <div style="flex:1;">
+            <div class="label">QUEM AVALIA SUA CANDIDATURA</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:22px; margin:4px 0 0;">Daniel Cassetari · CEO HKTC</h4>
+            <p style="font-size:13px; margin:2px 0 0; font-family:'Inter',sans-serif;">
+              25+ anos em comex · operações em HK, BR, China · ouvido por emissoras nacionais.
+            </p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="pill accent">CEO</span>
+            <span class="pill">+25 ANOS</span>
+          </div>
+        </div>
+
+        <!-- Como funciona o processo -->
+        <div class="secnote">
+          <span class="num">03</span>
+          <h3>Processo seletivo — 3 etapas em linha</h3>
+          <span class="tag">Funil</span>
+        </div>
+        <div class="grid-3">
+          <div class="box">
+            <div class="pill accent">ETAPA 01</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:22px; margin:6px 0 0;">Aplicação online</h4>
+            <p style="font-size:13px; margin:4px 0 0;">90s · perfil + intenção</p>
+          </div>
+          <div class="box">
+            <div class="pill accent">ETAPA 02</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:22px; margin:6px 0 0;">Diagnóstico 1:1</h4>
+            <p style="font-size:13px; margin:4px 0 0;">30min com time HKTC</p>
+          </div>
+          <div class="box">
+            <div class="pill accent">ETAPA 03</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:22px; margin:6px 0 0;">Aprovação + onboarding</h4>
+            <p style="font-size:13px; margin:4px 0 0;">vaga + acesso ao programa</p>
+          </div>
+        </div>
+
+        <!-- O que está incluso (compacto) -->
+        <div class="secnote">
+          <span class="num">04</span>
+          <h3>O que entra na vaga — checklist</h3>
+          <span class="tag">Resumo</span>
+        </div>
+        <div class="grid-2">
+          <div class="box">
+            <p style="margin:0; font-family:'Inter',sans-serif; font-size:14px; line-height:1.9;">
+              ✓ 12 módulos executivos (12 semanas)<br>
+              ✓ Apostila + slides premium<br>
+              ✓ Power BI + simuladores Excel<br>
+              ✓ Capstone com operação real<br>
+              ✓ Acesso direto ao Daniel em sessões<br>
+              ✓ Certificado HKTC
+            </p>
+          </div>
+          <div class="box dark">
+            <div class="label" style="color:#cfcfcf;">INVESTIMENTO</div>
+            <h4 style="font-family:'Caveat',cursive; font-size:42px; margin:6px 0 4px; color:#fff;">R$ 12.000</h4>
+            <p style="font-size:13px; color:#dcdcdc; margin:0;">12x · pagamento corporativo · faturamento HKTC</p>
+            <p style="font-size:12px; color:var(--accent); margin:8px 0 0;">⚠ Confirmado apenas após aprovação no diagnóstico</p>
+          </div>
+        </div>
+
+        <!-- Módulos — chip cloud -->
+        <div class="secnote">
+          <span class="num">05</span>
+          <h3>12 módulos — chip cloud (resumido)</h3>
+          <span class="tag">Sem aprofundar</span>
+        </div>
+        <div class="box" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill">M1 · Fundamentos</span>
+          <span class="pill">M2 · Estrutura BR</span>
+          <span class="pill">M3 · Modalidades</span>
+          <span class="pill">M4 · Documentos</span>
+          <span class="pill">M5 · Logística</span>
+          <span class="pill">M6 · Custo nacionaliz.</span>
+          <span class="pill">M7 · Exportação</span>
+          <span class="pill">M8 · China hub</span>
+          <span class="pill">M9 · Trading co.</span>
+          <span class="pill">M10 · Reforma trib.</span>
+          <span class="pill">M11 · Compliance</span>
+          <span class="pill accent">M12 · Capstone</span>
+        </div>
+
+        <!-- FAQ enxuto -->
+        <div class="secnote">
+          <span class="num">06</span>
+          <h3>FAQ enxuto — 4 perguntas-chave</h3>
+          <span class="tag">Objeções</span>
+        </div>
+        <div class="grid-2">
+          <div class="box dashed"><b>E se não for aprovado?</b><p style="font-size:14px; margin:4px 0 0;">Você recebe feedback e indicação de quando reaplicar.</p></div>
+          <div class="box dashed"><b>É EAD ou ao vivo?</b><p style="font-size:14px; margin:4px 0 0;">Online ao vivo + gravações + materiais permanentes.</p></div>
+          <div class="box dashed"><b>Posso pagar via empresa?</b><p style="font-size:14px; margin:4px 0 0;">Sim — proposta corporativa e nota fiscal.</p></div>
+          <div class="box dashed"><b>Quando começa a turma?</b><p style="font-size:14px; margin:4px 0 0;">Próxima classe abre matrícula em [data]. Vagas por aprovação.</p></div>
+        </div>
+
+        <!-- CTA final -->
+        <div class="secnote">
+          <span class="num">07</span>
+          <h3>CTA final — repete o formulário</h3>
+          <span class="tag">Fecha funil</span>
+        </div>
+        <div class="box accent" style="text-align:center; padding:28px;">
+          <h4 style="font-family:'Caveat',cursive; font-size:30px; margin:0;">30 vagas. <span class="ul-doodle">90 segundos para começar.</span></h4>
+          <div class="btn" style="margin-top:14px;">Aplicar agora →</div>
+        </div>
+
+      </div>
+
+      <div class="frame-foot">
+        <span><b>Tom:</b> Form-first, "private banking"</span>
+        <span><b>Ritmo:</b> Curto, vai direto ao funil</span>
+        <span><b>CTA:</b> Formulário visível desde o hero</span>
+        <span><b>Bom para:</b> tráfego pago / leads quentes</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const frames = document.querySelectorAll('.frame');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      const target = t.dataset.target;
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      frames.forEach(f => f.classList.toggle('active', f.dataset.frame === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Keyboard nav (← →)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const arr = ['A','B','C','D'];
+    const cur = arr.findIndex(k => document.querySelector(`.frame[data-frame="${k}"]`).classList.contains('active'));
+    let next = e.key === 'ArrowRight' ? (cur+1) % 4 : (cur+3) % 4;
+    document.querySelector(`.tab[data-target="${arr[next]}"]`).click();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Executive Import Program · Daniel Cassetari</title>
+
+<template id="__bundler_thumbnail" data-bg-color="#0a1f3a">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0a1f3a"/>
+    <g transform="translate(420 240)">
+      <rect width="360" height="360" rx="36" fill="url(#g)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+      <text x="180" y="215" text-anchor="middle" font-family="Georgia, serif" font-size="120" font-weight="600" fill="#ffffff">EIP</text>
+    </g>
+    <text x="600" y="660" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#f0c97a" font-style="italic">Executive Import Program</text>
+    <text x="600" y="700" text-anchor="middle" font-family="sans-serif" font-size="20" letter-spacing="6" fill="rgba(255,255,255,.6)">DANIEL CASSETARI · HKTC</text>
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#2b6fb5"/>
+        <stop offset="100%" stop-color="#15396b"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</template>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Paleta inspirada na HKTC + acentos corporativos */
+    --navy-900: #0a1f3a;       /* HKTC dark */
+    --navy-800: #0f2a4a;
+    --navy-700: #15396b;
+    --navy-600: #1d4f8c;
+    --blue-500: #2b6fb5;       /* azul corporativo */
+    --blue-100: #e8f0fa;
+    --accent:   #c8102e;       /* vermelho HKTC (acentos pontuais) */
+    --accent-2: #d97706;       /* gold/amber para premium */
+    --gold:     #b58840;
+    --ink:      #0e1620;
+    --ink-2:    #1c2733;
+    --muted:    #5b6b7d;
+    --line:     #e3e8ef;
+    --paper:    #ffffff;
+    --paper-2:  #f6f8fb;
+    --paper-3:  #eef2f7;
+    --green:    #15803d;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3,h4 { font-family: 'Fraunces', 'Manrope', serif; font-weight: 600; letter-spacing: -.01em; line-height: 1.1; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--blue-500);
+  }
+  .eyebrow.gold { color: var(--gold); }
+  .eyebrow.white { color: rgba(255,255,255,.75); }
+
+  /* ───────── NAV ───────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10,31,58,.96);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .nav-inner {
+    max-width: 1240px; margin: 0 auto;
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 19px; font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .brand-mark {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--blue-500), var(--navy-700));
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .brand small {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-size: 10px; letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.6);
+    font-weight: 600;
+    margin-top: 1px;
+  }
+  .nav-links {
+    display: flex; gap: 22px;
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: rgba(255,255,255,.78);
+    transition: color .15s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: .01em;
+    border: none;
+    cursor: pointer;
+    transition: transform .12s, background .15s, box-shadow .15s;
+    box-shadow: 0 4px 14px rgba(200,16,46,.25);
+  }
+  .btn:hover { background: #a40d26; transform: translateY(-1px); }
+  .btn.ghost {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,.3);
+    box-shadow: none;
+  }
+  .btn.ghost:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.5); }
+  .btn.dark {
+    background: var(--navy-900); color: #fff;
+    box-shadow: 0 4px 14px rgba(10,31,58,.25);
+  }
+  .btn.dark:hover { background: var(--navy-800); }
+  .btn.outline {
+    background: transparent;
+    color: var(--navy-900);
+    border: 1.5px solid var(--navy-900);
+    box-shadow: none;
+  }
+  .btn.outline:hover { background: var(--navy-900); color: #fff; }
+  .btn-arrow { font-size: 18px; line-height: 1; }
+
+  /* ───────── HERO ───────── */
+  .hero {
+    background:
+      radial-gradient(ellipse at top right, rgba(43,111,181,.25), transparent 60%),
+      linear-gradient(180deg, var(--navy-900), var(--navy-800));
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+  }
+  .hero-inner {
+    max-width: 1240px; margin: 0 auto;
+    padding: 80px 32px 64px;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 7px 14px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255,255,255,.85);
+    background: rgba(255,255,255,.04);
+  }
+  .hero-tag .dot {
+    width: 7px; height: 7px;
+    background: #5be584;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #5be584;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 5vw, 62px);
+    margin: 22px 0 18px;
+    color: #fff;
+    font-weight: 500;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: #f0c97a;
+    font-weight: 400;
+  }
+  .hero p.lead {
+    font-size: 18px;
+    color: rgba(255,255,255,.78);
+    max-width: 520px;
+    margin-bottom: 28px;
+  }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Hero card direito — credenciais */
+  .hero-card {
+    background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 18px;
+    padding: 28px;
+    backdrop-filter: blur(8px);
+    position: relative;
+  }
+  .hero-card .photo-frame {
+    aspect-ratio: 4/5;
+    border-radius: 12px;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 8px, transparent 8px 16px),
+      linear-gradient(160deg, #1a3358, #0a1f3a);
+    border: 1px solid rgba(255,255,255,.08);
+    display: grid; place-items: center;
+    color: rgba(255,255,255,.4);
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 20px;
+  }
+  .hero-card .photo-frame span { max-width: 180px; line-height: 1.5; }
+  .hero-card .name {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    margin: 16px 0 2px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .hero-card .role {
+    font-size: 13px;
+    color: rgba(255,255,255,.6);
+  }
+  .hero-card .badges {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .badge-tiny {
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.85);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .badge-tiny.gold { background: rgba(181,136,64,.15); color: #f0c97a; border-color: rgba(240,201,122,.3); }
+
+  /* Stats strip */
+  .stats-strip {
+    border-top: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(0,0,0,.15);
+    position: relative;
+  }
+  .stats-strip-inner {
+    max-width: 1240px; margin: 0 auto;
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .stat-cell .num {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .stat-cell .num em { font-style: italic; color: #f0c97a; font-weight: 400; }
+  .stat-cell .lbl {
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.55);
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  /* ───────── SECTIONS ───────── */
+  section { padding: 90px 0; }
+  .section-light { background: var(--paper); }
+  .section-paper { background: var(--paper-2); }
+  .section-dark { background: var(--navy-900); color: #fff; }
+
+  .section-head { max-width: 800px; margin-bottom: 48px; }
+  .section-head.center { margin: 0 auto 48px; text-align: center; }
+  .section-head h2 {
+    font-size: clamp(34px, 3.6vw, 46px);
+    margin: 14px 0 14px;
+    font-weight: 500;
+  }
+  .section-head h2 em { font-style: italic; color: var(--blue-500); font-weight: 400; }
+  .section-dark .section-head h2 em { color: #f0c97a; }
+  .section-head p {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 680px;
+  }
+  .section-dark .section-head p { color: rgba(255,255,255,.7); }
+
+  /* ───────── PROBLEMA ───────── */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .problem-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .problem-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(15,42,74,.08);
+  }
+  .problem-card .icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--blue-100);
+    color: var(--blue-500);
+    display: grid; place-items: center;
+    margin-bottom: 16px;
+  }
+  .problem-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--navy-900);
+  }
+  .problem-card p { color: var(--muted); font-size: 15px; }
+
+  /* ───────── BIO DANIEL ───────── */
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .bio-photo {
+    aspect-ratio: 4/5;
+    border-radius: 16px;
+    background:
+      repeating-linear-gradient(135deg, rgba(10,31,58,.04) 0 10px, transparent 10px 20px),
+      linear-gradient(160deg, #e8f0fa, #c9d8ec);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  .bio-photo::after {
+    content: "";
+    position: absolute; left: 20px; bottom: 20px;
+    background: var(--accent);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 700;
+    content: "CEO · HKTC";
+  }
+  .bio-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.3;
+    color: var(--navy-900);
+    margin: 24px 0 24px;
+    padding-left: 18px;
+    border-left: 3px solid var(--accent);
+  }
+  .bio-content h2 {
+    font-size: 42px;
+    color: var(--navy-900);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .bio-content h2 em { font-style: italic; color: var(--blue-500); font-weight: 400; }
+  .bio-content p { color: var(--ink-2); font-size: 16px; margin-bottom: 14px; }
+  .bio-credentials {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-top: 24px;
+  }
+  .cred {
+    padding: 14px 16px;
+    background: var(--paper-2);
+    border-radius: 10px;
+    border-left: 3px solid var(--blue-500);
+  }
+  .cred .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .cred .v { font-family: 'Fraunces', serif; font-size: 18px; color: var(--navy-900); margin-top: 2px; font-weight: 600; }
+
+  /* ───────── ICP ───────── */
+  .icp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .icp-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .icp-card .num-big {
+    position: absolute;
+    top: 16px; right: 22px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 70px;
+    color: var(--paper-3);
+    line-height: 1;
+    font-weight: 400;
+  }
+  .icp-card h3 {
+    font-size: 22px;
+    color: var(--navy-900);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .icp-card p { color: var(--muted); font-size: 15px; position: relative; z-index: 1; }
+  .icp-card ul {
+    margin: 14px 0 0; padding: 0; list-style: none;
+    font-size: 14px;
+    position: relative; z-index: 1;
+  }
+  .icp-card ul li {
+    padding: 6px 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .icp-card ul li::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ───────── METODOLOGIA ───────── */
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .method-card {
+    background: #fff;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 28px;
+    color: var(--ink);
+    position: relative;
+  }
+  .section-dark .method-card {
+    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.08);
+    color: #fff;
+  }
+  .method-card .step-n {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #f0c97a;
+    letter-spacing: .04em;
+    margin-bottom: 8px;
+  }
+  .method-card h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .method-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,.65);
+  }
+  .section-light .method-card .step-n { color: var(--blue-500); }
+  .section-light .method-card p { color: var(--muted); }
+
+  /* ───────── 12 MÓDULOS ───────── */
+  .modules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .module {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 22px;
+    transition: all .15s;
+    cursor: pointer;
+  }
+  .module:hover {
+    border-color: var(--blue-500);
+    box-shadow: 0 8px 22px rgba(43,111,181,.1);
+    transform: translateY(-2px);
+  }
+  .module-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .module-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--blue-500);
+    letter-spacing: .04em;
+    font-weight: 600;
+  }
+  .module-tag {
+    font-size: 9.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--paper-3);
+    color: var(--muted);
+  }
+  .module-tag.cap { background: var(--accent); color: #fff; }
+  .module h3 {
+    font-size: 17px;
+    color: var(--navy-900);
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+  .module p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ───────── DIFERENCIAIS (tabela) ───────── */
+  .compare {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1.3fr 1fr;
+    border-bottom: 1px solid var(--line);
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row > div { padding: 18px 24px; font-size: 15px; }
+  .compare-row.head > div {
+    background: var(--paper-2);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .compare-row.head .eip-col {
+    background: var(--navy-900);
+    color: #f0c97a;
+  }
+  .compare-row .crit { color: var(--ink-2); font-weight: 600; }
+  .compare-row .eip-col {
+    background: rgba(43,111,181,.04);
+    border-left: 3px solid var(--blue-500);
+    border-right: 3px solid var(--blue-500);
+    color: var(--navy-900);
+    font-weight: 600;
+  }
+  .compare-row .others-col { color: var(--muted); }
+
+  /* ───────── PRICING ───────── */
+  .pricing-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: stretch;
+  }
+  .price-card {
+    background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 20px;
+    padding: 40px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .price-card::before {
+    content: "";
+    position: absolute; top: -50%; right: -30%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(43,111,181,.4), transparent 60%);
+  }
+  .price-card .lim {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: rgba(200,16,46,.18);
+    border: 1px solid rgba(200,16,46,.4);
+    color: #ff7a8c;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .price-card h3 {
+    font-size: 32px;
+    color: #fff;
+    margin: 18px 0 6px;
+    font-weight: 500;
+  }
+  .price-card .price-line {
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 18px 0 8px;
+  }
+  .price-card .price-num {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    color: #f0c97a;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .price-card .price-meta { color: rgba(255,255,255,.6); font-size: 14px; }
+  .price-card ul {
+    list-style: none; padding: 0; margin: 24px 0 0;
+    position: relative; z-index: 1;
+  }
+  .price-card ul li {
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,.1);
+    font-size: 14.5px;
+    color: rgba(255,255,255,.85);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .price-card ul li::before {
+    content: "✓";
+    color: #f0c97a;
+    font-weight: 700;
+  }
+
+  .apply-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px;
+    display: flex; flex-direction: column;
+  }
+  .apply-card h3 {
+    font-size: 28px;
+    color: var(--navy-900);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .apply-card p.sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-row label {
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--paper-2);
+    color: var(--ink);
+    transition: border-color .15s, background .15s;
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    background: #fff;
+  }
+  .form-row textarea { resize: vertical; min-height: 80px; }
+  .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid2 .form-row { margin-bottom: 0; }
+  .apply-card .btn { margin-top: 16px; padding: 14px 22px; font-size: 15px; justify-content: center; }
+  .apply-card .small {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  /* Steps mini */
+  .steps {
+    display: flex; gap: 8px;
+    margin-bottom: 22px;
+    background: var(--paper-2);
+    padding: 6px;
+    border-radius: 10px;
+  }
+  .step {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .step.active {
+    background: #fff;
+    color: var(--navy-900);
+    box-shadow: 0 2px 6px rgba(15,42,74,.08);
+  }
+  .step b { font-family: 'Fraunces', serif; font-style: italic; color: var(--blue-500); }
+
+  /* ───────── MEDIA STRIP ───────── */
+  .media-strip {
+    background: var(--paper-2);
+    padding: 36px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .media-strip-inner {
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 32px;
+    text-align: center;
+  }
+  .media-strip .label {
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .media-logos {
+    display: flex; gap: 36px; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+  }
+  .media-logo {
+    height: 40px;
+    min-width: 110px;
+    border: 1.5px dashed #c5cfdc;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0 18px;
+    background: #fff;
+  }
+
+  /* ───────── FAQ ───────── */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .faq {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .faq h4 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy-900);
+    margin-bottom: 6px;
+  }
+  .faq p { font-size: 14.5px; color: var(--muted); }
+
+  /* ───────── FOOTER ───────── */
+  footer {
+    background: var(--navy-900);
+    color: rgba(255,255,255,.7);
+    padding: 60px 0 30px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  footer h5 {
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  footer ul { list-style: none; padding: 0; margin: 0; }
+  footer ul li { padding: 4px 0; font-size: 14px; }
+  footer ul li a { text-decoration: none; color: rgba(255,255,255,.65); }
+  footer ul li a:hover { color: #fff; }
+  footer .legal {
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding-top: 22px;
+    display: flex; justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255,255,255,.5);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ───────── RESPONSIVE ───────── */
+  @media (max-width: 980px) {
+    .hero-inner, .bio-grid, .pricing-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .stats-strip-inner, .problem-grid, .icp-grid, .method-grid { grid-template-columns: repeat(2, 1fr); }
+    .modules { grid-template-columns: repeat(2, 1fr); }
+    .compare-row { grid-template-columns: 1fr; }
+    .compare-row > div { border-bottom: 1px solid var(--line); }
+    .faq-grid, .form-grid2, .footer-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    section { padding: 60px 0; }
+  }
+  @media (max-width: 600px) {
+    .stats-strip-inner, .problem-grid, .icp-grid, .method-grid, .modules { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+  }
+
+  /* Scroll anim */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s, transform .6s; }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark">EIP</div>
+      <div>
+        Executive Import Program
+        <small>by Daniel Cassetari · HKTC</small>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#programa">Programa</a>
+      <a href="#daniel">O Diretor</a>
+      <a href="#metodo">Método</a>
+      <a href="#modulos">Módulos</a>
+      <a href="#investimento">Investimento</a>
+      <a href="#aplicar">Aplicação</a>
+    </div>
+    <a href="#aplicar" class="btn">Aplicar para a turma →</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="hero-tag"><span class="dot"></span>Aplicações abertas · Classe 2026 · 30 vagas</span>
+      <h1>Importar não é comprar barato.<br>É <em>estruturar margem.</em></h1>
+      <p class="lead">
+        O programa executivo premium em comércio exterior conduzido por
+        <b style="color:#fff;">Daniel Cassetari</b>, CEO da HKTC and Business
+        — referência de mercado há mais de 25 anos e mais de US$28.8 bilhões em operações globais.
+      </p>
+      <div class="hero-ctas">
+        <a href="#aplicar" class="btn">Solicitar aplicação <span class="btn-arrow">→</span></a>
+        <a href="#programa" class="btn ghost">Conhecer o programa</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="photo-frame"><span>RETRATO EDITORIAL · DANIEL CASSETARI</span></div>
+      <div class="name">Daniel Cassetari</div>
+      <div class="role">CEO · HKTC and Business Limited · Hong Kong</div>
+      <div class="badges">
+        <span class="badge-tiny gold">+25 ANOS</span>
+        <span class="badge-tiny">US$28.8B</span>
+        <span class="badge-tiny">ISO 9001</span>
+        <span class="badge-tiny">ISO 28000</span>
+        <span class="badge-tiny">GPTW</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stats-strip-inner">
+      <div class="stat-cell">
+        <div class="num">25<em>+</em></div>
+        <div class="lbl">Anos em comércio exterior</div>
+      </div>
+      <div class="stat-cell">
+        <div class="num">US$ 28.8<em>B</em></div>
+        <div class="lbl">Em operações globais</div>
+      </div>
+      <div class="stat-cell">
+        <div class="num">7</div>
+        <div class="lbl">Escritórios · BR · CN · HK</div>
+      </div>
+      <div class="stat-cell">
+        <div class="num">30</div>
+        <div class="lbl">Vagas · classe 2026</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MEDIA STRIP ═══ -->
+<div class="media-strip">
+  <div class="media-strip-inner">
+    <div class="label">Análises de Daniel Cassetari na imprensa</div>
+    <div class="media-logos">
+      <div class="media-logo">EMISSORA 01</div>
+      <div class="media-logo">EMISSORA 02</div>
+      <div class="media-logo">EMISSORA 03</div>
+      <div class="media-logo">PORTAL 01</div>
+      <div class="media-logo">PORTAL 02</div>
+      <div class="media-logo">PORTAL 03</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROBLEMA ═══ -->
+<section class="section-light" id="programa">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">O problema</div>
+      <h2>O erro de margem acontece <em>antes</em> da compra — não depois.</h2>
+      <p>Empresários perdem entre 15 e 22% de margem porque decidem importação sem leitura tributária, logística e cambial estruturada. O Executive Import Program corrige a raiz disso.</p>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/><path d="M12 9v5"/><circle cx="12" cy="18" r=".5" fill="currentColor"/></svg>
+        </div>
+        <h3>Erro de custo</h3>
+        <p>Empresas compram no exterior sem entender o custo nacionalizado real, margem efetiva e despesas ocultas que destroem a operação.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </div>
+        <h3>Erro documental</h3>
+        <p>Invoice, packing list, BL, NCM e licenças mal estruturadas geram atraso, multa e prejuízo direto na operação.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Erro estratégico</h3>
+        <p>Operações decididas pelo preço de fábrica, não por viabilidade fiscal, logística e comercial. Resultado: margem que evapora.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DANIEL ═══ -->
+<section class="section-paper" id="daniel">
+  <div class="wrap">
+    <div class="bio-grid">
+      <div class="bio-photo">
+        <span>FOTO INSTITUCIONAL DO DANIEL<br>(retrato executivo, fundo neutro)</span>
+      </div>
+      <div class="bio-content">
+        <div class="eyebrow">Quem dirige o programa</div>
+        <h2>Conheça <em>Daniel Cassetari</em></h2>
+        <div class="bio-quote">
+          "Você não entra em um programa para aprender teoria. Você entra para aprender a decidir, simular, negociar e operar."
+        </div>
+        <p>
+          CEO da <b>HKTC and Business Limited</b> (Hong Kong), trading multinacional com mais de 20 anos
+          conectando compradores e fornecedores em escala global. Operações em Brasil (SP, SC, MG), China
+          (Shenzhen, Guangzhou, Yiwu) e Hong Kong.
+        </p>
+        <p>
+          Comentarista frequente em emissoras nacionais sobre tarifas dos EUA, política comercial chinesa,
+          OMC e cadeias globais. Conhecido por leitura macro afiada e curadoria de operações reais.
+        </p>
+        <div class="bio-credentials">
+          <div class="cred"><div class="k">Posição</div><div class="v">CEO HKTC</div></div>
+          <div class="cred"><div class="k">Sede</div><div class="v">Hong Kong</div></div>
+          <div class="cred"><div class="k">Operações</div><div class="v">US$28.8 Bi</div></div>
+          <div class="cred"><div class="k">Mercado</div><div class="v">+25 anos</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ICP — Para quem é ═══ -->
+<section class="section-light">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Para quem é</div>
+      <h2>Um programa para <em>decisores</em>, não para curiosos.</h2>
+      <p>Aplicações são analisadas pelo time HKTC. Você só recebe a vaga depois de uma call de diagnóstico que valida fit e momento.</p>
+    </div>
+
+    <div class="icp-grid">
+      <div class="icp-card">
+        <div class="num-big">01</div>
+        <h3>Empresário importador</h3>
+        <p>Já importa, mas decide no escuro.</p>
+        <ul>
+          <li>Faturamento +R$1M/ano</li>
+          <li>Quer custo nacionalizado real</li>
+          <li>Busca margem estruturada</li>
+        </ul>
+      </div>
+      <div class="icp-card">
+        <div class="num-big">02</div>
+        <h3>Decisor C-level</h3>
+        <p>CEO, COO ou CFO que aprova operações.</p>
+        <ul>
+          <li>Precisa ler tributos antes</li>
+          <li>Quer governança documental</li>
+          <li>Risco logístico e cambial</li>
+        </ul>
+      </div>
+      <div class="icp-card">
+        <div class="num-big">03</div>
+        <h3>Sócio de trading</h3>
+        <p>Opera com China e quer escalar.</p>
+        <ul>
+          <li>Estruturar conta e ordem</li>
+          <li>Modelos escaláveis</li>
+          <li>Governança e compliance</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MÉTODO ═══ -->
+<section class="section-dark" id="metodo">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow gold">Método HKTC</div>
+      <h2>4 pilares para transformar importação em <em>alavanca estratégica.</em></h2>
+      <p>O método que a HKTC usa em operações reais — adaptado para que você aplique na sua empresa em 12 semanas.</p>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="step-n">PILAR 01</div>
+        <h3>Visão</h3>
+        <p>Cadeias globais, leitura macro, tarifas, política comercial. Você passa a antecipar movimentos do mercado.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-n">PILAR 02</div>
+        <h3>Cálculo</h3>
+        <p>Custo nacionalizado real, simuladores em Power BI, margem efetiva e cenários de stress da operação.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-n">PILAR 03</div>
+        <h3>Operação</h3>
+        <p>Documentação internacional, logística, Incoterms, desembaraço aduaneiro e fluxo end-to-end.</p>
+      </div>
+      <div class="method-card">
+        <div class="step-n">PILAR 04</div>
+        <h3>Governança</h3>
+        <p>Compliance, gestão de risco, fraude documental e modelos escaláveis com previsibilidade.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DIFERENCIAIS ═══ -->
+<section class="section-light">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Diferenciais</div>
+      <h2>Por que o EIP <em>não se compara</em> a cursos genéricos.</h2>
+      <p>A diferença não está no conteúdo — está em quem cura, quem decide, quem responde.</p>
+    </div>
+
+    <div class="compare">
+      <div class="compare-row head">
+        <div>Critério</div>
+        <div class="eip-col">Executive Import Program</div>
+        <div class="others-col">Cursos comuns</div>
+      </div>
+      <div class="compare-row">
+        <div class="crit">Curador</div>
+        <div class="eip-col">CEO com US$28.8B em operações</div>
+        <div class="others-col">Professor sem operação ativa</div>
+      </div>
+      <div class="compare-row">
+        <div class="crit">Ferramentas</div>
+        <div class="eip-col">Power BI + simuladores reais</div>
+        <div class="others-col">PDFs e planilhas básicas</div>
+      </div>
+      <div class="compare-row">
+        <div class="crit">Acesso ao mentor</div>
+        <div class="eip-col">Direto, em sessões ao vivo</div>
+        <div class="others-col">Suporte por chatbot</div>
+      </div>
+      <div class="compare-row">
+        <div class="crit">Capstone</div>
+        <div class="eip-col">Operação real com governança</div>
+        <div class="others-col">Não há</div>
+      </div>
+      <div class="compare-row">
+        <div class="crit">Network</div>
+        <div class="eip-col">Empresários selecionados (turma de 30)</div>
+        <div class="others-col">Comunidade aberta</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MÓDULOS ═══ -->
+<section class="section-paper" id="modulos">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">12 módulos · 12 semanas</div>
+      <h2>O conteúdo do <em>Executive Import Program</em></h2>
+      <p>Da fundação estratégica ao capstone com operação real. Cada módulo conecta teoria, simulação e decisão.</p>
+    </div>
+
+    <div class="modules">
+      <div class="module"><div class="module-head"><span class="module-num">M01</span><span class="module-tag">Fase 1</span></div><h3>Fundamentos Estratégicos</h3><p>Comércio exterior, cadeias globais e visão empresarial.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M02</span><span class="module-tag">Fase 1</span></div><h3>Estrutura Brasileira</h3><p>Siscomex, Receita Federal, DUIMP, anuentes e compliance.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M03</span><span class="module-tag">Fase 1</span></div><h3>Modalidades de Importação</h3><p>Própria, conta e ordem, encomenda e tomada de decisão.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M04</span><span class="module-tag">Fase 2</span></div><h3>Documentação Internacional</h3><p>Invoice, packing list, BL, certificados e checklist antifraude.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M05</span><span class="module-tag">Fase 2</span></div><h3>Logística Internacional</h3><p>Frete, Incoterms, seguro, transit time e estrutura portuária.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M06</span><span class="module-tag">Fase 2</span></div><h3>Custo Nacionalizado</h3><p>II, IPI, ICMS, PIS/COFINS, despesas operacionais e margem.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M07</span><span class="module-tag">Fase 2</span></div><h3>Exportação na Prática</h3><p>Preço de exportação, incentivos, contratos e operação.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M08</span><span class="module-tag">Fase 3</span></div><h3>China como Hub Global</h3><p>Sourcing, cultura de negociação e due diligence.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M09</span><span class="module-tag">Fase 3</span></div><h3>Trading Company</h3><p>Estrutura, conta e ordem, encomenda e modelos escaláveis.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M10</span><span class="module-tag">Fase 3</span></div><h3>Reforma Tributária</h3><p>IBS, CBS, impactos e redesenho estratégico.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M11</span><span class="module-tag">Fase 3</span></div><h3>Risco e Compliance</h3><p>Fraude documental, seguro, penalidades e governança.</p></div>
+      <div class="module"><div class="module-head"><span class="module-num">M12</span><span class="module-tag cap">Capstone</span></div><h3>Operação Real</h3><p>Capstone completo com simulação executiva ponta a ponta.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INVESTIMENTO + APLICAÇÃO ═══ -->
+<section class="section-light" id="investimento">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="eyebrow">Investimento &amp; Aplicação</div>
+      <h2>Garantir vaga na <em>classe 2026</em></h2>
+      <p>Apenas 30 vagas. Cada candidatura passa por diagnóstico antes da aprovação.</p>
+    </div>
+
+    <div class="pricing-wrap" id="aplicar">
+      <div class="price-card">
+        <span class="lim">⚠ Vagas limitadas · 30/30</span>
+        <h3>Programa completo</h3>
+        <div class="price-line">
+          <span class="price-num">R$ 12.000</span>
+        </div>
+        <div class="price-meta">À vista, 12x corporativo, ou faturamento via HKTC.</div>
+        <ul>
+          <li>12 módulos executivos · 12 semanas ao vivo</li>
+          <li>Apostila + slides premium</li>
+          <li>Power BI + simuladores Excel</li>
+          <li>Estudo de caso aplicado à sua empresa</li>
+          <li>Capstone com operação real</li>
+          <li>Acesso direto ao Daniel em sessões</li>
+          <li>Certificado HKTC</li>
+        </ul>
+      </div>
+
+      <div class="apply-card">
+        <h3>Iniciar minha aplicação</h3>
+        <p class="sub">3 etapas · resposta em até 7 dias úteis.</p>
+
+        <div class="steps">
+          <div class="step active"><b>01</b> Aplicação</div>
+          <div class="step"><b>02</b> Diagnóstico</div>
+          <div class="step"><b>03</b> Aprovação</div>
+        </div>
+
+        <form onsubmit="event.preventDefault(); alert('Candidatura recebida — em breve nossa equipe entra em contato.');">
+          <div class="form-grid2">
+            <div class="form-row">
+              <label for="nome">Nome completo</label>
+              <input id="nome" name="nome" type="text" required placeholder="Seu nome" />
+            </div>
+            <div class="form-row">
+              <label for="email">Email corporativo</label>
+              <input id="email" name="email" type="email" required placeholder="voce@empresa.com" />
+            </div>
+          </div>
+          <div class="form-grid2">
+            <div class="form-row">
+              <label for="empresa">Empresa</label>
+              <input id="empresa" name="empresa" type="text" required placeholder="Razão social" />
+            </div>
+            <div class="form-row">
+              <label for="cargo">Cargo</label>
+              <input id="cargo" name="cargo" type="text" required placeholder="CEO, sócio, diretor..." />
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="fat">Faturamento anual</label>
+            <select id="fat" name="fat" required>
+              <option value="">Selecione uma faixa</option>
+              <option>Até R$1M</option>
+              <option>R$1M – R$5M</option>
+              <option>R$5M – R$20M</option>
+              <option>R$20M – R$100M</option>
+              <option>Acima de R$100M</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="msg">Por que quer entrar (3 linhas)</label>
+            <textarea id="msg" name="msg" required placeholder="Conte rapidamente seu objetivo com importação"></textarea>
+          </div>
+          <button type="submit" class="btn dark">Enviar candidatura <span class="btn-arrow">→</span></button>
+          <p class="small">Seus dados são confidenciais. Resposta em até 7 dias úteis.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="section-paper">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="eyebrow">Perguntas frequentes</div>
+      <h2>Antes de aplicar, <em>tire suas dúvidas.</em></h2>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq"><h4>É um curso para iniciantes?</h4><p>Sim, mas com profundidade executiva. O aluno começa pela base e avança para simulação, decisão e operação real.</p></div>
+      <div class="faq"><h4>Como é o processo seletivo?</h4><p>Aplicação online → call de diagnóstico de 30min com o time HKTC → confirmação da vaga e onboarding.</p></div>
+      <div class="faq"><h4>O programa é online ou presencial?</h4><p>Online ao vivo, com gravações, materiais permanentes e simuladores em Power BI. Encontros presenciais opcionais.</p></div>
+      <div class="faq"><h4>Posso pagar via empresa?</h4><p>Sim. Emitimos proposta corporativa, contrato e nota fiscal. Faturamento via HKTC do Brasil S/A.</p></div>
+      <div class="faq"><h4>Tem certificado?</h4><p>Sim, certificado HKTC de conclusão, com validade corporativa para LinkedIn e currículo executivo.</p></div>
+      <div class="faq"><h4>O aluno sai pronto para importar?</h4><p>Sai com visão estruturada para planejar, calcular, contratar apoio técnico e acompanhar uma operação com muito mais segurança.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA FINAL ═══ -->
+<section class="section-dark" style="padding: 80px 0;">
+  <div class="wrap" style="text-align:center;">
+    <div class="eyebrow gold">Próxima turma 2026</div>
+    <h2 style="font-size: clamp(34px,4vw,52px); color:#fff; margin: 16px auto; max-width: 800px; font-weight:500;">
+      30 vagas. <em style="color:#f0c97a; font-style:italic;">Processo seletivo aberto.</em>
+    </h2>
+    <p style="color: rgba(255,255,255,.7); max-width: 560px; margin: 0 auto 28px; font-size:17px;">
+      Inicie sua candidatura agora — leva menos de 2 minutos. Vagas confirmadas por aprovação no diagnóstico.
+    </p>
+    <a href="#aplicar" class="btn">Aplicar para a classe 2026 <span class="btn-arrow">→</span></a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="color:#fff;">
+          <div class="brand-mark">EIP</div>
+          <div>
+            Executive Import Program
+            <small style="color:rgba(255,255,255,.5);">by Daniel Cassetari · HKTC</small>
+          </div>
+        </div>
+        <p style="color: rgba(255,255,255,.55); font-size:14px; max-width:340px; margin-top:18px;">
+          Programa executivo premium em comércio exterior. Operado em parceria com HKTC do Brasil S/A.
+        </p>
+      </div>
+      <div>
+        <h5>Programa</h5>
+        <ul>
+          <li><a href="#programa">Visão geral</a></li>
+          <li><a href="#metodo">Método HKTC</a></li>
+          <li><a href="#modulos">Os 12 módulos</a></li>
+          <li><a href="#investimento">Investimento</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>HKTC</h5>
+        <ul>
+          <li><a href="https://www.hktc.com.br" target="_blank" rel="noopener">hktc.com.br</a></li>
+          <li><a href="https://www.linkedin.com/in/danielcassetari/" target="_blank" rel="noopener">LinkedIn do Daniel</a></li>
+          <li><a href="https://www.instagram.com/danielcassetari/" target="_blank" rel="noopener">Instagram</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contato</h5>
+        <ul>
+          <li>São Paulo · Hong Kong</li>
+          <li>contato@eip.com.br</li>
+          <li>+55 (11) 4780-6295</li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Executive Import Program. Todos os direitos reservados.</span>
+      <span>Operado por HKTC do Brasil S/A · CNPJ 22.351.708/0001-20</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('section, .stats-strip, .media-strip').forEach(el => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>
