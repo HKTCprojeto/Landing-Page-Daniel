@@ -334,6 +334,16 @@ function toggleTheme() {
   applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
+/* ── Formata nome: "luis.felipe" → "Luis Felipe" ── */
+function formatNome(raw) {
+  return raw
+    .replace(/\./g, ' ')
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 /* ── Auth guard + render ── */
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
@@ -341,7 +351,8 @@ function toggleTheme() {
 
   const user  = session.user;
   const { data: perfil } = await sb.from('perfis').select('nome,cpf').eq('id', user.id).single();
-  const nome     = perfil?.nome || user.user_metadata?.nome || user.email.split('@')[0];
+  const nomeRaw  = perfil?.nome || user.user_metadata?.nome || user.email.split('@')[0];
+  const nome     = formatNome(nomeRaw);
   const cpf      = perfil?.cpf  || user.user_metadata?.cpf  || '';
   const email    = user.email;
   const initials = nome.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
