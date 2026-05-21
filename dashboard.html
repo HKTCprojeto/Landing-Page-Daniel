@@ -117,6 +117,20 @@
   .perfil-fields{display:flex;flex-direction:column;gap:14px}
   .perfil-field label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
   .perfil-field .value{padding:11px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;font-size:15px;color:var(--text);transition:background .25s,border-color .25s}
+  .perfil-input{width:100%;padding:11px 14px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;font-family:'Manrope',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s,background .25s}
+  .perfil-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,111,181,.12)}
+  .perfil-input.ok{border-color:var(--green)}
+  .perfil-input.err{border-color:#dc2626}
+  .value.readonly{opacity:.65;cursor:default;user-select:none}
+  .pfmsg{font-size:12px;margin-top:4px;min-height:15px}
+  .pfmsg.ok{color:var(--green)}
+  .pfmsg.err{color:#dc2626}
+  .btn-salvar-perfil{padding:11px 24px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+  .btn-salvar-perfil:hover{background:#1d5fa0}
+  .btn-salvar-perfil:disabled{opacity:.6;cursor:not-allowed}
+  .perfil-status{font-size:13px;font-weight:600}
+  .perfil-status.ok{color:var(--green)}
+  .perfil-status.err{color:#dc2626}
 
   /* ═══ CONFIGURAÇÕES ═══ */
   .config-section-title{font-family:'Fraunces',serif;font-size:20px;color:var(--text);margin-bottom:16px}
@@ -382,15 +396,32 @@ function initials(nome) {
             <div class="section-header-text"><h2>Meu Perfil</h2><p>Seus dados cadastrais no programa.</p></div>
           </div>
           <div class="perfil-card">
-            <div class="perfil-avatar">${ini}</div>
-            <div class="perfil-name">${nome}</div>
-            <div class="perfil-email">${email}</div>
-            <div class="perfil-fields">
-              <div class="perfil-field"><label>Nome completo</label><div class="value">${nome}</div></div>
-              <div class="perfil-field"><label>E-mail</label><div class="value">${email}</div></div>
-              <div class="perfil-field"><label>CPF</label><div class="value">${cpf?cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4'):'—'}</div></div>
-              <div class="perfil-field"><label>Plano</label><div class="value">${plano.charAt(0).toUpperCase()+plano.slice(1)}</div></div>
-              <div class="perfil-field"><label>Tipo de acesso</label><div class="value">${isAdmin?'Administrador':'Usuário'}</div></div>
+            <div class="perfil-avatar" id="pf-av">${ini}</div>
+            <div class="perfil-name"  id="pf-nm">${nome}</div>
+            <div class="perfil-email" id="pf-em">${email}</div>
+            <div class="perfil-fields" style="margin-top:16px">
+              <div class="perfil-field">
+                <label>Nome completo</label>
+                <input class="perfil-input" id="pf-nome" type="text" value="${nome}" placeholder="Seu nome completo" autocomplete="name" />
+                <div class="pfmsg" id="pm-nome"></div>
+              </div>
+              <div class="perfil-field">
+                <label>E-mail</label>
+                <input class="perfil-input" id="pf-email" type="email" value="${email}" placeholder="seu@email.com" autocomplete="email" />
+                <div class="pfmsg" id="pm-email"></div>
+              </div>
+              <div class="perfil-field">
+                <label>CPF</label>
+                <input class="perfil-input" id="pf-cpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"
+                  value="${cpf?cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4'):''}" />
+                <div class="pfmsg" id="pm-cpf"></div>
+              </div>
+              <div class="perfil-field"><label>Plano</label><div class="value readonly">${plano.charAt(0).toUpperCase()+plano.slice(1)}</div></div>
+              <div class="perfil-field"><label>Tipo de acesso</label><div class="value readonly">${isAdmin?'Administrador':'Usuário'}</div></div>
+            </div>
+            <div style="margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <button class="btn-salvar-perfil" id="btn-salvar-perfil" onclick="salvarPerfil()">Salvar alterações</button>
+              <span class="perfil-status" id="perfil-status"></span>
             </div>
           </div>
         </div>
@@ -452,7 +483,116 @@ function initials(nome) {
   document.getElementById('btn-logout').addEventListener('click',async()=>{
     await sb.auth.signOut(); window.location.href='login.html';
   });
+
+  /* ── Máscara e validação inline do perfil ── */
+  const pfCpf = document.getElementById('pf-cpf');
+  if (pfCpf) {
+    pfCpf.addEventListener('input', e => { e.target.value = maskCPF_pf(e.target.value); });
+    pfCpf.addEventListener('blur', validatePfCpf);
+  }
+  document.getElementById('pf-nome')?.addEventListener('blur', validatePfNome);
+  document.getElementById('pf-email')?.addEventListener('blur', validatePfEmail);
 })();
+
+/* ══════════════════════════════════════
+   PERFIL — EDIÇÃO
+══════════════════════════════════════ */
+function maskCPF_pf(v) {
+  return v.replace(/\D/g,'').slice(0,11)
+    .replace(/(\d{3})(\d)/,'$1.$2')
+    .replace(/(\d{3})(\d)/,'$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+}
+function cpfValido(c) {
+  c = c.replace(/\D/g,'');
+  if (c.length!==11 || /^(\d)\1+$/.test(c)) return false;
+  let s=0; for(let i=0;i<9;i++) s += +c[i]*(10-i);
+  let r=(s*10)%11; if(r>=10)r=0; if(r!==+c[9]) return false;
+  s=0; for(let i=0;i<10;i++) s += +c[i]*(11-i);
+  r=(s*10)%11; if(r>=10)r=0; return r===+c[10];
+}
+function setPf(id, mid, ok, msg) {
+  const el=document.getElementById(id), m=document.getElementById(mid);
+  if(el){ el.classList.toggle('ok', ok===true); el.classList.toggle('err', ok===false); }
+  if(m) { m.className='pfmsg '+(ok===true?'ok':ok===false?'err':''); m.textContent=msg||''; }
+}
+function validatePfNome() {
+  const v=document.getElementById('pf-nome')?.value.trim()||'';
+  if (!v)                          { setPf('pf-nome','pm-nome',false,'Nome obrigatório.'); return false; }
+  if (v.split(/\s+/).length < 2)   { setPf('pf-nome','pm-nome',false,'Informe nome e sobrenome.'); return false; }
+  if (!/^[\p{L}\s]+$/u.test(v))    { setPf('pf-nome','pm-nome',false,'Apenas letras e espaços.'); return false; }
+  setPf('pf-nome','pm-nome',true,''); return true;
+}
+function validatePfEmail() {
+  const v=document.getElementById('pf-email')?.value.trim()||'';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { setPf('pf-email','pm-email',false,'E-mail inválido.'); return false; }
+  setPf('pf-email','pm-email',true,''); return true;
+}
+function validatePfCpf() {
+  const v=document.getElementById('pf-cpf')?.value||'';
+  if (!v.replace(/\D/g,'')) { setPf('pf-cpf','pm-cpf',null,''); return true; } // CPF vazio é aceito
+  if (!cpfValido(v))        { setPf('pf-cpf','pm-cpf',false,'CPF inválido. Verifique os dígitos.'); return false; }
+  setPf('pf-cpf','pm-cpf',true,'CPF válido ✓'); return true;
+}
+
+async function salvarPerfil() {
+  if (!validatePfNome() | !validatePfEmail() | !validatePfCpf()) return; // | para validar todos
+
+  const btn    = document.getElementById('btn-salvar-perfil');
+  const status = document.getElementById('perfil-status');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  status.className = 'perfil-status'; status.textContent = '';
+
+  const novoNome  = document.getElementById('pf-nome').value.trim();
+  const novoEmail = document.getElementById('pf-email').value.trim();
+  const novoCpf   = document.getElementById('pf-cpf').value.replace(/\D/g,'') || null;
+
+  const { data:{ user:curUser } } = await sb.auth.getUser();
+  const emailChanged = novoEmail !== curUser.email;
+
+  /* Salva nome e CPF na tabela perfis */
+  const { error: perfilErr } = await sb.from('perfis')
+    .update({ nome: novoNome, cpf: novoCpf })
+    .eq('id', curUser.id);
+
+  if (perfilErr) {
+    btn.disabled=false; btn.textContent='Salvar alterações';
+    status.className='perfil-status err'; status.textContent='Erro ao salvar: '+perfilErr.message;
+    return;
+  }
+
+  /* Se o e-mail mudou, atualiza via Supabase Auth (envia confirmação) */
+  if (emailChanged) {
+    const { error: emailErr } = await sb.auth.updateUser({ email: novoEmail });
+    if (emailErr) {
+      btn.disabled=false; btn.textContent='Salvar alterações';
+      status.className='perfil-status err'; status.textContent='Erro no e-mail: '+emailErr.message;
+      return;
+    }
+  }
+
+  /* Atualiza o display do card */
+  const nf = formatNome(novoNome);
+  const av = initials(nf);
+  const pfAv = document.getElementById('pf-av');
+  const pfNm = document.getElementById('pf-nm');
+  const pfEm = document.getElementById('pf-em');
+  if (pfAv) pfAv.textContent = av;
+  if (pfNm) pfNm.textContent = nf;
+  if (pfEm) pfEm.textContent = novoEmail;
+  /* Atualiza também o avatar/nome da sidebar */
+  const sideAvatar = document.querySelector('.user-chip .avatar');
+  const sideName   = document.querySelector('.user-chip .user-name');
+  if (sideAvatar) sideAvatar.textContent = av;
+  if (sideName)   sideName.textContent   = nf;
+
+  btn.disabled=false; btn.textContent='Salvar alterações';
+  status.className='perfil-status ok';
+  status.textContent = emailChanged
+    ? '✓ Salvo! Confirme o novo e-mail na sua caixa de entrada.'
+    : '✓ Perfil atualizado com sucesso!';
+  setTimeout(()=>{ status.textContent=''; status.className='perfil-status'; }, 5000);
+}
 
 /* ══════════════════════════════════════
    APOSTILAS — RENDER
