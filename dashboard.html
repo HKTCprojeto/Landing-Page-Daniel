@@ -133,7 +133,13 @@
   .perfil-status.err{color:#dc2626}
 
   /* ═══ CONFIGURAÇÕES ═══ */
-  .config-section-title{font-family:'Fraunces',serif;font-size:20px;color:var(--text);margin-bottom:16px}
+  .config-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+  .config-tab{padding:8px 18px;border-radius:7px;border:none;background:none;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+  .config-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .config-tab:hover:not(.active){color:var(--text)}
+  .config-pane{display:none}
+  .config-pane.active{display:block}
+  .config-section-title{font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:16px}
   .table-wrap{border-radius:12px;border:1px solid var(--border);overflow:hidden;overflow-x:auto}
   .users-table{width:100%;border-collapse:collapse;min-width:620px}
   .users-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
@@ -152,6 +158,33 @@
   .plano-vitalicio{background:rgba(21,128,61,.15);color:#15803d}
   [data-theme="dark"] .plano-premium{color:#fbbf24}
   [data-theme="dark"] .plano-vitalicio{color:#4ade80}
+
+  /* ═══ API CARDS ═══ */
+  .api-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .api-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;transition:box-shadow .15s,background .25s}
+  .api-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  .api-card-top{display:flex;align-items:flex-start;gap:14px}
+  .api-logo{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0;font-weight:700}
+  .api-logo.supabase{background:linear-gradient(135deg,#3ecf8e22,#3ecf8e44);color:#3ecf8e;border:1px solid #3ecf8e44}
+  .api-logo.vercel{background:linear-gradient(135deg,#ffffff22,#ffffff11);color:var(--text);border:1px solid var(--border)}
+  .api-logo.gfonts{background:linear-gradient(135deg,#4285f422,#4285f444);color:#4285f4;border:1px solid #4285f444}
+  .api-logo.supabasejs{background:linear-gradient(135deg,#3ecf8e11,#3ecf8e33);color:#3ecf8e;border:1px solid #3ecf8e33}
+  .api-info{flex:1;min-width:0}
+  .api-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+  .api-type{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .api-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;flex-shrink:0;align-self:flex-start}
+  .api-status.ok{background:rgba(21,128,61,.12);color:#15803d}
+  .api-status.ok::before{content:'';width:6px;height:6px;border-radius:50%;background:#15803d;display:inline-block}
+  [data-theme="dark"] .api-status.ok{background:rgba(74,222,128,.12);color:#4ade80}
+  [data-theme="dark"] .api-status.ok::before{background:#4ade80}
+  .api-desc{font-size:13px;color:var(--muted);line-height:1.6}
+  .api-endpoint{display:flex;align-items:center;gap:7px;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:monospace;color:var(--muted);overflow:hidden}
+  .api-endpoint span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .api-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .api-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .api-tag{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--badge-open-bg);color:var(--badge-open-clr)}
+  .api-link{font-size:12px;font-weight:600;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:4px;transition:opacity .15s;flex-shrink:0}
+  .api-link:hover{opacity:.75}
 
   /* ═══ MODAL APOSTILA (admin) ═══ */
   .modal-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
@@ -432,23 +465,144 @@ function initials(nome) {
           <div class="section-header">
             <div class="section-header-text"><h2>Configurações</h2><p>Painel administrativo do sistema.</p></div>
           </div>
-          <div class="config-section-title">👥 Lista de Usuários</div>
-          <div class="table-wrap">
-            <table class="users-table">
-              <thead>
-                <tr>
-                  <th>Usuário</th>
-                  <th>E-mail</th>
-                  <th>Tipo</th>
-                  <th>Plano</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="users-tbody">
-                <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
-              </tbody>
-            </table>
+
+          <!-- Abas -->
+          <div class="config-tabs">
+            <button class="config-tab active" onclick="switchConfigTab('usuarios',this)">👥 Usuários</button>
+            <button class="config-tab" onclick="switchConfigTab('apis',this)">🔌 APIs</button>
           </div>
+
+          <!-- Painel: Usuários -->
+          <div class="config-pane active" id="cpane-usuarios">
+            <div class="config-section-title">Lista de Usuários</div>
+            <div class="table-wrap">
+              <table class="users-table">
+                <thead>
+                  <tr>
+                    <th>Usuário</th><th>E-mail</th><th>Tipo</th><th>Plano</th><th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="users-tbody">
+                  <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Painel: APIs -->
+          <div class="config-pane" id="cpane-apis">
+            <div class="config-section-title">APIs Integradas</div>
+            <div class="api-grid">
+
+              <!-- Supabase -->
+              <div class="api-card">
+                <div class="api-card-top">
+                  <div class="api-logo supabase">⚡</div>
+                  <div class="api-info">
+                    <div class="api-name">Supabase</div>
+                    <div class="api-type">Auth · Database · RLS</div>
+                  </div>
+                  <span class="api-status ok">Conectado</span>
+                </div>
+                <div class="api-desc">Banco de dados PostgreSQL com autenticação de usuários, políticas de segurança por linha (RLS) e API REST automática.</div>
+                <div class="api-endpoint">🔗 <span>uuzuyiydkfugccgpjwnl.supabase.co</span></div>
+                <div class="api-footer">
+                  <div class="api-tags">
+                    <span class="api-tag">PostgreSQL</span>
+                    <span class="api-tag">Auth</span>
+                    <span class="api-tag">Storage</span>
+                  </div>
+                  <a class="api-link" href="https://supabase.com/dashboard/project/uuzuyiydkfugccgpjwnl" target="_blank">Abrir painel ↗</a>
+                </div>
+              </div>
+
+              <!-- Supabase JS SDK -->
+              <div class="api-card">
+                <div class="api-card-top">
+                  <div class="api-logo supabasejs">📦</div>
+                  <div class="api-info">
+                    <div class="api-name">Supabase JS SDK</div>
+                    <div class="api-type">Client Library · v2</div>
+                  </div>
+                  <span class="api-status ok">Ativo</span>
+                </div>
+                <div class="api-desc">Biblioteca oficial do Supabase para JavaScript, carregada via CDN. Fornece acesso ao banco de dados e autenticação no frontend.</div>
+                <div class="api-endpoint">🔗 <span>cdn.jsdelivr.net/npm/@supabase/supabase-js@2</span></div>
+                <div class="api-footer">
+                  <div class="api-tags">
+                    <span class="api-tag">CDN</span>
+                    <span class="api-tag">JavaScript</span>
+                  </div>
+                  <a class="api-link" href="https://supabase.com/docs/reference/javascript" target="_blank">Documentação ↗</a>
+                </div>
+              </div>
+
+              <!-- Vercel -->
+              <div class="api-card">
+                <div class="api-card-top">
+                  <div class="api-logo vercel">▲</div>
+                  <div class="api-info">
+                    <div class="api-name">Vercel</div>
+                    <div class="api-type">Hosting · Deploy · CDN</div>
+                  </div>
+                  <span class="api-status ok">Ativo</span>
+                </div>
+                <div class="api-desc">Plataforma de hospedagem e entrega contínua. Realiza o deploy automático a cada push no repositório GitHub.</div>
+                <div class="api-endpoint">🔗 <span>landing-page-daniel-orcin.vercel.app</span></div>
+                <div class="api-footer">
+                  <div class="api-tags">
+                    <span class="api-tag">CI/CD</span>
+                    <span class="api-tag">Edge Network</span>
+                  </div>
+                  <a class="api-link" href="https://vercel.com/hktcprojetos-projects/landing-page-daniel" target="_blank">Abrir painel ↗</a>
+                </div>
+              </div>
+
+              <!-- Google Fonts -->
+              <div class="api-card">
+                <div class="api-card-top">
+                  <div class="api-logo gfonts">G</div>
+                  <div class="api-info">
+                    <div class="api-name">Google Fonts</div>
+                    <div class="api-type">Tipografia · CDN</div>
+                  </div>
+                  <span class="api-status ok">Ativo</span>
+                </div>
+                <div class="api-desc">Serviço de fontes web do Google. Carrega as fontes <strong>Manrope</strong> (texto) e <strong>Fraunces</strong> (títulos) usadas em todo o sistema.</div>
+                <div class="api-endpoint">🔗 <span>fonts.googleapis.com</span></div>
+                <div class="api-footer">
+                  <div class="api-tags">
+                    <span class="api-tag">Manrope</span>
+                    <span class="api-tag">Fraunces</span>
+                  </div>
+                  <a class="api-link" href="https://fonts.google.com" target="_blank">Google Fonts ↗</a>
+                </div>
+              </div>
+
+              <!-- GitHub -->
+              <div class="api-card">
+                <div class="api-card-top">
+                  <div class="api-logo vercel">🐙</div>
+                  <div class="api-info">
+                    <div class="api-name">GitHub</div>
+                    <div class="api-type">Repositório · Controle de versão</div>
+                  </div>
+                  <span class="api-status ok">Conectado</span>
+                </div>
+                <div class="api-desc">Repositório de código-fonte do projeto. Cada commit dispara automaticamente um novo deploy na Vercel via integração contínua.</div>
+                <div class="api-endpoint">🔗 <span>github.com/HKTCprojeto/Landing-Page-Daniel</span></div>
+                <div class="api-footer">
+                  <div class="api-tags">
+                    <span class="api-tag">Git</span>
+                    <span class="api-tag">CI/CD</span>
+                  </div>
+                  <a class="api-link" href="https://github.com/HKTCprojeto/Landing-Page-Daniel" target="_blank">Ver repositório ↗</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>` : ''}
 
       </div><!-- /content -->
@@ -468,7 +622,11 @@ function initials(nome) {
     document.querySelector(`[data-section="${sec}"]`)?.classList.add('active');
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
-    if (sec==='config' && isAdmin) carregarUsuarios();
+    if (sec==='config' && isAdmin) {
+      // Garante que a aba Usuários está ativa e carrega os dados
+      switchConfigTab('usuarios', document.querySelector('.config-tab'));
+      carregarUsuarios();
+    }
   }
   document.querySelectorAll('[data-section]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.section)));
   document.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.goto)));
@@ -724,6 +882,18 @@ function fecharPDF() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { fecharPDF(); fecharModalApostila?.(); }
 });
+
+/* ══════════════════════════════════════
+   CONFIGURAÇÕES — ABAS
+══════════════════════════════════════ */
+function switchConfigTab(tab, btn) {
+  document.querySelectorAll('.config-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.config-pane').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const pane = document.getElementById('cpane-' + tab);
+  if (pane) pane.classList.add('active');
+  if (tab === 'usuarios') carregarUsuarios();
+}
 
 /* ══════════════════════════════════════
    CONFIGURAÇÕES — LISTA DE USUÁRIOS
