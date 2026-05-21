@@ -580,31 +580,30 @@ function formatNome(raw) {
 /* ── Apostilas ── */
 function gerarApostilas() {
   const mods = [
-    { num:'M01', fase:'Fase 1',   titulo:'Fundamentos Estratégicos',  emoji:'🌐', pdf:'apostilas/modulo-1.pdf' },
-    { num:'M02', fase:'Fase 1',   titulo:'Estrutura Brasileira',       emoji:'🏛️', pdf:'apostilas/modulo-2.pdf' },
-    { num:'M03', fase:'Fase 1',   titulo:'Modalidades de Importação',  emoji:'📦', pdf:'apostilas/modulo-3.pdf' },
-    { num:'M04', fase:'Fase 2',   titulo:'Documentação Internacional', emoji:'📄', pdf:'apostilas/modulo-4.pdf' },
-    { num:'M05', fase:'Fase 2',   titulo:'Logística Internacional',    emoji:'🚢', pdf:'apostilas/modulo-5.pdf' },
-    { num:'M06', fase:'Fase 2',   titulo:'Custo Nacionalizado',        emoji:'💰', pdf:'apostilas/modulo-6.pdf' },
-    { num:'M07', fase:'Fase 2',   titulo:'Exportação na Prática',      emoji:'✈️', pdf:null },
-    { num:'M08', fase:'Fase 3',   titulo:'China como Hub Global',      emoji:'🇨🇳', pdf:'apostilas/modulo-8.pdf' },
-    { num:'M09', fase:'Fase 3',   titulo:'Trading Company',            emoji:'🏢', pdf:null },
-    { num:'M10', fase:'Fase 3',   titulo:'Reforma Tributária',         emoji:'⚖️', pdf:null },
-    { num:'M11', fase:'Fase 3',   titulo:'Risco e Compliance',         emoji:'🔒', pdf:null },
-    { num:'M12', fase:'Capstone', titulo:'Operação Real',              emoji:'🎯', pdf:null },
+    { num:'M01', titulo:'Módulo 1',  emoji:'📘', pdf:'apostilas/modulo-1.pdf' },
+    { num:'M02', titulo:'Módulo 2',  emoji:'📗', pdf:'apostilas/modulo-2.pdf' },
+    { num:'M03', titulo:'Módulo 3',  emoji:'📙', pdf:'apostilas/modulo-3.pdf' },
+    { num:'M04', titulo:'Módulo 4',  emoji:'📕', pdf:'apostilas/modulo-4.pdf' },
+    { num:'M05', titulo:'Módulo 5',  emoji:'📓', pdf:'apostilas/modulo-5.pdf' },
+    { num:'M06', titulo:'Módulo 6',  emoji:'📒', pdf:'apostilas/modulo-6.pdf' },
+    { num:'M07', titulo:'Módulo 7',  emoji:'📔', pdf:null },
+    { num:'M08', titulo:'Módulo 8',  emoji:'📃', pdf:'apostilas/modulo-8.pdf' },
+    { num:'M09', titulo:'Módulo 9',  emoji:'📄', pdf:null },
+    { num:'M10', titulo:'Módulo 10', emoji:'📑', pdf:null },
+    { num:'M11', titulo:'Módulo 11', emoji:'🗒️', pdf:null },
+    { num:'M12', titulo:'Módulo 12', emoji:'🎯', pdf:null },
   ];
   return mods.map(m => `
     <div class="apostila-card">
       <div class="apostila-cover">${m.emoji}</div>
       <div>
-        <div class="apostila-fase">${m.num} · ${m.fase}</div>
         <div class="apostila-title">${m.titulo}</div>
       </div>
       <span class="apostila-badge ${m.pdf ? 'badge-open' : 'badge-locked'}">
         ${m.pdf ? '🔓 Disponível' : '🔒 Em breve'}
       </span>
       <button class="btn-apostila ${m.pdf ? '' : 'locked'}"
-        ${m.pdf ? `onclick="abrirPDF('${m.pdf}','${m.num} · ${m.fase}','${m.titulo}')"` : 'disabled'}>
+        ${m.pdf ? `onclick="abrirPDF('${m.pdf}','${m.num}','${m.titulo}')"` : 'disabled'}>
         ${m.pdf ? 'Ler apostila' : 'Aguardando liberação'}
       </button>
     </div>`).join('');
