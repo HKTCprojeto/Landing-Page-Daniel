@@ -280,6 +280,59 @@
     transition:background .25s, border-color .25s;
   }
 
+  /* ═══ PDF VIEWER ═══ */
+  .pdf-overlay {
+    display:none; position:fixed; inset:0; z-index:500;
+    background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .pdf-overlay.open { display:flex; }
+  .pdf-modal {
+    background:var(--card); border-radius:18px;
+    width:100%; max-width:1000px;
+    height:calc(100vh - 40px);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 32px 80px rgba(0,0,0,.5);
+  }
+  .pdf-header {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .pdf-header-info { flex:1; min-width:0; }
+  .pdf-header-fase { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue); margin-bottom:2px; }
+  .pdf-header-title { font-size:15px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pdf-header-actions { display:flex; gap:8px; flex-shrink:0; }
+  .btn-pdf-dl {
+    display:flex; align-items:center; gap:6px;
+    padding:8px 14px; border-radius:8px;
+    background:var(--bg2); border:1px solid var(--border);
+    color:var(--text); font-family:'Manrope',sans-serif;
+    font-size:12px; font-weight:600; text-decoration:none;
+    transition:border-color .15s, color .15s;
+  }
+  .btn-pdf-dl:hover { border-color:var(--blue); color:var(--blue); }
+  .btn-pdf-close {
+    display:flex; align-items:center; gap:6px;
+    padding:8px 14px; border-radius:8px;
+    background:#c8102e; color:#fff;
+    border:none; cursor:pointer;
+    font-family:'Manrope',sans-serif; font-size:12px; font-weight:600;
+    transition:background .15s;
+  }
+  .btn-pdf-close:hover { background:#a40d26; }
+  .pdf-frame {
+    flex:1; border:none; width:100%;
+    background:#525659;
+  }
+  .pdf-loading {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:12px; color:var(--muted); font-size:14px;
+  }
+
   /* Loading */
   .loading {
     display:flex; align-items:center; justify-content:center;
@@ -413,6 +466,23 @@ function formatNome(raw) {
         </div>
       </header>
 
+      <!-- PDF VIEWER MODAL -->
+      <div class="pdf-overlay" id="pdf-overlay">
+        <div class="pdf-modal">
+          <div class="pdf-header">
+            <div class="pdf-header-info">
+              <div class="pdf-header-fase" id="pdf-fase"></div>
+              <div class="pdf-header-title" id="pdf-title"></div>
+            </div>
+            <div class="pdf-header-actions">
+              <a class="btn-pdf-dl" id="pdf-dl" href="#" download>⬇ Baixar PDF</a>
+              <button class="btn-pdf-close" onclick="fecharPDF()">✕ Fechar</button>
+            </div>
+          </div>
+          <iframe class="pdf-frame" id="pdf-frame" src=""></iframe>
+        </div>
+      </div>
+
       <div class="content">
 
         <!-- HOME -->
@@ -510,18 +580,18 @@ function formatNome(raw) {
 /* ── Apostilas ── */
 function gerarApostilas() {
   const mods = [
-    { num:'M01', fase:'Fase 1',   titulo:'Fundamentos Estratégicos',  emoji:'🌐', open:true  },
-    { num:'M02', fase:'Fase 1',   titulo:'Estrutura Brasileira',       emoji:'🏛️', open:true  },
-    { num:'M03', fase:'Fase 1',   titulo:'Modalidades de Importação',  emoji:'📦', open:true  },
-    { num:'M04', fase:'Fase 2',   titulo:'Documentação Internacional', emoji:'📄', open:false },
-    { num:'M05', fase:'Fase 2',   titulo:'Logística Internacional',    emoji:'🚢', open:false },
-    { num:'M06', fase:'Fase 2',   titulo:'Custo Nacionalizado',        emoji:'💰', open:false },
-    { num:'M07', fase:'Fase 2',   titulo:'Exportação na Prática',      emoji:'✈️', open:false },
-    { num:'M08', fase:'Fase 3',   titulo:'China como Hub Global',      emoji:'🇨🇳', open:false },
-    { num:'M09', fase:'Fase 3',   titulo:'Trading Company',            emoji:'🏢', open:false },
-    { num:'M10', fase:'Fase 3',   titulo:'Reforma Tributária',         emoji:'⚖️', open:false },
-    { num:'M11', fase:'Fase 3',   titulo:'Risco e Compliance',         emoji:'🔒', open:false },
-    { num:'M12', fase:'Capstone', titulo:'Operação Real',              emoji:'🎯', open:false },
+    { num:'M01', fase:'Fase 1',   titulo:'Fundamentos Estratégicos',  emoji:'🌐', pdf:'apostilas/modulo-1.pdf' },
+    { num:'M02', fase:'Fase 1',   titulo:'Estrutura Brasileira',       emoji:'🏛️', pdf:'apostilas/modulo-2.pdf' },
+    { num:'M03', fase:'Fase 1',   titulo:'Modalidades de Importação',  emoji:'📦', pdf:'apostilas/modulo-3.pdf' },
+    { num:'M04', fase:'Fase 2',   titulo:'Documentação Internacional', emoji:'📄', pdf:'apostilas/modulo-4.pdf' },
+    { num:'M05', fase:'Fase 2',   titulo:'Logística Internacional',    emoji:'🚢', pdf:'apostilas/modulo-5.pdf' },
+    { num:'M06', fase:'Fase 2',   titulo:'Custo Nacionalizado',        emoji:'💰', pdf:'apostilas/modulo-6.pdf' },
+    { num:'M07', fase:'Fase 2',   titulo:'Exportação na Prática',      emoji:'✈️', pdf:null },
+    { num:'M08', fase:'Fase 3',   titulo:'China como Hub Global',      emoji:'🇨🇳', pdf:'apostilas/modulo-8.pdf' },
+    { num:'M09', fase:'Fase 3',   titulo:'Trading Company',            emoji:'🏢', pdf:null },
+    { num:'M10', fase:'Fase 3',   titulo:'Reforma Tributária',         emoji:'⚖️', pdf:null },
+    { num:'M11', fase:'Fase 3',   titulo:'Risco e Compliance',         emoji:'🔒', pdf:null },
+    { num:'M12', fase:'Capstone', titulo:'Operação Real',              emoji:'🎯', pdf:null },
   ];
   return mods.map(m => `
     <div class="apostila-card">
@@ -530,13 +600,31 @@ function gerarApostilas() {
         <div class="apostila-fase">${m.num} · ${m.fase}</div>
         <div class="apostila-title">${m.titulo}</div>
       </div>
-      <span class="apostila-badge ${m.open ? 'badge-open' : 'badge-locked'}">
-        ${m.open ? '🔓 Disponível' : '🔒 Em breve'}
+      <span class="apostila-badge ${m.pdf ? 'badge-open' : 'badge-locked'}">
+        ${m.pdf ? '🔓 Disponível' : '🔒 Em breve'}
       </span>
-      <a class="btn-apostila ${m.open ? '' : 'locked'}" ${m.open ? 'href="#"' : ''}>
-        ${m.open ? 'Acessar apostila' : 'Aguardando liberação'}
-      </a>
+      <button class="btn-apostila ${m.pdf ? '' : 'locked'}"
+        ${m.pdf ? `onclick="abrirPDF('${m.pdf}','${m.num} · ${m.fase}','${m.titulo}')"` : 'disabled'}>
+        ${m.pdf ? 'Ler apostila' : 'Aguardando liberação'}
+      </button>
     </div>`).join('');
 }
+
+/* ── PDF Viewer ── */
+function abrirPDF(src, fase, titulo) {
+  document.getElementById('pdf-fase').textContent  = fase;
+  document.getElementById('pdf-title').textContent = titulo;
+  document.getElementById('pdf-frame').src = src;
+  document.getElementById('pdf-dl').href   = src;
+  document.getElementById('pdf-dl').download = titulo + '.pdf';
+  document.getElementById('pdf-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function fecharPDF() {
+  document.getElementById('pdf-overlay').classList.remove('open');
+  document.getElementById('pdf-frame').src = '';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharPDF(); });
 </script>
 </html>
