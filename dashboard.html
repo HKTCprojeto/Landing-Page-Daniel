@@ -546,9 +546,14 @@ function initials(nome) {
           <div class="mrow"><label>Título</label><input class="minp" id="a-titulo" placeholder="Aula 1 — Introdução" /></div>
           <div class="mrow"><label>Descrição</label><textarea class="mtxt" id="a-descricao" placeholder="O que será abordado nesta aula..."></textarea></div>
           <div class="mrow">
-            <label>URL do vídeo (qualidade padrão)</label>
-            <input class="minp" id="a-video-url" placeholder="https://.../aula-01.mp4" />
-            <div class="mhint">Pode ser um MP4 hospedado no Supabase Storage ou em qualquer CDN.</div>
+            <label>📂 Subir vídeo do computador (opcional)</label>
+            <input type="file" class="minp" id="a-video-file" accept="video/mp4,video/webm,video/quicktime" style="padding:7px 10px;cursor:pointer" />
+            <div class="mhint" id="a-upload-status">Selecione um MP4/WEBM até 50&nbsp;MB. A URL será preenchida automaticamente abaixo.</div>
+          </div>
+          <div class="mrow">
+            <label>URL do vídeo</label>
+            <input class="minp" id="a-video-url" placeholder="https://.../aula.mp4  ou  https://youtu.be/XXXXXXXXXXX" />
+            <div class="mhint">Aceita: MP4 direto, link do <strong>YouTube</strong> (youtu.be / youtube.com / shorts) ou qualquer CDN.</div>
           </div>
           <div class="mrow">
             <label>Qualidades extras (opcional)</label>
@@ -578,9 +583,10 @@ function initials(nome) {
           </div>
           <div class="video-frame-wrap">
             <video class="video-frame" id="video-frame" controls controlsList="nodownload" preload="metadata"></video>
+            <iframe class="video-frame" id="yt-frame" style="display:none;aspect-ratio:16/9;width:100%;border:0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
           </div>
           <div class="video-controls">
-            <div class="vctrl">
+            <div class="vctrl" id="speed-wrap">
               <button class="vctrl-btn" id="speed-btn" onclick="toggleVctrlMenu('speed')">
                 <span>⚡</span> <span id="speed-label">Velocidade: 1x</span> <span class="caret">▼</span>
               </button>
@@ -593,7 +599,7 @@ function initials(nome) {
               <div class="vctrl-menu" id="quality-menu"></div>
             </div>
             <div style="flex:1"></div>
-            <span style="font-size:11px;color:var(--muted)">Use ESPAÇO para play/pause · ←/→ para avançar</span>
+            <span id="video-hint" style="font-size:11px;color:var(--muted)">Use ESPAÇO para play/pause · ←/→ para avançar</span>
           </div>
           <div class="video-desc-box" id="video-desc-box"></div>
         </div>
@@ -1379,6 +1385,16 @@ function escapeHtml(s='') {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+/* Extrai o videoId de uma URL do YouTube (watch?v=, youtu.be, embed, shorts). */
+function youtubeId(url) {
+  if (!url || typeof url !== 'string') return null;
+  const re = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i;
+  const m = url.match(re);
+  return m ? m[1] : null;
+}
+
+function isYouTube(url) { return !!youtubeId(url); }
+
 function parseQualidades(raw) {
   // Aceita: array JSON [{label,url}] OU string "label|url" por linha
   if (!raw) return [];
@@ -1471,11 +1487,79 @@ function abrirModalAula(id = null) {
     document.getElementById('a-thumb').value       = '';
     document.getElementById('a-disponivel').checked = false;
   }
+  /* Reseta o input de arquivo */
+  const fInput = document.getElementById('a-video-file');
+  if (fInput) {
+    fInput.value = '';
+    /* Garante que o listener está registrado uma única vez */
+    if (!fInput.dataset.bound) {
+      fInput.addEventListener('change', handleAulaFileUpload);
+      fInput.dataset.bound = '1';
+    }
+  }
+  const st = document.getElementById('a-upload-status');
+  if (st) {
+    st.textContent = 'Selecione um MP4/WEBM até 50 MB. A URL será preenchida automaticamente abaixo.';
+    st.style.color = '';
+  }
   document.getElementById('modal-aula').classList.add('open');
 }
 function fecharModalAula() {
   document.getElementById('modal-aula')?.classList.remove('open');
   _editingAulaId = null;
+  const fInput = document.getElementById('a-video-file');
+  if (fInput) fInput.value = '';
+  const st = document.getElementById('a-upload-status');
+  if (st) {
+    st.textContent = 'Selecione um MP4/WEBM até 50 MB. A URL será preenchida automaticamente abaixo.';
+    st.style.color = '';
+  }
+}
+
+/* Upload de vídeo do computador → Supabase Storage → preenche URL */
+async function handleAulaFileUpload(ev) {
+  const file = ev.target.files?.[0];
+  if (!file) return;
+  const status   = document.getElementById('a-upload-status');
+  const urlInput = document.getElementById('a-video-url');
+  const saveBtn  = document.getElementById('btn-aula-save');
+
+  /* Limite imposto pelo servidor Supabase no plano Free */
+  if (file.size > 50 * 1024 * 1024) {
+    status.style.color = '#dc2626';
+    status.textContent = `Arquivo de ${(file.size/1024/1024).toFixed(1)} MB excede 50 MB. Comprima o vídeo ou hospede no YouTube e cole a URL.`;
+    ev.target.value = '';
+    return;
+  }
+
+  /* Sanitiza nome (sem acentos/espaços/símbolos) */
+  const safeName = file.name
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^A-Za-z0-9._-]/g,'_')
+    .replace(/_+/g,'_');
+  const path = `uploads/${Date.now()}-${safeName}`;
+
+  status.style.color = '';
+  status.textContent = `Enviando ${(file.size/1024/1024).toFixed(1)} MB…`;
+  saveBtn && (saveBtn.disabled = true);
+
+  const { error } = await sb.storage.from('aulas-videos').upload(path, file, {
+    upsert: false,
+    contentType: file.type || 'video/mp4',
+    cacheControl: '3600',
+  });
+  saveBtn && (saveBtn.disabled = false);
+
+  if (error) {
+    status.style.color = '#dc2626';
+    status.textContent = 'Erro no upload: ' + error.message;
+    return;
+  }
+
+  const { data: { publicUrl } } = sb.storage.from('aulas-videos').getPublicUrl(path);
+  urlInput.value = publicUrl;
+  status.style.color = 'var(--green)';
+  status.textContent = '✓ Vídeo enviado! URL preenchida abaixo. Clique em Salvar.';
 }
 
 async function salvarAula() {
@@ -1546,9 +1630,13 @@ function abrirAula(id) {
   document.getElementById('video-desc-box').textContent  = a.descricao || '';
   document.getElementById('video-desc-box').style.display = a.descricao ? '' : 'none';
 
-  /* Monta a lista final de qualidades:
-     - se houver qualidades extras → usa elas
-     - inclui video_url como "auto" caso não esteja na lista */
+  const video       = document.getElementById('video-frame');
+  const yt          = document.getElementById('yt-frame');
+  const speedWrap   = document.getElementById('speed-wrap');
+  const qualityWrap = document.getElementById('quality-wrap');
+  const hint        = document.getElementById('video-hint');
+
+  /* Monta a lista de fontes (qualidades extras + video_url) */
   const extras = Array.isArray(a.qualidades) ? a.qualidades.filter(q => q && q.url) : [];
   let qualities = [...extras];
   if (a.video_url && !qualities.some(q => q.url === a.video_url)) {
@@ -1556,8 +1644,33 @@ function abrirAula(id) {
   }
   if (!qualities.length && a.video_url) qualities = [{ label: 'auto', url: a.video_url }];
 
+  const first = qualities[0];
+  const ytId  = first ? youtubeId(first.url) : null;
+
+  document.getElementById('video-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* ── Caso 1: YouTube → renderiza iframe e esconde controles custom ── */
+  if (ytId) {
+    video.pause?.(); video.removeAttribute('src'); video.load?.();
+    video.style.display = 'none';
+    yt.style.display = '';
+    /* autoplay=1, rel=0 (sem vídeos relacionados de outros canais),
+       modestbranding=1, playsinline=1 */
+    yt.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    /* YouTube embed tem seu próprio menu de velocidade e qualidade. */
+    if (speedWrap)   speedWrap.style.display   = 'none';
+    if (qualityWrap) qualityWrap.style.display = 'none';
+    if (hint) hint.textContent = 'Use os controles do YouTube para velocidade e qualidade.';
+    return;
+  }
+
+  /* ── Caso 2: Vídeo direto (MP4/WEBM) ── */
+  yt.src = ''; yt.style.display = 'none';
+  video.style.display = '';
+  if (hint) hint.textContent = 'Use ESPAÇO para play/pause · ←/→ para avançar';
+
   /* Render menu de qualidades */
-  const qualityWrap = document.getElementById('quality-wrap');
   const qualityMenu = document.getElementById('quality-menu');
   if (qualities.length > 1) {
     qualityWrap.style.display = '';
@@ -1574,6 +1687,7 @@ function abrirAula(id) {
   }
 
   /* Render menu de velocidades */
+  if (speedWrap) speedWrap.style.display = '';
   const speedMenu = document.getElementById('speed-menu');
   speedMenu.innerHTML = SPEED_OPTIONS.map(s => `
     <div class="vctrl-menu-item ${s===1?'active':''}" data-speed="${s}">
@@ -1585,8 +1699,6 @@ function abrirAula(id) {
   });
 
   /* Carrega vídeo na primeira qualidade */
-  const video = document.getElementById('video-frame');
-  const first = qualities[0];
   if (first) {
     _currentQuality = first.label;
     document.getElementById('quality-label').textContent = `Qualidade: ${first.label}`;
@@ -1595,9 +1707,6 @@ function abrirAula(id) {
   _currentSpeed = 1;
   video.playbackRate = 1;
   document.getElementById('speed-label').textContent = 'Velocidade: 1x';
-
-  document.getElementById('video-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
   video.play().catch(()=>{ /* autoplay bloqueado → ok, usuário clica */ });
 }
 
@@ -1607,6 +1716,8 @@ function fecharAula() {
   ov.classList.remove('open');
   const v = document.getElementById('video-frame');
   if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+  const yt = document.getElementById('yt-frame');
+  if (yt) { yt.src = ''; yt.style.display = 'none'; }
   document.body.style.overflow = '';
   closeAllVctrlMenus();
   _currentAula = null;
