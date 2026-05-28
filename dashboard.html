@@ -228,6 +228,50 @@
   .btn-msave:hover{background:#1d5fa0}
   .btn-msave:disabled{opacity:.6;cursor:not-allowed}
 
+  /* ═══ AULAS (vídeos) ═══ */
+  .aulas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .aula-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,transform .15s,background .25s}
+  .aula-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
+  .aula-thumb{position:relative;aspect-ratio:16/9;border-radius:10px;background:linear-gradient(135deg,var(--navy-2),var(--navy-3));display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
+  .aula-thumb img{width:100%;height:100%;object-fit:cover}
+  .aula-thumb .play-icon{position:absolute;width:54px;height:54px;border-radius:50%;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;backdrop-filter:blur(2px);transition:transform .15s,background .15s}
+  .aula-thumb:hover .play-icon{background:var(--accent);transform:scale(1.08)}
+  .aula-thumb.locked{cursor:not-allowed;opacity:.55}
+  .aula-thumb.locked .play-icon{background:rgba(0,0,0,.4)}
+  .aula-title{font-size:15px;font-weight:700;color:var(--text);line-height:1.3}
+  .aula-desc{font-size:12.5px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+  /* ═══ VIDEO PLAYER ═══ */
+  .video-overlay{display:none;position:fixed;inset:0;z-index:550;background:rgba(0,0,0,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+  .video-overlay.open{display:flex}
+  .video-modal{background:#000;border-radius:14px;width:100%;max-width:1100px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+  .video-header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--border)}
+  .video-header-info{flex:1;min-width:0}
+  .video-header-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .video-header-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:2px}
+  .video-frame-wrap{position:relative;background:#000;flex:1;min-height:0}
+  .video-frame{width:100%;height:auto;max-height:65vh;display:block;background:#000;outline:none}
+  .video-controls{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border-top:1px solid var(--border);flex-wrap:wrap}
+  .vctrl{position:relative}
+  .vctrl-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s}
+  .vctrl-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .vctrl-btn .caret{font-size:9px;opacity:.6}
+  .vctrl-menu{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px;min-width:140px;box-shadow:0 12px 32px rgba(0,0,0,.25);z-index:10}
+  .vctrl-menu.open{display:block}
+  .vctrl-menu-item{padding:8px 12px;border-radius:6px;font-size:13px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:background .12s}
+  .vctrl-menu-item:hover{background:var(--bg2)}
+  .vctrl-menu-item.active{background:var(--badge-open-bg);color:var(--badge-open-clr);font-weight:700}
+  .vctrl-menu-item .check{font-size:11px;opacity:0}
+  .vctrl-menu-item.active .check{opacity:1}
+  .video-desc-box{padding:14px 18px;background:var(--card);border-top:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.55;max-height:140px;overflow-y:auto}
+  .btn-video-close{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:#c8102e;color:#fff;border:none;cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;transition:background .15s}
+  .btn-video-close:hover{background:#a40d26}
+
+  /* ═══ MODAL AULA (admin) — usa as classes .modal-* já existentes ═══ */
+  .mtxt{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Manrope',sans-serif;font-size:14px;color:var(--text);background:var(--input-bg);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
+  .mtxt:focus{border-color:var(--blue)}
+  .mhint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
   /* ═══ PDF VIEWER ═══ */
   .pdf-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
   .pdf-overlay.open{display:flex}
@@ -248,7 +292,18 @@
   .spinner{width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--blue);animation:spin .7s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ═══ RESPONSIVE ═══ */
+  /* ═══════════════════════════════════════
+     RESPONSIVE — mobile · tablet · TV
+  ═══════════════════════════════════════ */
+
+  /* ── Tablet (≤1024px): sidebar ainda visível, ajustes menores ── */
+  @media(max-width:1024px){
+    .content{padding:24px 20px}
+    .topbar{padding:0 20px}
+    .api-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  }
+
+  /* ── Mobile (≤768px): sidebar oculta, toggle aparece ── */
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
     .sidebar.open{transform:translateX(0)}
@@ -258,6 +313,64 @@
     .topbar{padding:0 16px 0 56px}
     .content{padding:20px 16px}
     .topbar-user,.admin-badge{display:none}
+    /* Perfil card */
+    .perfil-card{padding:20px}
+    /* Cards grid */
+    .cards-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+    .apostilas-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+    /* PDF modal */
+    .pdf-modal{border-radius:12px}
+    .pdf-header{padding:12px 14px;flex-wrap:wrap;gap:6px}
+    .pdf-header-actions{gap:6px}
+    /* Config tabs */
+    .config-tabs{overflow-x:auto;max-width:100%;width:100%;flex-wrap:nowrap}
+  }
+
+  /* ── Celulares pequenos (≤480px) ── */
+  @media(max-width:480px){
+    .topbar{padding:0 10px 0 52px;height:54px}
+    .page-title{font-size:14px}
+    .content{padding:14px 12px}
+    .welcome-header h1{font-size:20px}
+    /* Oculta label do botão de tema → só ícone */
+    .theme-toggle .t-label{display:none}
+    .theme-toggle{padding:5px 8px}
+    /* Perfil card */
+    .perfil-card{padding:16px}
+    .perfil-name{font-size:18px}
+    .perfil-avatar{width:68px;height:68px;font-size:24px}
+    .perfil-avatar-wrap{width:68px;height:68px}
+    /* PDF modal header compacto */
+    .pdf-header{padding:10px 12px}
+    .btn-pdf-dl,.btn-pdf-close{padding:7px 10px;font-size:11px}
+    /* Modals */
+    .modal-box{padding:18px}
+    /* Cards grid */
+    .cards-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .apostilas-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .dash-card{padding:16px}
+    .dash-card .card-icon{font-size:22px}
+    /* Abas de config */
+    .config-tabs{width:100%}
+    .config-tab{flex:1;text-align:center;padding:8px 10px;font-size:12px}
+  }
+
+  /* ── Televisão / 4K (≥1920px) ── */
+  @media(min-width:1920px){
+    :root{--sidebar-w:300px}
+    .sidebar-brand{padding:30px 24px 26px}
+    .topbar{height:72px;padding:0 48px}
+    .topbar .page-title{font-size:20px}
+    .content{padding:40px 48px}
+    .welcome-header h1{font-size:36px}
+    .welcome-header p{font-size:17px}
+    .cards-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .apostilas-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .dash-card{padding:28px}
+    .dash-card .card-icon{font-size:34px}
+    .users-table th,.users-table td{padding:14px 18px;font-size:14px}
+    .api-grid{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px}
+    .perfil-card{max-width:620px;padding:36px}
   }
 </style>
 </head>
@@ -306,13 +419,15 @@ function initials(nome) {
 
   const user = session.user;
 
-  const [perfilRes, apostilasRes] = await Promise.all([
+  const [perfilRes, apostilasRes, aulasRes] = await Promise.all([
     sb.from('perfis').select('nome,cpf,role,plano,email,avatar_url').eq('id',user.id).single(),
-    sb.from('apostilas').select('*').order('ordem')
+    sb.from('apostilas').select('*').order('ordem'),
+    sb.from('aulas').select('*').order('ordem')
   ]);
 
   const perfil    = perfilRes.data;
   const apostilas = apostilasRes.data || [];
+  const aulas     = aulasRes.data || [];
 
   /* ── Usuário desativado? ── */
   if (perfil && perfil.ativo === false) {
@@ -358,6 +473,7 @@ function initials(nome) {
         <div class="nav-section">
           <div class="nav-section-label">Estudos</div>
           <a class="nav-item" data-section="apostilas"><span class="icon">📚</span> Apostilas</a>
+          <a class="nav-item" data-section="aulas"><span class="icon">🎬</span> Aulas</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-label">Perfil</div>
@@ -421,6 +537,68 @@ function initials(nome) {
         </div>
       </div>` : ''}
 
+      <!-- MODAL ADD/EDIT AULA (admin) -->
+      ${isAdmin ? `
+      <div class="modal-overlay" id="modal-aula">
+        <div class="modal-box" style="max-width:560px">
+          <div class="modal-title" id="modal-aula-title">Nova Aula</div>
+          <div class="mrow"><label>Número (opcional, ex: A01)</label><input class="minp" id="a-num" placeholder="A01" /></div>
+          <div class="mrow"><label>Título</label><input class="minp" id="a-titulo" placeholder="Aula 1 — Introdução" /></div>
+          <div class="mrow"><label>Descrição</label><textarea class="mtxt" id="a-descricao" placeholder="O que será abordado nesta aula..."></textarea></div>
+          <div class="mrow">
+            <label>URL do vídeo (qualidade padrão)</label>
+            <input class="minp" id="a-video-url" placeholder="https://.../aula-01.mp4" />
+            <div class="mhint">Pode ser um MP4 hospedado no Supabase Storage ou em qualquer CDN.</div>
+          </div>
+          <div class="mrow">
+            <label>Qualidades extras (opcional)</label>
+            <textarea class="mtxt" id="a-qualidades" placeholder="1080p|https://.../aula-01-1080p.mp4
+720p|https://.../aula-01-720p.mp4
+480p|https://.../aula-01-480p.mp4"></textarea>
+            <div class="mhint">Uma por linha no formato <strong>rótulo|url</strong>. O player deixará o usuário alternar.</div>
+          </div>
+          <div class="mrow"><label>URL da thumbnail (opcional)</label><input class="minp" id="a-thumb" placeholder="https://.../thumb.jpg" /></div>
+          <div class="mrow"><label class="mcheck"><input type="checkbox" id="a-disponivel" /> Disponível para os usuários</label></div>
+          <div class="modal-footer">
+            <button class="btn-mcancel" onclick="fecharModalAula()">Cancelar</button>
+            <button class="btn-msave" id="btn-aula-save" onclick="salvarAula()">Salvar</button>
+          </div>
+        </div>
+      </div>` : ''}
+
+      <!-- VIDEO PLAYER MODAL -->
+      <div class="video-overlay" id="video-overlay">
+        <div class="video-modal">
+          <div class="video-header">
+            <div class="video-header-info">
+              <div class="video-header-num" id="video-num"></div>
+              <div class="video-header-title" id="video-title-lbl"></div>
+            </div>
+            <button class="btn-video-close" onclick="fecharAula()">✕ Fechar</button>
+          </div>
+          <div class="video-frame-wrap">
+            <video class="video-frame" id="video-frame" controls controlsList="nodownload" preload="metadata"></video>
+          </div>
+          <div class="video-controls">
+            <div class="vctrl">
+              <button class="vctrl-btn" id="speed-btn" onclick="toggleVctrlMenu('speed')">
+                <span>⚡</span> <span id="speed-label">Velocidade: 1x</span> <span class="caret">▼</span>
+              </button>
+              <div class="vctrl-menu" id="speed-menu"></div>
+            </div>
+            <div class="vctrl" id="quality-wrap" style="display:none">
+              <button class="vctrl-btn" onclick="toggleVctrlMenu('quality')">
+                <span>🎛️</span> <span id="quality-label">Qualidade: auto</span> <span class="caret">▼</span>
+              </button>
+              <div class="vctrl-menu" id="quality-menu"></div>
+            </div>
+            <div style="flex:1"></div>
+            <span style="font-size:11px;color:var(--muted)">Use ESPAÇO para play/pause · ←/→ para avançar</span>
+          </div>
+          <div class="video-desc-box" id="video-desc-box"></div>
+        </div>
+      </div>
+
       <div class="content">
 
         <!-- ── HOME ── -->
@@ -434,6 +612,11 @@ function initials(nome) {
               <div class="card-icon">📚</div>
               <div class="card-label">Apostilas</div>
               <div class="card-desc">Material didático dos módulos</div>
+            </div>
+            <div class="dash-card" data-goto="aulas">
+              <div class="card-icon">🎬</div>
+              <div class="card-label">Aulas</div>
+              <div class="card-desc">Videoaulas do programa</div>
             </div>
             <div class="dash-card" data-goto="perfil">
               <div class="card-icon">👤</div>
@@ -459,6 +642,18 @@ function initials(nome) {
             ${isAdmin ? `<button class="btn-add-modulo" onclick="abrirModalApostila()">＋ Novo módulo</button>` : ''}
           </div>
           <div class="apostilas-grid" id="apostilas-grid"></div>
+        </div>
+
+        <!-- ── AULAS (vídeos) ── -->
+        <div class="section" id="sec-aulas">
+          <div class="section-header">
+            <div class="section-header-text">
+              <h2>Aulas</h2>
+              <p>Videoaulas do Executive Import Program.</p>
+            </div>
+            ${isAdmin ? `<button class="btn-add-modulo" onclick="abrirModalAula()">＋ Novo vídeo</button>` : ''}
+          </div>
+          <div class="aulas-grid" id="aulas-grid"></div>
         </div>
 
         <!-- ── PERFIL ── -->
@@ -692,11 +887,13 @@ function initials(nome) {
     </div><!-- /main -->
   `;
 
-  /* ── Renderiza apostilas ── */
+  /* ── Renderiza apostilas e aulas ── */
   renderApostilas(apostilas, isAdmin);
+  renderAulas(aulas, isAdmin);
+  window._isAdmin = isAdmin;
 
   /* ── Navegação ── */
-  const titles = { home:'Início', apostilas:'Apostilas', perfil:'Meu Perfil', config:'Configurações' };
+  const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', perfil:'Meu Perfil', config:'Configurações' };
   function navigate(sec) {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -709,6 +906,22 @@ function initials(nome) {
       // Garante que a aba Usuários está ativa e carrega os dados
       switchConfigTab('usuarios', document.querySelector('.config-tab'));
       carregarUsuarios();
+    }
+    /* Garante que a foto persiste ao entrar em Meu Perfil */
+    if (sec === 'perfil') {
+      const pfAvEl = document.getElementById('pf-av');
+      const btnRem = document.getElementById('btn-remover-foto');
+      if (_currentAvatarUrl) {
+        const urlTs = _currentAvatarUrl + '?t=' + Date.now();
+        if (pfAvEl) pfAvEl.innerHTML = `<img src="${urlTs}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+        if (btnRem) btnRem.style.display = '';
+      } else {
+        /* Sem foto — garante que as iniciais estão corretas */
+        const nfCur = document.getElementById('pf-nm')?.textContent || '';
+        const avCur = initials(nfCur);
+        if (pfAvEl && !pfAvEl.querySelector('img')) pfAvEl.textContent = avCur;
+        if (btnRem) btnRem.style.display = 'none';
+      }
     }
   }
   document.querySelectorAll('[data-section]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.section)));
@@ -881,16 +1094,14 @@ async function salvarPerfil() {
   /* Atualiza o display do card */
   const nf = formatNome(novoNome);
   const av = initials(nf);
-  const pfAv = document.getElementById('pf-av');
   const pfNm = document.getElementById('pf-nm');
   const pfEm = document.getElementById('pf-em');
-  if (pfAv) pfAv.textContent = av;
   if (pfNm) pfNm.textContent = nf;
   if (pfEm) pfEm.textContent = novoEmail;
-  /* Atualiza nome e avatar da sidebar */
+  /* Atualiza nome na sidebar */
   const sideName = document.querySelector('.user-chip .user-name');
   if (sideName) sideName.textContent = nf;
-  /* Atualiza iniciais apenas se não tiver foto */
+  /* Atualiza iniciais apenas se não tiver foto; preserva a foto se houver */
   if (!_currentAvatarUrl) _setAllAvatars(av);
 
   btn.disabled=false; btn.textContent='Salvar alterações';
@@ -1029,7 +1240,7 @@ function fecharPDF() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { fecharPDF(); fecharModalApostila?.(); }
+  if (e.key === 'Escape') { fecharPDF(); fecharModalApostila?.(); fecharAula(); fecharModalAula?.(); }
 });
 
 /* ══════════════════════════════════════
@@ -1088,7 +1299,7 @@ async function carregarUsuarios() {
       </td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn-reset" onclick="resetSenha('${u.email}','${n}')">🔑 Reset</button>
+          <button class="btn-reset" onclick="resetSenha('${u.id}','${u.email}','${n}')">🔑 Reset senha</button>
           ${ativo
             ? `<button class="btn-desativar" onclick="toggleAtivoUser('${u.id}',false,'${n}')">🚫 Desativar</button>`
             : `<button class="btn-ativar"    onclick="toggleAtivoUser('${u.id}',true,'${n}')">✅ Ativar</button>`
@@ -1159,14 +1370,334 @@ async function cadastrarUsuario() {
   await carregarUsuarios();
 }
 
-async function resetSenha(email, nome) {
-  if (!email) { alert('E-mail não disponível para este usuário.'); return; }
-  if (!confirm(`Enviar e-mail de redefinição de senha para ${nome||email}?`)) return;
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/login.html'
+/* ══════════════════════════════════════
+   AULAS — RENDER
+══════════════════════════════════════ */
+let _aulasCache = [];
+
+function escapeHtml(s='') {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function parseQualidades(raw) {
+  // Aceita: array JSON [{label,url}] OU string "label|url" por linha
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.filter(q => q && q.url);
+  if (typeof raw === 'string') {
+    return raw.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+      const [label, ...rest] = line.split('|');
+      const url = rest.join('|').trim();
+      return url ? { label: (label||'').trim() || 'auto', url } : null;
+    }).filter(Boolean);
+  }
+  return [];
+}
+
+function qualidadesToText(arr) {
+  if (!Array.isArray(arr)) return '';
+  return arr.map(q => `${q.label||'auto'}|${q.url}`).join('\n');
+}
+
+function renderAulas(data, isAdmin) {
+  _aulasCache = data;
+  const grid = document.getElementById('aulas-grid');
+  if (!grid) return;
+  if (!data.length) {
+    grid.innerHTML = '<p style="color:var(--muted)">Nenhuma aula cadastrada.</p>';
+    return;
+  }
+  grid.innerHTML = data.map(a => {
+    const disp = !!a.disponivel;
+    const hasVideo = !!(a.video_url || (Array.isArray(a.qualidades) && a.qualidades.length));
+    const clickable = disp && hasVideo;
+    const thumbHtml = a.thumb_url
+      ? `<img src="${escapeHtml(a.thumb_url)}" alt="">`
+      : `<span style="font-size:42px">🎬</span>`;
+    return `
+      <div class="aula-card" id="aulacard-${a.id}">
+        <div class="aula-thumb ${clickable?'':'locked'}" ${clickable?`onclick="abrirAula(${a.id})"`:''}>
+          ${thumbHtml}
+          <div class="play-icon">${disp?'▶':'🔒'}</div>
+        </div>
+        <div>
+          <div class="aula-title">${escapeHtml(a.titulo||'')}</div>
+        </div>
+        ${a.descricao ? `<div class="aula-desc">${escapeHtml(a.descricao)}</div>` : ''}
+        <span class="apostila-badge ${disp?'badge-open':'badge-locked'}" style="margin-top:auto">
+          ${disp?'🔓 Disponível':'🔒 Em breve'}
+        </span>
+        ${isAdmin ? `
+        <div class="admin-actions">
+          <button class="btn-ap-adm" onclick="toggleDisponivelAula(${a.id},${disp})" title="${disp?'Desativar':'Ativar'}">
+            ${disp?'🔒':'🔓'} ${disp?'Desativar':'Ativar'}
+          </button>
+          <button class="btn-ap-adm" onclick="abrirModalAula(${a.id})" title="Editar">✏️ Editar</button>
+          <button class="btn-ap-adm danger" onclick="deletarAula(${a.id})" title="Excluir">🗑️</button>
+        </div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+async function recarregarAulas() {
+  const { data } = await sb.from('aulas').select('*').order('ordem');
+  renderAulas(data || [], !!window._isAdmin);
+}
+
+/* ══════════════════════════════════════
+   AULAS — ADMIN CRUD
+══════════════════════════════════════ */
+let _editingAulaId = null;
+
+function abrirModalAula(id = null) {
+  _editingAulaId = id;
+  document.getElementById('modal-aula-title').textContent = id ? 'Editar Aula' : 'Nova Aula';
+  if (id) {
+    const a = _aulasCache.find(x => x.id === id);
+    if (a) {
+      document.getElementById('a-num').value         = a.num || '';
+      document.getElementById('a-titulo').value      = a.titulo || '';
+      document.getElementById('a-descricao').value   = a.descricao || '';
+      document.getElementById('a-video-url').value   = a.video_url || '';
+      document.getElementById('a-qualidades').value  = qualidadesToText(a.qualidades || []);
+      document.getElementById('a-thumb').value       = a.thumb_url || '';
+      document.getElementById('a-disponivel').checked = !!a.disponivel;
+    }
+  } else {
+    document.getElementById('a-num').value         = '';
+    document.getElementById('a-titulo').value      = '';
+    document.getElementById('a-descricao').value   = '';
+    document.getElementById('a-video-url').value   = '';
+    document.getElementById('a-qualidades').value  = '';
+    document.getElementById('a-thumb').value       = '';
+    document.getElementById('a-disponivel').checked = false;
+  }
+  document.getElementById('modal-aula').classList.add('open');
+}
+function fecharModalAula() {
+  document.getElementById('modal-aula')?.classList.remove('open');
+  _editingAulaId = null;
+}
+
+async function salvarAula() {
+  const btn = document.getElementById('btn-aula-save');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+
+  const qualidades = parseQualidades(document.getElementById('a-qualidades').value);
+  const payload = {
+    num:        document.getElementById('a-num').value.trim() || null,
+    titulo:     document.getElementById('a-titulo').value.trim(),
+    descricao:  document.getElementById('a-descricao').value.trim() || null,
+    video_url:  document.getElementById('a-video-url').value.trim() || null,
+    qualidades: qualidades,
+    thumb_url:  document.getElementById('a-thumb').value.trim() || null,
+    disponivel: document.getElementById('a-disponivel').checked,
+  };
+
+  if (!payload.titulo) {
+    alert('Título é obrigatório.');
+    btn.disabled = false; btn.textContent = 'Salvar'; return;
+  }
+  if (!payload.video_url && qualidades.length === 0) {
+    alert('Informe a URL do vídeo ou pelo menos uma qualidade.');
+    btn.disabled = false; btn.textContent = 'Salvar'; return;
+  }
+
+  let error;
+  if (_editingAulaId) {
+    ({ error } = await sb.from('aulas').update(payload).eq('id', _editingAulaId));
+  } else {
+    const maxOrdem = _aulasCache.length ? Math.max(..._aulasCache.map(a => a.ordem || 0)) : 0;
+    ({ error } = await sb.from('aulas').insert({ ...payload, ordem: maxOrdem + 1 }));
+  }
+  btn.disabled = false; btn.textContent = 'Salvar';
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModalAula();
+  await recarregarAulas();
+}
+
+async function deletarAula(id) {
+  if (!confirm('Excluir esta aula? Esta ação não pode ser desfeita.')) return;
+  const { error } = await sb.from('aulas').delete().eq('id', id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  await recarregarAulas();
+}
+
+async function toggleDisponivelAula(id, current) {
+  const { error } = await sb.from('aulas').update({ disponivel: !current }).eq('id', id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  await recarregarAulas();
+}
+
+/* ══════════════════════════════════════
+   PLAYER DE VÍDEO
+══════════════════════════════════════ */
+const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+let _currentAula = null;
+let _currentQuality = null; // label
+let _currentSpeed = 1;
+
+function abrirAula(id) {
+  const a = _aulasCache.find(x => x.id === id);
+  if (!a) return;
+  _currentAula = a;
+
+  document.getElementById('video-num').textContent       = a.num || 'AULA';
+  document.getElementById('video-title-lbl').textContent = a.titulo || '';
+  document.getElementById('video-desc-box').textContent  = a.descricao || '';
+  document.getElementById('video-desc-box').style.display = a.descricao ? '' : 'none';
+
+  /* Monta a lista final de qualidades:
+     - se houver qualidades extras → usa elas
+     - inclui video_url como "auto" caso não esteja na lista */
+  const extras = Array.isArray(a.qualidades) ? a.qualidades.filter(q => q && q.url) : [];
+  let qualities = [...extras];
+  if (a.video_url && !qualities.some(q => q.url === a.video_url)) {
+    qualities.unshift({ label: 'auto', url: a.video_url });
+  }
+  if (!qualities.length && a.video_url) qualities = [{ label: 'auto', url: a.video_url }];
+
+  /* Render menu de qualidades */
+  const qualityWrap = document.getElementById('quality-wrap');
+  const qualityMenu = document.getElementById('quality-menu');
+  if (qualities.length > 1) {
+    qualityWrap.style.display = '';
+    qualityMenu.innerHTML = qualities.map((q, i) => `
+      <div class="vctrl-menu-item ${i===0?'active':''}" data-quality-url="${escapeHtml(q.url)}" data-quality-label="${escapeHtml(q.label)}">
+        <span>${escapeHtml(q.label)}</span><span class="check">✓</span>
+      </div>
+    `).join('');
+    qualityMenu.querySelectorAll('.vctrl-menu-item').forEach(el => {
+      el.addEventListener('click', () => setQuality(el.dataset.qualityUrl, el.dataset.qualityLabel));
+    });
+  } else {
+    qualityWrap.style.display = 'none';
+  }
+
+  /* Render menu de velocidades */
+  const speedMenu = document.getElementById('speed-menu');
+  speedMenu.innerHTML = SPEED_OPTIONS.map(s => `
+    <div class="vctrl-menu-item ${s===1?'active':''}" data-speed="${s}">
+      <span>${s}x${s===1?' (normal)':''}</span><span class="check">✓</span>
+    </div>
+  `).join('');
+  speedMenu.querySelectorAll('.vctrl-menu-item').forEach(el => {
+    el.addEventListener('click', () => setPlaybackRate(parseFloat(el.dataset.speed)));
   });
-  if (error) alert('Erro: ' + error.message);
-  else alert(`✓ E-mail de reset enviado para ${email}`);
+
+  /* Carrega vídeo na primeira qualidade */
+  const video = document.getElementById('video-frame');
+  const first = qualities[0];
+  if (first) {
+    _currentQuality = first.label;
+    document.getElementById('quality-label').textContent = `Qualidade: ${first.label}`;
+    video.src = first.url;
+  }
+  _currentSpeed = 1;
+  video.playbackRate = 1;
+  document.getElementById('speed-label').textContent = 'Velocidade: 1x';
+
+  document.getElementById('video-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  video.play().catch(()=>{ /* autoplay bloqueado → ok, usuário clica */ });
+}
+
+function fecharAula() {
+  const ov = document.getElementById('video-overlay');
+  if (!ov || !ov.classList.contains('open')) return;
+  ov.classList.remove('open');
+  const v = document.getElementById('video-frame');
+  if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+  document.body.style.overflow = '';
+  closeAllVctrlMenus();
+  _currentAula = null;
+}
+
+function setPlaybackRate(rate) {
+  const v = document.getElementById('video-frame');
+  if (!v) return;
+  v.playbackRate = rate;
+  _currentSpeed = rate;
+  document.getElementById('speed-label').textContent = `Velocidade: ${rate}x`;
+  document.querySelectorAll('#speed-menu .vctrl-menu-item').forEach(el => {
+    el.classList.toggle('active', parseFloat(el.dataset.speed) === rate);
+  });
+  closeAllVctrlMenus();
+}
+
+function setQuality(url, label) {
+  const v = document.getElementById('video-frame');
+  if (!v) return;
+  const wasPlaying = !v.paused;
+  const time = v.currentTime;
+  v.src = url;
+  v.addEventListener('loadedmetadata', function once() {
+    v.currentTime = time;
+    v.playbackRate = _currentSpeed;
+    if (wasPlaying) v.play().catch(()=>{});
+    v.removeEventListener('loadedmetadata', once);
+  });
+  _currentQuality = label;
+  document.getElementById('quality-label').textContent = `Qualidade: ${label}`;
+  document.querySelectorAll('#quality-menu .vctrl-menu-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.qualityUrl === url);
+  });
+  closeAllVctrlMenus();
+}
+
+function toggleVctrlMenu(which) {
+  const menu = document.getElementById(which === 'speed' ? 'speed-menu' : 'quality-menu');
+  const other = document.getElementById(which === 'speed' ? 'quality-menu' : 'speed-menu');
+  if (other) other.classList.remove('open');
+  if (menu) menu.classList.toggle('open');
+}
+function closeAllVctrlMenus() {
+  document.querySelectorAll('.vctrl-menu').forEach(m => m.classList.remove('open'));
+}
+/* Fecha os menus ao clicar fora */
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.vctrl')) closeAllVctrlMenus();
+});
+/* Atalhos de teclado dentro do player */
+document.addEventListener('keydown', (e) => {
+  const ov = document.getElementById('video-overlay');
+  if (!ov || !ov.classList.contains('open')) return;
+  const v = document.getElementById('video-frame');
+  if (!v) return;
+  // Não interferir se o foco estiver em algum input
+  const tag = (document.activeElement?.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea') return;
+  if (e.key === ' ') { e.preventDefault(); v.paused ? v.play() : v.pause(); }
+  else if (e.key === 'ArrowRight') { v.currentTime = Math.min(v.duration||1e9, v.currentTime + 5); }
+  else if (e.key === 'ArrowLeft')  { v.currentTime = Math.max(0, v.currentTime - 5); }
+});
+
+async function resetSenha(userId, email, nome) {
+  if (!userId) { alert('ID de usuário não disponível.'); return; }
+
+  /* Gera a senha padrão: 2 iniciais do e-mail em maiúsculo + "edit2026" */
+  const prefix   = (email || '').split('@')[0].slice(0, 2).toUpperCase();
+  const novaSenha = prefix + 'edit2026';
+
+  const confirmMsg =
+    `Redefinir senha de ${nome || email}?\n\n` +
+    `Nova senha padrão: ${novaSenha}\n\n` +
+    `Anote esta senha para repassar ao usuário após confirmar.`;
+
+  if (!confirm(confirmMsg)) return;
+
+  const { error } = await sb.rpc('admin_reset_password', {
+    p_user_id:    userId,
+    p_new_password: novaSenha
+  });
+
+  if (error) { alert('Erro ao redefinir senha: ' + error.message); return; }
+
+  alert(
+    `✓ Senha redefinida com sucesso!\n\n` +
+    `Usuário: ${nome || email}\n` +
+    `Nova senha: ${novaSenha}\n\n` +
+    `Repasse esta senha ao usuário.`
+  );
 }
 </script>
 </html>
