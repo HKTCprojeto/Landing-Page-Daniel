@@ -758,15 +758,15 @@
   }
   .step b { font-family: 'Fraunces', serif; font-style: italic; color: var(--blue-500); }
 
-  /* ───────── MEDIA STRIP ───────── */
+  /* ───────── MEDIA / VÍDEOS ───────── */
   .media-strip {
     background: var(--paper-2);
-    padding: 36px 0;
+    padding: 56px 0;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
   .media-strip-inner {
-    max-width: 1240px; margin: 0 auto;
+    max-width: 900px; margin: 0 auto;
     padding: 0 32px;
     text-align: center;
   }
@@ -776,25 +776,150 @@
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 700;
-    margin-bottom: 18px;
+    margin-bottom: 32px;
   }
-  .media-logos {
-    display: flex; gap: 36px; flex-wrap: wrap;
-    justify-content: center; align-items: center;
+
+  /* ── Carousel ── */
+  .vc-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
-  .media-logo {
-    height: 40px;
-    min-width: 110px;
-    border: 1.5px dashed #c5cfdc;
-    border-radius: 8px;
-    display: grid; place-items: center;
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-weight: 600;
-    padding: 0 18px;
+  .vc-viewport {
+    overflow: hidden;
+    flex: 1;
+    border-radius: 16px;
+  }
+  .vc-track {
+    display: flex;
+    transition: transform .42s cubic-bezier(.4,0,.2,1);
+  }
+  .vc-slide {
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+  .vc-card {
     background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(10,31,58,.09);
+    text-align: left;
+  }
+  .vc-video-wrap {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    position: relative;
+  }
+  .vc-video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+  }
+  /* Speed bar */
+  .vc-speed-bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 16px;
+    border-top: 1px solid var(--line);
+    background: var(--paper-2);
+    flex-wrap: wrap;
+  }
+  .vc-speed-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .vc-speed-btn {
+    padding: 3px 9px;
+    border-radius: 5px;
+    border: 1.5px solid var(--line);
+    background: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    line-height: 1.4;
+  }
+  .vc-speed-btn:hover { border-color: var(--blue-500); color: var(--blue-500); }
+  .vc-speed-btn.sp-active { background: var(--blue-500); border-color: var(--blue-500); color: #fff; }
+
+  .vc-info {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .vc-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--blue-100);
+    color: var(--blue-500);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .vc-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .vc-arrow {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    transition: all .15s;
+    box-shadow: 0 2px 8px rgba(10,31,58,.07);
+    padding: 0;
+  }
+  .vc-arrow:hover:not(:disabled) {
+    border-color: var(--blue-500);
+    color: var(--blue-500);
+    transform: scale(1.08);
+  }
+  .vc-arrow:disabled { opacity: .3; cursor: default; }
+  .vc-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .vc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #c5cfdc;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background .2s, transform .2s;
+  }
+  .vc-dot.active {
+    background: var(--blue-500);
+    transform: scale(1.35);
+  }
+  @media(max-width:600px) {
+    .vc-arrow { width: 34px; height: 34px; font-size: 20px; }
   }
 
   /* ───────── FAQ ───────── */
@@ -852,20 +977,114 @@
     gap: 12px;
   }
 
-  /* ───────── RESPONSIVE ───────── */
+  /* ═══════════════════════════════════════
+     RESPONSIVE — mobile · tablet · desktop · TV
+  ═══════════════════════════════════════ */
+
+  /* ── Tablet Landscape (≤1180px) ── */
+  @media (max-width: 1180px) {
+    .method-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; }
+  }
+
+  /* ── Tablet Portrait (≤980px) ── */
   @media (max-width: 980px) {
+    /* Layouts de 2 colunas */
     .hero-inner, .bio-grid, .pricing-wrap { grid-template-columns: 1fr; gap: 40px; }
     .stats-strip-inner, .problem-grid, .icp-grid, .method-grid { grid-template-columns: repeat(2, 1fr); }
     .modules { grid-template-columns: repeat(2, 1fr); }
-    .compare-row { grid-template-columns: 1fr; }
-    .compare-row > div { border-bottom: 1px solid var(--line); }
     .faq-grid, .form-grid2, .footer-grid { grid-template-columns: 1fr; }
+    /* Nav */
     .nav-links { display: none; }
+    .nav-btn-extra { display: none; }   /* mostra só o botão Entrar no nav */
+    /* Espaçamento */
     section { padding: 60px 0; }
+    .wrap { padding: 0 24px; }
+    /* Hero card e foto bio centralizados */
+    .hero-card { max-width: 440px; margin: 0 auto; }
+    .bio-photo { max-width: 380px; margin: 0 auto; }
+    /* Tabela comparativa: scroll horizontal em vez de empilhamento */
+    .compare { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .compare-row { min-width: 580px; grid-template-columns: 1.3fr 1.3fr 1fr; }
   }
+
+  /* ── Mobile (≤600px) ── */
   @media (max-width: 600px) {
-    .stats-strip-inner, .problem-grid, .icp-grid, .method-grid, .modules { grid-template-columns: 1fr; }
-    .hero h1 { font-size: 36px; }
+    /* Grids → 1 coluna */
+    .problem-grid, .icp-grid, .method-grid, .modules { grid-template-columns: 1fr; }
+    /* Stats mantém 2 colunas (mais compacto que 1) */
+    .stats-strip-inner { grid-template-columns: repeat(2, 1fr); padding: 18px 16px; gap: 14px; }
+    .stat-cell .num    { font-size: 28px; }
+    .stat-cell .lbl    { font-size: 11px; }
+    /* Padding geral */
+    .wrap              { padding: 0 16px; }
+    .nav-inner         { padding: 10px 16px; gap: 10px; }
+    .brand             { font-size: 16px; }
+    .brand-mark        { width: 30px; height: 30px; font-size: 13px; }
+    /* Hero */
+    .hero-inner        { padding: 36px 16px 32px; gap: 24px; }
+    .hero h1           { font-size: 34px; }
+    .hero p.lead       { font-size: 15px; max-width: 100%; }
+    .hero-ctas         { flex-direction: column; gap: 10px; }
+    .hero-ctas .btn    { justify-content: center; }
+    .hero-card         { max-width: 100%; }
+    .hero-card .photo-frame { max-height: 320px; overflow: hidden; }
+    /* Seções */
+    section            { padding: 48px 0; }
+    .section-head h2   { font-size: 28px; }
+    .section-head p    { font-size: 15px; }
+    /* Bio */
+    .bio-photo         { max-width: 260px; }
+    .bio-quote         { font-size: 19px; }
+    .bio-content h2    { font-size: 28px; }
+    .bio-credentials   { grid-template-columns: 1fr 1fr; }
+    /* Preço */
+    .price-card, .apply-card { padding: 22px; }
+    .price-card .price-num   { font-size: 48px; }
+    .price-card h3     { font-size: 24px; }
+    .apply-card h3     { font-size: 22px; }
+    /* Carrossel de vídeos */
+    .media-strip-inner { padding: 0 8px; }
+    .vc-arrow          { width: 32px; height: 32px; font-size: 18px; }
+    /* Footer */
+    footer             { padding: 40px 0 24px; }
+    .footer-grid       { gap: 20px; }
+  }
+
+  /* ── Celulares pequenos (≤380px) ── */
+  @media (max-width: 380px) {
+    .brand             { font-size: 14px; gap: 8px; }
+    .brand-mark        { width: 28px; height: 28px; font-size: 12px; }
+    .brand small       { display: none; }   /* oculta subtítulo no logo */
+    .hero h1           { font-size: 28px; }
+    .stat-cell .num    { font-size: 22px; }
+    .btn               { padding: 9px 14px; font-size: 13px; }
+    .price-card .price-num { font-size: 38px; }
+    .hero-inner        { padding: 28px 14px 24px; }
+  }
+
+  /* ── Televisão / 4K (≥1920px) ── */
+  @media (min-width: 1920px) {
+    .wrap              { max-width: 1560px; }
+    .nav-inner         { max-width: 1560px; padding: 18px 48px; }
+    .hero-inner        { max-width: 1560px; padding: 110px 48px 90px; }
+    .stats-strip-inner { max-width: 1560px; padding: 36px 48px; }
+    body               { font-size: 17px; }
+    .hero h1           { font-size: 84px; }
+    .hero p.lead       { font-size: 22px; }
+    .section-head h2   { font-size: 58px; }
+    .section-head p    { font-size: 20px; }
+    .stat-cell .num    { font-size: 50px; }
+    .stat-cell .lbl    { font-size: 14px; }
+    .problem-grid      { grid-template-columns: repeat(3, 1fr); }
+    .icp-grid          { grid-template-columns: repeat(3, 1fr); }
+    .method-grid       { grid-template-columns: repeat(4, 1fr); }
+    .modules           { grid-template-columns: repeat(4, 1fr); }
+    .faq-grid          { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid       { max-width: 1560px; }
+    .bio-content h2    { font-size: 52px; }
+    .bio-quote         { font-size: 30px; }
+    .price-card .price-num { font-size: 76px; }
   }
 
   /* Scroll anim */
@@ -893,10 +1112,10 @@
       <a href="#investimento">Investimento</a>
       <a href="#aplicar">Planos</a>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;">
+    <div class="nav-ctas" style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
       <a href="login.html" class="btn ghost" style="padding:10px 18px;font-size:14px;">Entrar</a>
-      <a href="cadastro.html" class="btn" style="padding:10px 18px;font-size:14px;">Cadastrar</a>
-      <a href="#aplicar" class="btn" style="padding:10px 18px;font-size:14px;">Aplicar →</a>
+      <a href="cadastro.html" class="btn nav-btn-extra" style="padding:10px 18px;font-size:14px;">Cadastrar</a>
+      <a href="#aplicar" class="btn nav-btn-extra" style="padding:10px 18px;font-size:14px;">Aplicar →</a>
     </div>
   </div>
 </nav>
@@ -953,18 +1172,174 @@
   </div>
 </header>
 
-<!-- ═══ MEDIA STRIP ═══ -->
+<!-- ═══ IMPRENSA — VÍDEOS ═══ -->
 <div class="media-strip">
   <div class="media-strip-inner">
     <div class="label">Análises de Daniel Cassetari na imprensa</div>
-    <div class="media-logos">
-      <div class="media-logo">EMISSORA 01</div>
-      <div class="media-logo">EMISSORA 02</div>
-      <div class="media-logo">EMISSORA 03</div>
-      <div class="media-logo">PORTAL 01</div>
-      <div class="media-logo">PORTAL 02</div>
-      <div class="media-logo">PORTAL 03</div>
+
+    <div class="vc-wrap">
+      <button class="vc-arrow" id="vc-prev" aria-label="Anterior">&#8249;</button>
+
+      <div class="vc-viewport">
+        <div class="vc-track" id="vc-track">
+
+          <!-- Slide 1 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/podcomex-revisado.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">PodComex</span>
+                <div class="vc-title">Daniel Cassetari — Análise sobre importação e tarifas internacionais</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/corte-pod.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">Destaque</span>
+                <div class="vc-title">Daniel Cassetari — Comentário sobre comércio exterior na imprensa</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/mito-qualidade-chinesa.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">Análise</span>
+                <div class="vc-title">O Mito da Qualidade Chinesa — É Tudo Sobre o Preço</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/reforma-tributaria-01.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">Reforma Tributária</span>
+                <div class="vc-title">Daniel Cassetari — Reforma Tributária e Impactos no Comércio Exterior</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/ibs.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">IBS</span>
+                <div class="vc-title">Daniel Cassetari — IBS: Imposto sobre Bens e Serviços na prática</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6 -->
+          <div class="vc-slide">
+            <div class="vc-card">
+              <div class="vc-video-wrap">
+                <video class="vc-video" controls preload="metadata">
+                  <source src="https://uuzuyiydkfugccgpjwnl.supabase.co/storage/v1/object/public/aulas-videos/landing/reforma-tributaria-02.mp4" type="video/mp4">
+                  Seu navegador não suporta vídeos HTML5.
+                </video>
+              </div>
+              <div class="vc-speed-bar">
+                <span class="vc-speed-lbl">Velocidade:</span>
+                <button class="vc-speed-btn" data-rate="0.5">0.5×</button>
+                <button class="vc-speed-btn" data-rate="0.75">0.75×</button>
+                <button class="vc-speed-btn sp-active" data-rate="1">1×</button>
+                <button class="vc-speed-btn" data-rate="1.25">1.25×</button>
+                <button class="vc-speed-btn" data-rate="1.5">1.5×</button>
+                <button class="vc-speed-btn" data-rate="2">2×</button>
+              </div>
+              <div class="vc-info">
+                <span class="vc-tag">Reforma Tributária</span>
+                <div class="vc-title">Daniel Cassetari — Reforma Tributária: Continuação e Cenários</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="vc-arrow" id="vc-next" aria-label="Próximo">&#8250;</button>
     </div>
+
+    <div class="vc-dots" id="vc-dots"></div>
   </div>
 </div>
 
@@ -1407,5 +1782,77 @@
   });
 </script>
 
+
+<script>
+/* ── Video Carousel ─────────────────────────────────────── */
+(function () {
+  var track   = document.getElementById('vc-track');
+  var dotsDiv = document.getElementById('vc-dots');
+  var prev    = document.getElementById('vc-prev');
+  var next    = document.getElementById('vc-next');
+  if (!track || !dotsDiv || !prev || !next) return;
+
+  var slides  = track.getElementsByClassName('vc-slide');
+  var cur     = 0;
+  var total   = slides.length;
+
+  /* cria dots */
+  for (var i = 0; i < total; i++) {
+    (function(idx) {
+      var d = document.createElement('button');
+      d.className = idx === 0 ? 'vc-dot active' : 'vc-dot';
+      d.setAttribute('aria-label', 'Video ' + (idx + 1));
+      d.onclick = function () { goTo(idx); };
+      dotsDiv.appendChild(d);
+    })(i);
+  }
+
+  function goTo(idx) {
+    var vid = slides[cur].querySelector('video');
+    if (vid) vid.pause();
+    cur = idx < 0 ? 0 : idx >= total ? total - 1 : idx;
+    track.style.transform = 'translateX(' + (-cur * 100) + '%)';
+    var dots = dotsDiv.getElementsByClassName('vc-dot');
+    for (var j = 0; j < dots.length; j++) {
+      dots[j].className = j === cur ? 'vc-dot active' : 'vc-dot';
+    }
+    prev.disabled = cur === 0;
+    next.disabled = cur === total - 1;
+  }
+
+  prev.onclick = function () { goTo(cur - 1); };
+  next.onclick = function () { goTo(cur + 1); };
+
+  /* swipe */
+  var tx = 0;
+  track.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, {passive: true});
+  track.addEventListener('touchend',   function (e) {
+    var d = tx - e.changedTouches[0].clientX;
+    if (d > 50) goTo(cur + 1);
+    else if (d < -50) goTo(cur - 1);
+  });
+
+  goTo(0);
+
+  /* controle de velocidade — cada card independente */
+  var cards = document.querySelectorAll('.vc-card');
+  for (var c = 0; c < cards.length; c++) {
+    (function(card) {
+      var btns  = card.querySelectorAll('.vc-speed-btn');
+      var video = card.querySelector('video');
+      for (var b = 0; b < btns.length; b++) {
+        (function(btn) {
+          btn.onclick = function () {
+            if (video) video.playbackRate = parseFloat(btn.getAttribute('data-rate'));
+            for (var k = 0; k < btns.length; k++) {
+              btns[k].className = btns[k] === btn ? 'vc-speed-btn sp-active' : 'vc-speed-btn';
+            }
+          };
+        })(btns[b]);
+      }
+    })(cards[c]);
+  }
+})();
+</script>
 </body>
 </html>

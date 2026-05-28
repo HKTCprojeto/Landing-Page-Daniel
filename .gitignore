@@ -1,2 +1,6 @@
 .claude/
 node_modules/
+.scripts/
+.vercel
+supabase/.temp/
+uploads/Videos/
