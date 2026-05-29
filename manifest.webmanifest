@@ -1,0 +1,22 @@
+{
+  "name": "Executive Import Program",
+  "short_name": "EIP",
+  "description": "Plataforma de estudos do Executive Import Program — Daniel Cassetari · HKTC",
+  "start_url": "/dashboard.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a1f3a",
+  "theme_color": "#0a1f3a",
+  "lang": "pt-BR",
+  "categories": ["education", "business"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Aulas",     "short_name": "Aulas",     "url": "/dashboard.html#aulas" },
+    { "name": "Apostilas", "short_name": "Apostilas", "url": "/dashboard.html#apostilas" }
+  ]
+}

@@ -23,6 +23,10 @@
   </svg>
 </template>
 
+<meta name="theme-color" content="#0a1f3a">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -1726,11 +1730,20 @@
     <div class="legal">
       <span>© 2026 Executive Import Program. Todos os direitos reservados.</span>
       <span>Operado por HKTC do Brasil S/A · CNPJ 22.351.708/0001-20</span>
+      <span><a href="/privacidade.html" style="color:rgba(255,255,255,.65);text-decoration:none">Política de Privacidade</a></span>
       <span class="dev-credit">Desenvolvido por <a href="https://www.linkedin.com/in/luis-galv%C3%A3o/" target="_blank" rel="noopener">Luis Galvão</a></span>
     </div>
   </div>
 </footer>
 
+<script>
+  /* PWA — registra o service worker (sem bloquear a página). */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ── Supabase ──────────────────────────────────────────────
@@ -1862,5 +1875,6 @@
   }
 })();
 </script>
+<script defer src="/cookie-banner.js"></script>
 </body>
 </html>
