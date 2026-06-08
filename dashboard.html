@@ -816,16 +816,8 @@ function initials(nome) {
           <input type="hidden" id="fb-tipo" value="">
           <input type="hidden" id="fb-conteudo-id" value="">
           <div class="mrow">
-            <label>Tipo de feedback</label>
-            <div class="fb-categorias">
-              <button type="button" class="fb-cat" data-cat="elogio"     onclick="setFbCategoria('elogio',this)">👍 Elogio</button>
-              <button type="button" class="fb-cat" data-cat="sugestao"   onclick="setFbCategoria('sugestao',this)">💡 Sugestão</button>
-              <button type="button" class="fb-cat" data-cat="reclamacao" onclick="setFbCategoria('reclamacao',this)">⚠️ Reclamação</button>
-            </div>
-          </div>
-          <div class="mrow">
-            <label>Conte mais (opcional)</label>
-            <textarea class="mtxt" id="fb-comentario" placeholder="Compartilhe o motivo da sua avaliação..."></textarea>
+            <label>Comentário (opcional)</label>
+            <textarea class="mtxt" id="fb-comentario" placeholder="Conte o motivo da sua avaliação — uma sugestão, elogio ou ponto a melhorar..."></textarea>
           </div>
           <div class="modal-footer">
             <button class="btn-mcancel" onclick="fecharModalFeedback()">Avaliar depois</button>
@@ -1021,23 +1013,21 @@ function initials(nome) {
             </div>
             <div class="fb-stat-cards" id="fb-stat-cards"></div>
             <div class="fb-filters" id="fb-filters">
-              <button class="fb-filter active" data-fb-filter="todos"      onclick="filterFeedbacks('todos',this)">Todos</button>
-              <button class="fb-filter"        data-fb-filter="aula"       onclick="filterFeedbacks('aula',this)">🎬 Aulas</button>
-              <button class="fb-filter"        data-fb-filter="apostila"   onclick="filterFeedbacks('apostila',this)">📘 Apostilas</button>
-              <button class="fb-filter"        data-fb-filter="elogio"     onclick="filterFeedbacks('elogio',this)">👍 Elogios</button>
-              <button class="fb-filter"        data-fb-filter="sugestao"   onclick="filterFeedbacks('sugestao',this)">💡 Sugestões</button>
-              <button class="fb-filter"        data-fb-filter="reclamacao" onclick="filterFeedbacks('reclamacao',this)">⚠️ Reclamações</button>
-              <button class="fb-filter"        data-fb-filter="baixas"     onclick="filterFeedbacks('baixas',this)">★ ≤ 2 (Atenção)</button>
+              <button class="fb-filter active" data-fb-filter="todos"    onclick="filterFeedbacks('todos',this)">Todos</button>
+              <button class="fb-filter"        data-fb-filter="aula"     onclick="filterFeedbacks('aula',this)">🎬 Aulas</button>
+              <button class="fb-filter"        data-fb-filter="apostila" onclick="filterFeedbacks('apostila',this)">📘 Apostilas</button>
+              <button class="fb-filter"        data-fb-filter="altas"    onclick="filterFeedbacks('altas',this)">★ ≥ 4 (Positivas)</button>
+              <button class="fb-filter"        data-fb-filter="baixas"   onclick="filterFeedbacks('baixas',this)">★ ≤ 2 (Atenção)</button>
             </div>
             <div class="table-wrap">
               <table class="users-table" id="fb-table">
                 <thead>
                   <tr>
-                    <th>Usuário</th><th>Conteúdo</th><th>Nota</th><th>Tipo</th><th>Comentário</th><th>Data</th>
+                    <th>Usuário</th><th>Conteúdo</th><th>Nota</th><th>Comentário</th><th>Data</th>
                   </tr>
                 </thead>
                 <tbody id="fb-tbody">
-                  <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
+                  <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1695,14 +1685,14 @@ function renderFeedbacksTable() {
   let list = _feedbacksAdminCache;
   if (_fbFilter === 'aula' || _fbFilter === 'apostila') {
     list = list.filter(f => f.tipo === _fbFilter);
-  } else if (_fbFilter === 'elogio' || _fbFilter === 'sugestao' || _fbFilter === 'reclamacao') {
-    list = list.filter(f => f.categoria === _fbFilter);
+  } else if (_fbFilter === 'altas') {
+    list = list.filter(f => f.nota >= 4);
   } else if (_fbFilter === 'baixas') {
     list = list.filter(f => f.nota <= 2);
   }
 
   if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum feedback nesta categoria.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Nenhum feedback nesta categoria.</td></tr>';
     return;
   }
 
@@ -1730,12 +1720,6 @@ function renderFeedbacksTable() {
         <div style="font-size:12px;color:var(--muted)">${escapeHtml(f.conteudo_titulo || '(removido)')}</div>
       </td>
       <td><span class="fb-table-stars">${stars}</span></td>
-      <td><span class="fb-cat-tag fb-cat-${f.categoria}">${
-        f.categoria === 'elogio'     ? '👍 Elogio'    :
-        f.categoria === 'sugestao'   ? '💡 Sugestão'  :
-        f.categoria === 'reclamacao' ? '⚠️ Reclamação' :
-                                       '—'
-      }</span></td>
       <td><div class="fb-coment-cell">${f.comentario ? escapeHtml(f.comentario) : '<em style="color:var(--muted)">— sem comentário —</em>'}</div></td>
       <td style="font-size:12px;color:var(--muted);white-space:nowrap">${_fbFmtDate(f.criado_em)}</td>
     </tr>`;
@@ -2664,7 +2648,6 @@ function abrirModalFeedback(tipo, conteudoId, titulo, num) {
   document.getElementById('fb-content-titulo').textContent = (num ? num + ' · ' : '') + (titulo || '');
   document.getElementById('fb-comentario').value    = '';
   setFbRating(0);
-  document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
   document.getElementById('modal-feedback').classList.add('open');
 }
 
@@ -2680,19 +2663,11 @@ function setFbRating(v) {
   document.getElementById('fb-rating-label').textContent = _ratingLabels[v] || _ratingLabels[0];
 }
 
-function setFbCategoria(cat, btn) {
-  document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  btn.dataset.selected = '1';
-}
-
 async function enviarFeedback() {
   const nota       = parseInt(document.getElementById('fb-rating').value, 10);
   const tipo       = document.getElementById('fb-tipo').value;
   const conteudoId = parseInt(document.getElementById('fb-conteudo-id').value, 10);
   const comentario = document.getElementById('fb-comentario').value.trim();
-  const catBtn     = document.querySelector('.fb-cat.active');
-  const categoria  = catBtn ? catBtn.dataset.cat : 'outro';
 
   if (!nota || nota < 1) {
     alert('Por favor, selecione de 1 a 5 estrelas.');
@@ -2707,16 +2682,14 @@ async function enviarFeedback() {
     aula_id:     tipo === 'aula'     ? conteudoId : null,
     apostila_id: tipo === 'apostila' ? conteudoId : null,
     nota,
-    categoria,
     comentario:  comentario || null,
   };
 
   /* Upsert manual: tenta insert, se já existir → update */
-  const filter = tipo === 'aula' ? { aula_id: conteudoId } : { apostila_id: conteudoId };
   const existing = _meusFeedbacks[tipo + ':' + conteudoId];
   let error;
   if (existing) {
-    ({ error } = await sb.from('feedbacks').update({ nota, categoria, comentario: comentario || null }).eq('id', existing.id));
+    ({ error } = await sb.from('feedbacks').update({ nota, comentario: comentario || null }).eq('id', existing.id));
   } else {
     ({ error } = await sb.from('feedbacks').insert(payload));
   }
