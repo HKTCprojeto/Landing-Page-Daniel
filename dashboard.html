@@ -308,7 +308,7 @@
 
   /* ═══ NOTAS / COMENTÁRIOS — painel lateral ═══ */
   .video-side-panel{padding:0 18px 18px;background:var(--card);border-top:1px solid var(--border);flex:1;min-height:0}
-  .vsp-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:14px}
+  .vsp-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:14px;align-items:flex-end;flex-wrap:wrap}
   .vsp-tab{padding:11px 14px;border:none;background:none;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
   .vsp-tab.active{color:var(--text);border-bottom-color:var(--blue)}
   .vsp-tab:hover:not(.active){color:var(--text)}
@@ -786,6 +786,8 @@ function initials(nome) {
             <div class="vsp-tabs">
               <button class="vsp-tab active" data-vsp-tab="notas" onclick="switchVspTab('notas',this)">📝 Minhas notas (<span id="vsp-notas-count">0</span>)</button>
               <button class="vsp-tab" data-vsp-tab="coments" onclick="switchVspTab('coments',this)">💬 Comentários (<span id="vsp-coments-count">0</span>)</button>
+              <div style="flex:1"></div>
+              <button class="btn-pdf-avaliar" id="btn-aula-avaliar" onclick="avaliarAulaAtual()" style="align-self:center;margin-bottom:1px" title="Avaliar esta aula"><span id="aula-avaliar-content">⭐ Avaliar</span></button>
             </div>
             <div class="vsp-pane active" id="vsp-pane-notas">
               <div id="notas-list" class="notas-list"><p class="vsp-empty">Você ainda não fez anotações nesta aula.</p></div>
@@ -2245,6 +2247,7 @@ async function abrirAula(id) {
   /* Carrega notas + comentários em paralelo */
   carregarNotas(a.id);
   carregarComentarios(a.id);
+  _atualizarBotaoAvaliarAula();
 
   /* Posiciona barra de progresso inicial */
   const prevProg = _progressoMap[a.id];
@@ -2730,6 +2733,12 @@ function avaliarApostilaAtual() {
   abrirModalFeedback('apostila', _currentApostila.id, _currentApostila.titulo, _currentApostila.num);
 }
 
+/* Wrapper chamado pelo botão do player de aula (ao lado das abas) */
+function avaliarAulaAtual() {
+  if (!_currentAula) return;
+  abrirModalFeedback('aula', _currentAula.id, _currentAula.titulo, _currentAula.num);
+}
+
 /* Atualiza o conteúdo do botão verde "Avaliar" no header do PDF */
 function _atualizarBotaoAvaliarPDF() {
   const wrap = document.getElementById('pdf-avaliar-content');
@@ -2744,6 +2753,23 @@ function _atualizarBotaoAvaliarPDF() {
   } else {
     wrap.textContent = '⭐ Avaliar';
     btn.title = 'Avaliar este módulo';
+  }
+}
+
+/* Atualiza o conteúdo do botão verde "Avaliar" no header das abas da aula */
+function _atualizarBotaoAvaliarAula() {
+  const wrap = document.getElementById('aula-avaliar-content');
+  const btn  = document.getElementById('btn-aula-avaliar');
+  if (!wrap || !btn) return;
+  if (!_currentAula) { btn.style.display = 'none'; return; }
+  btn.style.display = '';
+  const fb = _meusFeedbacks['aula:' + _currentAula.id];
+  if (fb) {
+    wrap.innerHTML = `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span>`;
+    btn.title = `Sua nota: ${fb.nota} / 5 — clique para ver/editar`;
+  } else {
+    wrap.textContent = '⭐ Avaliar';
+    btn.title = 'Avaliar esta aula';
   }
 }
 
@@ -2800,6 +2826,7 @@ async function enviarFeedback() {
   if (_aulasCache.length)     renderAulas(_aulasCache, !!window._isAdmin);
   if (_apostilasCache.length) renderApostilas(_apostilasCache, !!window._isAdmin);
   _atualizarBotaoAvaliarPDF();
+  _atualizarBotaoAvaliarAula();
 
   /* Toast simples */
   const toast = document.createElement('div');
