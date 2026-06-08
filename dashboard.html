@@ -254,13 +254,21 @@
   .video-header-info{flex:1;min-width:0}
   .video-header-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .video-header-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:2px}
-  /* Wrapper limita altura do player (vídeo + YouTube iframe ficam no mesmo box) */
-  .video-frame-wrap{position:relative;background:#000;width:100%;max-height:60vh;overflow:hidden;flex-shrink:0}
-  .video-frame{width:100%;display:block;background:#000;outline:none}
-  video.video-frame{height:auto;max-height:60vh}
-  /* O div #yt-frame recebe um iframe injetado pelo YT.Player → ocupa 100% */
-  #yt-frame{width:100%;max-height:60vh;aspect-ratio:16/9;display:block;background:#000}
-  #yt-frame iframe{width:100%!important;height:100%!important;border:0;display:block}
+  /* Player wrapper — usa padding-top dinâmico pra fixar o aspect 16:9
+     com cap em 60vh; filhos são absolutos pra que o YT.Player NUNCA
+     estoure e empurre o painel de notas/comentários. */
+  .video-frame-wrap{
+    position:relative;background:#000;width:100%;
+    height:0;padding-top:min(56.25%, 60vh);
+    overflow:hidden;flex-shrink:0
+  }
+  .video-frame-wrap > video.video-frame,
+  .video-frame-wrap > #yt-frame{
+    position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;outline:none;border:0
+  }
+  .video-frame-wrap > #yt-frame iframe{
+    width:100%!important;height:100%!important;border:0!important;display:block
+  }
   .video-controls{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border-top:1px solid var(--border);flex-wrap:wrap}
   .vctrl{position:relative}
   .vctrl-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s}
@@ -323,9 +331,9 @@
   .coment-form-actions span{flex:1;text-align:left;min-width:0}
   .coment-form-actions button{flex-shrink:0}
   .coments-list{display:flex;flex-direction:column;gap:12px}
-  .coment-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .coment-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);min-width:0}
   .coment-item:last-child{border-bottom:none}
-  .coment-replies{margin-left:46px;border-left:2px solid var(--border);padding-left:14px;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+  .coment-replies{margin-left:46px;border-left:2px solid var(--border);padding-left:14px;display:flex;flex-direction:column;gap:10px;margin-top:10px;min-width:0}
   .coment-replies .coment-item{padding:6px 0;border-bottom:none}
   .coment-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy-3));display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
   .coment-av img{width:100%;height:100%;object-fit:cover}
@@ -403,7 +411,7 @@
     .video-modal{border-radius:0;min-height:100vh}
     .video-header{padding:10px 12px}
     .video-header-title{font-size:14px}
-    .video-frame-wrap,video.video-frame,#yt-frame{max-height:50vh}
+    .video-frame-wrap{padding-top:min(56.25%, 50vh)}
     .video-controls{padding:8px 12px;gap:6px}
     .vctrl-btn{padding:6px 10px;font-size:11px}
     #video-hint{display:none}
@@ -441,7 +449,7 @@
     .config-tabs{width:100%}
     .config-tab{flex:1;text-align:center;padding:8px 10px;font-size:12px}
     /* Player — celular pequeno */
-    .video-frame-wrap,video.video-frame,#yt-frame{max-height:42vh}
+    .video-frame-wrap{padding-top:min(56.25%, 42vh)}
     .vctrl-btn span:not(.caret){font-size:11px}
     .speed-label,.quality-label{display:none}
     .coment-av{width:30px;height:30px;font-size:11px}
