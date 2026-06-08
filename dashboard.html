@@ -352,11 +352,17 @@
   /* ═══ BOTÃO "AVALIAR AGORA" — cards ═══ */
   .btn-avaliar{padding:8px 12px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;width:100%}
   .btn-avaliar:hover{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.06)}
-  .btn-avaliar.avaliado{border-color:rgba(245,158,11,.45);color:#f59e0b;background:rgba(245,158,11,.06)}
-  [data-theme="dark"] .btn-avaliar:hover,
-  [data-theme="dark"] .btn-avaliar.avaliado{color:#fbbf24;border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08)}
+  .btn-avaliar.avaliado{border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.06);padding:8px 12px;font-size:16px}
+  .btn-avaliar.avaliado .mini-stars{font-size:16px;letter-spacing:2px}
+  [data-theme="dark"] .btn-avaliar:hover{color:#fbbf24;border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08)}
+  [data-theme="dark"] .btn-avaliar.avaliado{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08)}
   .mini-stars{color:#f59e0b;letter-spacing:1px;font-family:Arial,sans-serif;font-size:13px}
   [data-theme="dark"] .mini-stars{color:#fbbf24}
+
+  /* Botão Avaliar no header do PDF (verde) */
+  .btn-pdf-avaliar{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:var(--green);border:1px solid var(--green);color:#fff;cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;transition:background .15s,filter .15s}
+  .btn-pdf-avaliar:hover{filter:brightness(1.08)}
+  .btn-pdf-avaliar .mini-stars{color:#fff;font-size:13px}
 
   /* ═══ MODAL DE FEEDBACK / AVALIAÇÃO ═══ */
   .fb-stars{display:flex;gap:6px;justify-content:center;margin:8px 0 14px}
@@ -372,6 +378,14 @@
   .fb-cat{flex:1;min-width:90px;padding:9px 8px;border-radius:8px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--text);cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;transition:all .15s;text-align:center}
   .fb-cat:hover{border-color:var(--blue)}
   .fb-cat.active{border-color:var(--blue);background:var(--badge-open-bg);color:var(--badge-open-clr)}
+  /* Modo visualização do modal de feedback */
+  .fb-modo-view .fb-star{pointer-events:none}
+  .fb-modo-view #fb-comentario{background:var(--bg2);cursor:default;border-color:var(--border)}
+  .fb-modo-view #fb-comentario:focus{border-color:var(--border);box-shadow:none}
+  .fb-modo-view .fb-edit-show{display:inline-flex}
+  .fb-modo-view .fb-view-hide{display:none}
+  .fb-edit-show{display:none}
+  .fb-comentario-vazio{font-size:13px;color:var(--muted);font-style:italic;padding:14px;background:var(--bg2);border-radius:8px;border:1px dashed var(--border);text-align:center}
 
   /* ═══ FEEDBACKS ADMIN ═══ */
   .fb-stat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:18px}
@@ -672,8 +686,9 @@ function initials(nome) {
               <div class="pdf-header-title" id="pdf-title-lbl"></div>
             </div>
             <div class="pdf-header-actions">
-              <button class="btn-pdf-dl" id="btn-pdf-concluir" onclick="concluirApostila()" title="Marcar como lida e avaliar">✓ Concluí a leitura</button>
+              <button class="btn-pdf-dl" id="btn-pdf-concluir" onclick="concluirApostila()" title="Marcar como lida">✓ Concluí a leitura</button>
               <a class="btn-pdf-dl" id="pdf-dl" href="#" download>⬇ Baixar PDF</a>
+              <button class="btn-pdf-avaliar" id="btn-pdf-avaliar" onclick="avaliarApostilaAtual()" title="Avaliar este módulo"><span id="pdf-avaliar-content">⭐ Avaliar</span></button>
               <button class="btn-pdf-close" onclick="fecharPDF()">✕ Fechar</button>
             </div>
           </div>
@@ -829,8 +844,9 @@ function initials(nome) {
             <textarea class="mtxt" id="fb-comentario" placeholder="Conte o motivo da sua avaliação — uma sugestão, elogio ou ponto a melhorar..."></textarea>
           </div>
           <div class="modal-footer">
-            <button class="btn-mcancel" onclick="fecharModalFeedback()">Avaliar depois</button>
-            <button class="btn-msave" id="btn-fb-save" onclick="enviarFeedback()">Enviar avaliação</button>
+            <button class="btn-mcancel" onclick="fecharModalFeedback()" id="btn-fb-cancel">Avaliar depois</button>
+            <button class="btn-mcancel fb-edit-show" onclick="editarFeedbackAtual()" id="btn-fb-editar" style="border-color:var(--blue);color:var(--blue)">✏️ Editar</button>
+            <button class="btn-msave fb-view-hide" id="btn-fb-save" onclick="enviarFeedback()">Enviar avaliação</button>
           </div>
         </div>
       </div>
@@ -1427,8 +1443,8 @@ function renderApostilas(data, isAdmin) {
         ${m.disponivel&&m.pdf_path?'Ler apostila':'Aguardando liberação'}
       </button>
       ${m.disponivel ? `
-        <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('apostila',${m.id},'${escapeHtml(m.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(m.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5':'Avaliar este módulo'}">
-          ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span> Editar avaliação` : '⭐ Avaliar agora'}
+        <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('apostila',${m.id},'${escapeHtml(m.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(m.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5 — clique para ver/editar':'Avaliar este módulo'}">
+          ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span>` : '⭐ Avaliar agora'}
         </button>
       ` : ''}
       ${isAdmin ? `
@@ -1557,6 +1573,8 @@ function abrirPDF(src, idOrNum, num, titulo) {
     btnConcluir.textContent   = '✓ Concluí a leitura';
     btnConcluir.disabled = false;
   }
+  /* Atualiza botão verde "Avaliar" no header */
+  _atualizarBotaoAvaliarPDF();
   document.getElementById('pdf-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
@@ -1937,8 +1955,8 @@ function renderAulas(data, isAdmin) {
           ${disp?'🔓 Disponível':'🔒 Em breve'}
         </span>
         ${disp ? `
-          <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('aula',${a.id},'${escapeHtml(a.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(a.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5':'Avaliar esta aula'}" style="margin-top:auto">
-            ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span> Editar avaliação` : '⭐ Avaliar agora'}
+          <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('aula',${a.id},'${escapeHtml(a.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(a.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5 — clique para ver/editar':'Avaliar esta aula'}" style="margin-top:auto">
+            ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span>` : '⭐ Avaliar agora'}
           </button>
         ` : ''}
         ${isAdmin ? `
@@ -2668,20 +2686,65 @@ function abrirModalFeedback(tipo, conteudoId, titulo, num) {
   document.getElementById('fb-content-tipo').textContent = tipo === 'aula' ? '🎬 AULA' : '📘 APOSTILA';
   document.getElementById('fb-content-titulo').textContent = (num ? num + ' · ' : '') + (titulo || '');
 
-  /* Se já existe avaliação anterior, pré‑preenche pra permitir edição */
   const existing = _meusFeedbacks[tipo + ':' + conteudoId];
+  const ta       = document.getElementById('fb-comentario');
+
   if (existing) {
-    document.querySelector('#modal-feedback .modal-title').textContent = '✏️ Editar avaliação';
-    document.getElementById('fb-comentario').value = existing.comentario || '';
+    /* Modo VIEW — usuário já avaliou */
+    document.body.classList.add('fb-modo-view');
+    document.querySelector('#modal-feedback .modal-title').textContent = 'Sua avaliação';
+    ta.value = existing.comentario || '';
+    ta.placeholder = '(você não deixou nenhum comentário)';
+    ta.readOnly = true;
     setFbRating(existing.nota || 0);
-    document.getElementById('btn-fb-save').textContent = 'Atualizar avaliação';
+    document.getElementById('btn-fb-save').textContent = 'Salvar alterações';
+    document.getElementById('btn-fb-cancel').textContent = 'Fechar';
   } else {
+    /* Modo EDIT — primeira avaliação */
+    document.body.classList.remove('fb-modo-view');
     document.querySelector('#modal-feedback .modal-title').textContent = '⭐ Avaliar conteúdo';
-    document.getElementById('fb-comentario').value = '';
+    ta.value = '';
+    ta.placeholder = 'Conte o motivo da sua avaliação — uma sugestão, elogio ou ponto a melhorar...';
+    ta.readOnly = false;
     setFbRating(0);
     document.getElementById('btn-fb-save').textContent = 'Enviar avaliação';
+    document.getElementById('btn-fb-cancel').textContent = 'Avaliar depois';
   }
   document.getElementById('modal-feedback').classList.add('open');
+}
+
+/* Libera os campos do modal pra edição (a partir do modo view) */
+function editarFeedbackAtual() {
+  document.body.classList.remove('fb-modo-view');
+  const ta = document.getElementById('fb-comentario');
+  ta.readOnly = false;
+  ta.placeholder = 'Conte o motivo da sua avaliação...';
+  document.querySelector('#modal-feedback .modal-title').textContent = '✏️ Editar avaliação';
+  document.getElementById('btn-fb-cancel').textContent = 'Cancelar';
+  ta.focus();
+}
+
+/* Wrapper chamado pelo botão do PDF viewer */
+function avaliarApostilaAtual() {
+  if (!_currentApostila) return;
+  abrirModalFeedback('apostila', _currentApostila.id, _currentApostila.titulo, _currentApostila.num);
+}
+
+/* Atualiza o conteúdo do botão verde "Avaliar" no header do PDF */
+function _atualizarBotaoAvaliarPDF() {
+  const wrap = document.getElementById('pdf-avaliar-content');
+  const btn  = document.getElementById('btn-pdf-avaliar');
+  if (!wrap || !btn) return;
+  if (!_currentApostila) { btn.style.display = 'none'; return; }
+  btn.style.display = '';
+  const fb = _meusFeedbacks['apostila:' + _currentApostila.id];
+  if (fb) {
+    wrap.innerHTML = `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span>`;
+    btn.title = `Sua nota: ${fb.nota} / 5 — clique para ver/editar`;
+  } else {
+    wrap.textContent = '⭐ Avaliar';
+    btn.title = 'Avaliar este módulo';
+  }
 }
 
 function fecharModalFeedback() {
@@ -2736,6 +2799,7 @@ async function enviarFeedback() {
   /* Re-renderiza grids pra atualizar os botões "Avaliar agora" → "Editar avaliação" */
   if (_aulasCache.length)     renderAulas(_aulasCache, !!window._isAdmin);
   if (_apostilasCache.length) renderApostilas(_apostilasCache, !!window._isAdmin);
+  _atualizarBotaoAvaliarPDF();
 
   /* Toast simples */
   const toast = document.createElement('div');
