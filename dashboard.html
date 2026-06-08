@@ -246,15 +246,21 @@
   .aula-desc{font-size:12.5px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
   /* ═══ VIDEO PLAYER ═══ */
-  .video-overlay{display:none;position:fixed;inset:0;z-index:550;background:rgba(0,0,0,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+  .video-overlay{display:none;position:fixed;inset:0;z-index:550;background:rgba(0,0,0,.85);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
   .video-overlay.open{display:flex}
-  .video-modal{background:#000;border-radius:14px;width:100%;max-width:1100px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6)}
-  .video-header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--border)}
+  /* O modal cresce conforme o conteúdo; a rolagem fica no overlay */
+  .video-modal{background:#000;border-radius:14px;width:100%;max-width:1100px;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.6);margin:auto}
+  .video-header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
   .video-header-info{flex:1;min-width:0}
   .video-header-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .video-header-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:2px}
-  .video-frame-wrap{position:relative;background:#000;flex:1;min-height:0}
-  .video-frame{width:100%;height:auto;max-height:65vh;display:block;background:#000;outline:none}
+  /* Wrapper limita altura do player (vídeo + YouTube iframe ficam no mesmo box) */
+  .video-frame-wrap{position:relative;background:#000;width:100%;max-height:60vh;overflow:hidden;flex-shrink:0}
+  .video-frame{width:100%;display:block;background:#000;outline:none}
+  video.video-frame{height:auto;max-height:60vh}
+  /* O div #yt-frame recebe um iframe injetado pelo YT.Player → ocupa 100% */
+  #yt-frame{width:100%;max-height:60vh;aspect-ratio:16/9;display:block;background:#000}
+  #yt-frame iframe{width:100%!important;height:100%!important;border:0;display:block}
   .video-controls{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border-top:1px solid var(--border);flex-wrap:wrap}
   .vctrl{position:relative}
   .vctrl-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s}
@@ -293,7 +299,7 @@
   .continue-pct{font-size:12px;color:rgba(255,255,255,.7);margin-top:6px}
 
   /* ═══ NOTAS / COMENTÁRIOS — painel lateral ═══ */
-  .video-side-panel{padding:0 18px 18px;background:var(--card);border-top:1px solid var(--border)}
+  .video-side-panel{padding:0 18px 18px;background:var(--card);border-top:1px solid var(--border);flex:1;min-height:0}
   .vsp-tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:14px}
   .vsp-tab{padding:11px 14px;border:none;background:none;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
   .vsp-tab.active{color:var(--text);border-bottom-color:var(--blue)}
@@ -301,7 +307,7 @@
   .vsp-pane{display:none}
   .vsp-pane.active{display:block}
   .vsp-empty{font-size:13px;color:var(--muted);padding:18px 0;text-align:center}
-  .notas-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+  .notas-list{display:flex;flex-direction:column;gap:8px}
   .nota-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;transition:border-color .15s}
   .nota-item:hover{border-color:var(--blue)}
   .nota-tempo{flex-shrink:0;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:monospace}
@@ -312,10 +318,11 @@
   .nota-actions button:hover{background:var(--card);color:var(--blue)}
   .nota-actions button.danger:hover{color:#dc2626}
   .coment-form{margin-bottom:18px;background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--border)}
-  .coment-form textarea{min-height:70px;background:var(--card)}
-  .coment-form-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px}
-  .coment-form-actions span{flex:1;text-align:left}
-  .coments-list{display:flex;flex-direction:column;gap:12px;max-height:400px;overflow-y:auto}
+  .coment-form textarea{min-height:70px;background:var(--card);width:100%;display:block;resize:vertical;max-width:100%;box-sizing:border-box}
+  .coment-form-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .coment-form-actions span{flex:1;text-align:left;min-width:0}
+  .coment-form-actions button{flex-shrink:0}
+  .coments-list{display:flex;flex-direction:column;gap:12px}
   .coment-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
   .coment-item:last-child{border-bottom:none}
   .coment-replies{margin-left:46px;border-left:2px solid var(--border);padding-left:14px;display:flex;flex-direction:column;gap:10px;margin-top:10px}
@@ -391,6 +398,19 @@
     .pdf-header-actions{gap:6px}
     /* Config tabs */
     .config-tabs{overflow-x:auto;max-width:100%;width:100%;flex-wrap:nowrap}
+    /* Player */
+    .video-overlay{padding:0}
+    .video-modal{border-radius:0;min-height:100vh}
+    .video-header{padding:10px 12px}
+    .video-header-title{font-size:14px}
+    .video-frame-wrap,video.video-frame,#yt-frame{max-height:50vh}
+    .video-controls{padding:8px 12px;gap:6px}
+    .vctrl-btn{padding:6px 10px;font-size:11px}
+    #video-hint{display:none}
+    .video-side-panel{padding:0 12px 16px}
+    .video-desc-box{padding:12px;font-size:12.5px}
+    .vsp-tab{padding:10px 8px;font-size:12px;flex:1;text-align:center}
+    .coment-replies{margin-left:20px;padding-left:10px}
   }
 
   /* ── Celulares pequenos (≤480px) ── */
@@ -420,6 +440,11 @@
     /* Abas de config */
     .config-tabs{width:100%}
     .config-tab{flex:1;text-align:center;padding:8px 10px;font-size:12px}
+    /* Player — celular pequeno */
+    .video-frame-wrap,video.video-frame,#yt-frame{max-height:42vh}
+    .vctrl-btn span:not(.caret){font-size:11px}
+    .speed-label,.quality-label{display:none}
+    .coment-av{width:30px;height:30px;font-size:11px}
   }
 
   /* ── Televisão / 4K (≥1920px) ── */
