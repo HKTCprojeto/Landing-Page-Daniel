@@ -349,6 +349,15 @@
   .coment-actions button:hover{color:var(--blue)}
   .coment-actions button.danger:hover{color:#dc2626}
 
+  /* ═══ BOTÃO "AVALIAR AGORA" — cards ═══ */
+  .btn-avaliar{padding:8px 12px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;width:100%}
+  .btn-avaliar:hover{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.06)}
+  .btn-avaliar.avaliado{border-color:rgba(245,158,11,.45);color:#f59e0b;background:rgba(245,158,11,.06)}
+  [data-theme="dark"] .btn-avaliar:hover,
+  [data-theme="dark"] .btn-avaliar.avaliado{color:#fbbf24;border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08)}
+  .mini-stars{color:#f59e0b;letter-spacing:1px;font-family:Arial,sans-serif;font-size:13px}
+  [data-theme="dark"] .mini-stars{color:#fbbf24}
+
   /* ═══ MODAL DE FEEDBACK / AVALIAÇÃO ═══ */
   .fb-stars{display:flex;gap:6px;justify-content:center;margin:8px 0 14px}
   .fb-star{font-size:36px;line-height:1;color:#cbd5e1;background:none;border:none;cursor:pointer;padding:4px;transition:transform .12s,color .12s;font-family:Arial,sans-serif}
@@ -1400,6 +1409,7 @@ function renderApostilas(data, isAdmin) {
     const pct = concluida ? 100
               : prog ? Math.min(95, Math.floor((prog.segundos / APOSTILA_TARGET_SEC) * 100))
               : 0;
+    const fb = _meusFeedbacks['apostila:' + m.id];
     return `
     <div class="apostila-card" id="acard-${m.id}">
       <div class="apostila-cover">${m.emoji||'📘'}</div>
@@ -1416,6 +1426,11 @@ function renderApostilas(data, isAdmin) {
       <button class="btn-apostila" ${m.disponivel&&m.pdf_path?`onclick="abrirPDF('${m.pdf_path}',${m.id},'${escapeHtml(m.num||'').replace(/'/g,"\\'")}','${escapeHtml(m.titulo||'').replace(/'/g,"\\'")}')"`:''} ${!m.disponivel||!m.pdf_path?'disabled':''}>
         ${m.disponivel&&m.pdf_path?'Ler apostila':'Aguardando liberação'}
       </button>
+      ${m.disponivel ? `
+        <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('apostila',${m.id},'${escapeHtml(m.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(m.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5':'Avaliar este módulo'}">
+          ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span> Editar avaliação` : '⭐ Avaliar agora'}
+        </button>
+      ` : ''}
       ${isAdmin ? `
       <div class="admin-actions">
         <button class="btn-ap-adm" onclick="toggleDisponivel(${m.id},${m.disponivel})" title="${m.disponivel?'Desativar':'Ativar'}">
@@ -1903,6 +1918,7 @@ function renderAulas(data, isAdmin) {
     const prog = _progressoMap[a.id];
     const pct  = prog ? Math.min(100, Math.round((prog.segundos / Math.max(1, prog.duracao)) * 100)) : 0;
     const concluida = prog && prog.concluida;
+    const fb = _meusFeedbacks['aula:' + a.id];
     return `
       <div class="aula-card" id="aulacard-${a.id}">
         <div class="aula-thumb ${clickable?'':'locked'}" ${clickable?`onclick="abrirAula(${a.id})"`:''}>
@@ -1917,9 +1933,14 @@ function renderAulas(data, isAdmin) {
           ` : ''}
         </div>
         ${a.descricao ? `<div class="aula-desc">${escapeHtml(a.descricao)}</div>` : ''}
-        <span class="apostila-badge ${disp?'badge-open':'badge-locked'}" style="margin-top:auto">
+        <span class="apostila-badge ${disp?'badge-open':'badge-locked'}">
           ${disp?'🔓 Disponível':'🔒 Em breve'}
         </span>
+        ${disp ? `
+          <button class="btn-avaliar ${fb?'avaliado':''}" onclick="abrirModalFeedback('aula',${a.id},'${escapeHtml(a.titulo||'').replace(/'/g,"\\'")}','${escapeHtml(a.num||'').replace(/'/g,"\\'")}')" title="${fb?'Sua nota: '+fb.nota+' / 5':'Avaliar esta aula'}" style="margin-top:auto">
+            ${fb ? `<span class="mini-stars">${'★'.repeat(fb.nota)}${'☆'.repeat(5-fb.nota)}</span> Editar avaliação` : '⭐ Avaliar agora'}
+          </button>
+        ` : ''}
         ${isAdmin ? `
         <div class="admin-actions">
           <button class="btn-ap-adm" onclick="toggleDisponivelAula(${a.id},${disp})" title="${disp?'Desativar':'Ativar'}">
@@ -2646,8 +2667,20 @@ function abrirModalFeedback(tipo, conteudoId, titulo, num) {
   document.getElementById('fb-conteudo-id').value   = conteudoId;
   document.getElementById('fb-content-tipo').textContent = tipo === 'aula' ? '🎬 AULA' : '📘 APOSTILA';
   document.getElementById('fb-content-titulo').textContent = (num ? num + ' · ' : '') + (titulo || '');
-  document.getElementById('fb-comentario').value    = '';
-  setFbRating(0);
+
+  /* Se já existe avaliação anterior, pré‑preenche pra permitir edição */
+  const existing = _meusFeedbacks[tipo + ':' + conteudoId];
+  if (existing) {
+    document.querySelector('#modal-feedback .modal-title').textContent = '✏️ Editar avaliação';
+    document.getElementById('fb-comentario').value = existing.comentario || '';
+    setFbRating(existing.nota || 0);
+    document.getElementById('btn-fb-save').textContent = 'Atualizar avaliação';
+  } else {
+    document.querySelector('#modal-feedback .modal-title').textContent = '⭐ Avaliar conteúdo';
+    document.getElementById('fb-comentario').value = '';
+    setFbRating(0);
+    document.getElementById('btn-fb-save').textContent = 'Enviar avaliação';
+  }
   document.getElementById('modal-feedback').classList.add('open');
 }
 
@@ -2699,6 +2732,10 @@ async function enviarFeedback() {
 
   await carregarMeusFeedbacks();
   fecharModalFeedback();
+
+  /* Re-renderiza grids pra atualizar os botões "Avaliar agora" → "Editar avaliação" */
+  if (_aulasCache.length)     renderAulas(_aulasCache, !!window._isAdmin);
+  if (_apostilasCache.length) renderApostilas(_apostilasCache, !!window._isAdmin);
 
   /* Toast simples */
   const toast = document.createElement('div');
