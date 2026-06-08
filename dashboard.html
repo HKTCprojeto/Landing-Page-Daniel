@@ -724,7 +724,7 @@ function initials(nome) {
                 <input type="file" id="m-thumb-file" accept="image/jpeg,image/png,image/webp" style="display:none" />
                 <button type="button" class="btn-thumb-pick" onclick="document.getElementById('m-thumb-file').click()">📂 Escolher imagem</button>
                 <button type="button" class="btn-thumb-clear" onclick="limparThumb('m')" style="display:none" id="m-thumb-clear">🗑️ Remover</button>
-                <div class="mhint" id="m-thumb-status">JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.</div>
+                <div class="mhint" id="m-thumb-status">JPG/PNG/WEBP até 15 MB. Ou cole a URL abaixo.</div>
               </div>
             </div>
             <input class="minp" id="m-thumb" placeholder="https://.../capa.jpg" style="margin-top:8px" />
@@ -771,7 +771,7 @@ function initials(nome) {
                 <input type="file" id="a-thumb-file" accept="image/jpeg,image/png,image/webp" style="display:none" />
                 <button type="button" class="btn-thumb-pick" onclick="document.getElementById('a-thumb-file').click()">📂 Escolher imagem</button>
                 <button type="button" class="btn-thumb-clear" onclick="limparThumb('a')" style="display:none" id="a-thumb-clear">🗑️ Remover</button>
-                <div class="mhint" id="a-thumb-status">JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.</div>
+                <div class="mhint" id="a-thumb-status">JPG/PNG/WEBP até 15 MB. Ou cole a URL abaixo.</div>
               </div>
             </div>
             <input class="minp" id="a-thumb" placeholder="https://.../capa.jpg" style="margin-top:8px" />
@@ -1295,7 +1295,7 @@ function _setAllAvatars(html) {
 async function uploadAvatar(event) {
   const file = event.target.files[0];
   if (!file) return;
-  if (file.size > 3 * 1024 * 1024) { alert('Imagem muito grande. Máximo 3 MB.'); return; }
+  if (file.size > 10 * 1024 * 1024) { alert('Imagem muito grande. Máximo 10 MB.'); return; }
 
   const ext   = file.name.split('.').pop().toLowerCase();
   const valid = ['jpg','jpeg','png','webp'];
@@ -1540,7 +1540,7 @@ function abrirModalApostila(id = null) {
   const tFile = document.getElementById('m-thumb-file');
   if (tFile) tFile.value = '';
   const tStatus = document.getElementById('m-thumb-status');
-  if (tStatus) { tStatus.textContent = 'JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.'; tStatus.style.color = ''; }
+  if (tStatus) { tStatus.textContent = 'JPG/PNG/WEBP até 15 MB. Ou cole a URL abaixo.'; tStatus.style.color = ''; }
   _renderThumbPreview('m', document.getElementById('m-thumb').value);
   document.getElementById('modal-apostila').classList.add('open');
 }
@@ -2102,9 +2102,9 @@ async function handleThumbUpload(ev, prefix) {
   const preview  = document.getElementById(prefix + '-thumb-preview');
   const btnClear = document.getElementById(prefix + '-thumb-clear');
 
-  if (file.size > 3 * 1024 * 1024) {
+  if (file.size > 15 * 1024 * 1024) {
     status.style.color = '#dc2626';
-    status.textContent = `Imagem de ${(file.size/1024/1024).toFixed(1)} MB excede 3 MB.`;
+    status.textContent = `Imagem de ${(file.size/1024/1024).toFixed(1)} MB excede 15 MB.`;
     ev.target.value = '';
     return;
   }
@@ -2152,7 +2152,7 @@ function limparThumb(prefix) {
   document.getElementById(prefix + '-thumb').value = '';
   _renderThumbPreview(prefix, null);
   const status = document.getElementById(prefix + '-thumb-status');
-  if (status) { status.style.color = ''; status.textContent = 'JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.'; }
+  if (status) { status.style.color = ''; status.textContent = 'JPG/PNG/WEBP até 15 MB. Ou cole a URL abaixo.'; }
 }
 
 /* Liga os listeners uma única vez (input file + paste de URL atualiza preview) */
