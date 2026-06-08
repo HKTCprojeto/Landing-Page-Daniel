@@ -408,6 +408,18 @@
   [data-theme="dark"] .fb-cat-elogio{background:rgba(74,222,128,.12);color:#4ade80}
   .fb-coment-cell{max-width:300px;font-size:12.5px;color:var(--muted);line-height:1.4;white-space:pre-wrap;word-break:break-word}
 
+  /* ═══ UPLOADER DE THUMBNAIL ═══ */
+  .thumb-uploader{display:flex;gap:14px;align-items:flex-start}
+  .thumb-preview{flex-shrink:0;width:120px;aspect-ratio:16/9;border-radius:10px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .15s}
+  .thumb-preview img{width:100%;height:100%;object-fit:cover}
+  .thumb-preview.has-image{border-style:solid;border-color:var(--blue)}
+  .thumb-placeholder{font-size:32px;opacity:.5}
+  .thumb-actions{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+  .btn-thumb-pick{padding:8px 12px;border-radius:7px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;transition:background .15s;width:fit-content}
+  .btn-thumb-pick:hover{background:#1d5fa0}
+  .btn-thumb-clear{padding:6px 10px;border-radius:7px;background:none;color:#dc2626;border:1px solid rgba(220,38,38,.4);cursor:pointer;font-family:'Manrope',sans-serif;font-size:11px;font-weight:600;width:fit-content;transition:background .15s}
+  .btn-thumb-clear:hover{background:rgba(220,38,38,.08)}
+
   /* ═══ MODAL AULA (admin) — usa as classes .modal-* já existentes ═══ */
   .mtxt{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Manrope',sans-serif;font-size:14px;color:var(--text);background:var(--input-bg);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
   .mtxt:focus{border-color:var(--blue)}
@@ -703,7 +715,20 @@ function initials(nome) {
           <div class="modal-title" id="modal-apostila-title">Novo Módulo</div>
           <div class="mrow"><label>Número (ex: M13)</label><input class="minp" id="m-num" placeholder="M13" /></div>
           <div class="mrow"><label>Título</label><input class="minp" id="m-titulo" placeholder="Módulo 13" /></div>
-          <div class="mrow"><label>Emoji</label><input class="minp" id="m-emoji" placeholder="📘" /></div>
+          <div class="mrow"><label>Emoji (usado se não tiver capa)</label><input class="minp" id="m-emoji" placeholder="📘" /></div>
+          <div class="mrow">
+            <label>🖼️ Capa do módulo (thumbnail)</label>
+            <div class="thumb-uploader">
+              <div class="thumb-preview" id="m-thumb-preview"><span class="thumb-placeholder">📘</span></div>
+              <div class="thumb-actions">
+                <input type="file" id="m-thumb-file" accept="image/jpeg,image/png,image/webp" style="display:none" />
+                <button type="button" class="btn-thumb-pick" onclick="document.getElementById('m-thumb-file').click()">📂 Escolher imagem</button>
+                <button type="button" class="btn-thumb-clear" onclick="limparThumb('m')" style="display:none" id="m-thumb-clear">🗑️ Remover</button>
+                <div class="mhint" id="m-thumb-status">JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.</div>
+              </div>
+            </div>
+            <input class="minp" id="m-thumb" placeholder="https://.../capa.jpg" style="margin-top:8px" />
+          </div>
           <div class="mrow"><label>Caminho do PDF (ex: apostilas/modulo-13.pdf)</label><input class="minp" id="m-pdf" placeholder="apostilas/modulo-13.pdf" /></div>
           <div class="mrow"><label class="mcheck"><input type="checkbox" id="m-disponivel" /> Disponível para os usuários</label></div>
           <div class="modal-footer">
@@ -738,7 +763,19 @@ function initials(nome) {
 480p|https://.../aula-01-480p.mp4"></textarea>
             <div class="mhint">Uma por linha no formato <strong>rótulo|url</strong>. O player deixará o usuário alternar.</div>
           </div>
-          <div class="mrow"><label>URL da thumbnail (opcional)</label><input class="minp" id="a-thumb" placeholder="https://.../thumb.jpg" /></div>
+          <div class="mrow">
+            <label>🖼️ Capa do vídeo (thumbnail)</label>
+            <div class="thumb-uploader">
+              <div class="thumb-preview" id="a-thumb-preview"><span class="thumb-placeholder">🎬</span></div>
+              <div class="thumb-actions">
+                <input type="file" id="a-thumb-file" accept="image/jpeg,image/png,image/webp" style="display:none" />
+                <button type="button" class="btn-thumb-pick" onclick="document.getElementById('a-thumb-file').click()">📂 Escolher imagem</button>
+                <button type="button" class="btn-thumb-clear" onclick="limparThumb('a')" style="display:none" id="a-thumb-clear">🗑️ Remover</button>
+                <div class="mhint" id="a-thumb-status">JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.</div>
+              </div>
+            </div>
+            <input class="minp" id="a-thumb" placeholder="https://.../capa.jpg" style="margin-top:8px" />
+          </div>
           <div class="mrow"><label class="mcheck"><input type="checkbox" id="a-disponivel" /> Disponível para os usuários</label></div>
           <div class="modal-footer">
             <button class="btn-mcancel" onclick="fecharModalAula()">Cancelar</button>
@@ -1428,9 +1465,12 @@ function renderApostilas(data, isAdmin) {
               : prog ? Math.min(95, Math.floor((prog.segundos / APOSTILA_TARGET_SEC) * 100))
               : 0;
     const fb = _meusFeedbacks['apostila:' + m.id];
+    const coverHtml = m.thumb_url
+      ? `<img src="${escapeHtml(m.thumb_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`
+      : (m.emoji || '📘');
     return `
     <div class="apostila-card" id="acard-${m.id}">
-      <div class="apostila-cover">${m.emoji||'📘'}</div>
+      <div class="apostila-cover" style="overflow:hidden">${coverHtml}</div>
       <div>
         <div class="apostila-title">${escapeHtml(m.titulo||'')}</div>
         ${pct > 0 ? `
@@ -1483,6 +1523,7 @@ function abrirModalApostila(id = null) {
       document.getElementById('m-num').value       = m.num || '';
       document.getElementById('m-titulo').value    = m.titulo || '';
       document.getElementById('m-emoji').value     = m.emoji || '';
+      document.getElementById('m-thumb').value     = m.thumb_url || '';
       document.getElementById('m-pdf').value       = m.pdf_path || '';
       document.getElementById('m-disponivel').checked = !!m.disponivel;
     }
@@ -1490,9 +1531,17 @@ function abrirModalApostila(id = null) {
     document.getElementById('m-num').value       = '';
     document.getElementById('m-titulo').value    = '';
     document.getElementById('m-emoji').value     = '📘';
+    document.getElementById('m-thumb').value     = '';
     document.getElementById('m-pdf').value       = '';
     document.getElementById('m-disponivel').checked = false;
   }
+  /* Liga handlers e renderiza preview da thumb */
+  _bindThumbHandlers();
+  const tFile = document.getElementById('m-thumb-file');
+  if (tFile) tFile.value = '';
+  const tStatus = document.getElementById('m-thumb-status');
+  if (tStatus) { tStatus.textContent = 'JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.'; tStatus.style.color = ''; }
+  _renderThumbPreview('m', document.getElementById('m-thumb').value);
   document.getElementById('modal-apostila').classList.add('open');
 }
 function fecharModalApostila() {
@@ -1507,6 +1556,7 @@ async function salvarApostila() {
     num:       document.getElementById('m-num').value.trim(),
     titulo:    document.getElementById('m-titulo').value.trim(),
     emoji:     document.getElementById('m-emoji').value.trim() || '📘',
+    thumb_url: document.getElementById('m-thumb').value.trim() || null,
     pdf_path:  document.getElementById('m-pdf').value.trim() || null,
     disponivel:document.getElementById('m-disponivel').checked,
   };
@@ -2021,6 +2071,11 @@ function abrirModalAula(id = null) {
     st.textContent = 'Selecione um MP4/WEBM até 50 MB. A URL será preenchida automaticamente abaixo.';
     st.style.color = '';
   }
+  /* Liga handlers e renderiza preview da thumb */
+  _bindThumbHandlers();
+  const tFile = document.getElementById('a-thumb-file');
+  if (tFile) tFile.value = '';
+  _renderThumbPreview('a', document.getElementById('a-thumb').value);
   document.getElementById('modal-aula').classList.add('open');
 }
 function fecharModalAula() {
@@ -2033,6 +2088,87 @@ function fecharModalAula() {
     st.textContent = 'Selecione um MP4/WEBM até 50 MB. A URL será preenchida automaticamente abaixo.';
     st.style.color = '';
   }
+}
+
+/* ══════════════════════════════════════
+   UPLOAD DE THUMBNAIL (aulas e apostilas)
+══════════════════════════════════════ */
+/* prefix = 'a' (aula) ou 'm' (módulo/apostila) — IDs dos elementos seguem o prefixo. */
+async function handleThumbUpload(ev, prefix) {
+  const file = ev.target.files?.[0];
+  if (!file) return;
+  const status   = document.getElementById(prefix + '-thumb-status');
+  const urlInput = document.getElementById(prefix + '-thumb');
+  const preview  = document.getElementById(prefix + '-thumb-preview');
+  const btnClear = document.getElementById(prefix + '-thumb-clear');
+
+  if (file.size > 3 * 1024 * 1024) {
+    status.style.color = '#dc2626';
+    status.textContent = `Imagem de ${(file.size/1024/1024).toFixed(1)} MB excede 3 MB.`;
+    ev.target.value = '';
+    return;
+  }
+
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `thumbs/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+
+  status.style.color = '';
+  status.textContent = 'Enviando…';
+
+  const { error } = await sb.storage.from('aulas-videos').upload(path, file, {
+    upsert: false,
+    contentType: file.type || 'image/jpeg',
+    cacheControl: '3600',
+  });
+  if (error) {
+    status.style.color = '#dc2626';
+    status.textContent = 'Erro: ' + error.message;
+    return;
+  }
+  const { data: { publicUrl } } = sb.storage.from('aulas-videos').getPublicUrl(path);
+  urlInput.value = publicUrl;
+  _renderThumbPreview(prefix, publicUrl);
+  status.style.color = 'var(--green)';
+  status.textContent = '✓ Imagem enviada!';
+}
+
+function _renderThumbPreview(prefix, url) {
+  const preview  = document.getElementById(prefix + '-thumb-preview');
+  const btnClear = document.getElementById(prefix + '-thumb-clear');
+  if (!preview) return;
+  if (url && url.trim()) {
+    preview.innerHTML = `<img src="${escapeHtml(url)}" alt="">`;
+    preview.classList.add('has-image');
+    if (btnClear) btnClear.style.display = '';
+  } else {
+    const placeholder = prefix === 'a' ? '🎬' : '📘';
+    preview.innerHTML = `<span class="thumb-placeholder">${placeholder}</span>`;
+    preview.classList.remove('has-image');
+    if (btnClear) btnClear.style.display = 'none';
+  }
+}
+
+function limparThumb(prefix) {
+  document.getElementById(prefix + '-thumb').value = '';
+  _renderThumbPreview(prefix, null);
+  const status = document.getElementById(prefix + '-thumb-status');
+  if (status) { status.style.color = ''; status.textContent = 'JPG/PNG/WEBP até 3 MB. Ou cole a URL abaixo.'; }
+}
+
+/* Liga os listeners uma única vez (input file + paste de URL atualiza preview) */
+function _bindThumbHandlers() {
+  ['a', 'm'].forEach(prefix => {
+    const fileInput = document.getElementById(prefix + '-thumb-file');
+    const urlInput  = document.getElementById(prefix + '-thumb');
+    if (fileInput && !fileInput.dataset.bound) {
+      fileInput.addEventListener('change', (e) => handleThumbUpload(e, prefix));
+      fileInput.dataset.bound = '1';
+    }
+    if (urlInput && !urlInput.dataset.bound) {
+      urlInput.addEventListener('input', () => _renderThumbPreview(prefix, urlInput.value));
+      urlInput.dataset.bound = '1';
+    }
+  });
 }
 
 /* Upload de vídeo do computador → Supabase Storage → preenche URL */
