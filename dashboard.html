@@ -1781,28 +1781,30 @@ let _fbFilter            = 'todos';
 async function carregarFeedbacksAdmin() {
   const tbody = document.getElementById('fb-tbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>';
   const { data, error } = await sb.rpc('admin_list_feedbacks');
   if (error) {
-    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);padding:16px">Erro: ${escapeHtml(error.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted);padding:16px">Erro: ${escapeHtml(error.message)}</td></tr>`;
     return;
   }
   _feedbacksAdminCache = data || [];
-  renderFeedbackStats();
-  renderFeedbacksTable();
+  renderFeedbacksTable();  // já chama renderFeedbackStats com a lista filtrada
 }
 
-function renderFeedbackStats() {
+function renderFeedbackStats(listaFiltrada, labelMedia) {
   const wrap = document.getElementById('fb-stat-cards');
   if (!wrap) return;
-  const total = _feedbacksAdminCache.length;
-  const media = total ? (_feedbacksAdminCache.reduce((a, f) => a + f.nota, 0) / total) : 0;
+  const total     = _feedbacksAdminCache.length;
   const aulas     = _feedbacksAdminCache.filter(f => f.tipo === 'aula').length;
   const apostilas = _feedbacksAdminCache.filter(f => f.tipo === 'apostila').length;
   const baixas    = _feedbacksAdminCache.filter(f => f.nota <= 2).length;
+  /* A média responde ao filtro ativo (Aulas, Apostilas, ★≥4, ★≤2 ou Todos) */
+  const lista = (listaFiltrada && listaFiltrada.length !== undefined) ? listaFiltrada : _feedbacksAdminCache;
+  const media = lista.length ? (lista.reduce((a, f) => a + f.nota, 0) / lista.length) : 0;
+  const lbl   = labelMedia || 'Nota média (todos)';
   wrap.innerHTML = `
     <div class="fb-stat-card"><div class="fb-stat-label">Total</div><div class="fb-stat-value">${total}</div></div>
-    <div class="fb-stat-card"><div class="fb-stat-label">Nota média</div><div class="fb-stat-value gold">${media ? media.toFixed(1) + ' ★' : '—'}</div></div>
+    <div class="fb-stat-card"><div class="fb-stat-label">${escapeHtml(lbl)}</div><div class="fb-stat-value gold">${media ? media.toFixed(1) + ' ★' : '—'}</div></div>
     <div class="fb-stat-card"><div class="fb-stat-label">Aulas avaliadas</div><div class="fb-stat-value">${aulas}</div></div>
     <div class="fb-stat-card"><div class="fb-stat-label">Apostilas avaliadas</div><div class="fb-stat-value">${apostilas}</div></div>
     <div class="fb-stat-card"><div class="fb-stat-label">Baixas (≤ 2 ★)</div><div class="fb-stat-value" style="color:#dc2626">${baixas}</div></div>
@@ -1827,13 +1829,22 @@ function renderFeedbacksTable() {
   if (!tbody) return;
 
   let list = _feedbacksAdminCache;
-  if (_fbFilter === 'aula' || _fbFilter === 'apostila') {
-    list = list.filter(f => f.tipo === _fbFilter);
+  let labelMedia = 'Nota média (todos)';
+  if (_fbFilter === 'aula') {
+    list = list.filter(f => f.tipo === 'aula');
+    labelMedia = 'Nota média (aulas)';
+  } else if (_fbFilter === 'apostila') {
+    list = list.filter(f => f.tipo === 'apostila');
+    labelMedia = 'Nota média (apostilas)';
   } else if (_fbFilter === 'altas') {
     list = list.filter(f => f.nota >= 4);
+    labelMedia = 'Nota média (★ ≥ 4)';
   } else if (_fbFilter === 'baixas') {
     list = list.filter(f => f.nota <= 2);
+    labelMedia = 'Nota média (★ ≤ 2)';
   }
+  /* Atualiza os cards de stats com a média ajustada ao filtro */
+  renderFeedbackStats(list, labelMedia);
 
   if (!list.length) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Nenhum feedback nesta categoria.</td></tr>';
