@@ -232,6 +232,42 @@
   .btn-msave:hover{background:#1d5fa0}
   .btn-msave:disabled{opacity:.6;cursor:not-allowed}
 
+  /* ═══ CERTIFICADOS ═══ */
+  .cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  .cert-card{background:linear-gradient(135deg,#fff,#fafafa);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+  [data-theme="dark"] .cert-card{background:linear-gradient(135deg,#0f2a4a,#15396b);border-color:rgba(255,255,255,.1)}
+  .cert-card.locked{opacity:.55;filter:saturate(.4)}
+  .cert-card:hover:not(.locked){transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.12)}
+  .cert-card::before{content:'';position:absolute;top:-24px;right:-24px;width:80px;height:80px;background:radial-gradient(circle,rgba(245,158,11,.15) 0%,transparent 70%);pointer-events:none}
+  .cert-card.programa{background:linear-gradient(135deg,#0a1f3a,#15396b);color:#fff;border-color:rgba(245,158,11,.4)}
+  .cert-card.programa::before{background:radial-gradient(circle,rgba(245,158,11,.4) 0%,transparent 70%);width:120px;height:120px;top:-40px;right:-40px}
+  .cert-seal{font-size:42px;text-align:center;line-height:1;margin-top:4px}
+  .cert-tipo{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+  .cert-card.programa .cert-tipo{color:#fbbf24}
+  .cert-titulo{font-family:'Fraunces',serif;font-size:18px;color:var(--text);text-align:center;line-height:1.3;font-weight:600}
+  .cert-card.programa .cert-titulo{color:#fff}
+  .cert-data{font-size:12px;color:var(--muted);text-align:center}
+  .cert-card.programa .cert-data{color:rgba(255,255,255,.7)}
+  .cert-actions{display:flex;gap:8px;margin-top:auto}
+  .cert-actions button{flex:1;padding:9px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;border:1px solid var(--border);background:none;color:var(--text);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+  .cert-actions button:hover{border-color:var(--blue);color:var(--blue);background:var(--btn-ap-hover-bg)}
+  .cert-actions button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .cert-actions button.primary:hover{background:#1d5fa0;color:#fff}
+  .cert-card.programa .cert-actions button{border-color:rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.06)}
+  .cert-card.programa .cert-actions button:hover{background:rgba(245,158,11,.2);border-color:#fbbf24;color:#fbbf24}
+  .cert-card.programa .cert-actions button.primary{background:#fbbf24;color:#0a1f3a;border-color:#fbbf24}
+  .cert-card.programa .cert-actions button.primary:hover{background:#f59e0b;border-color:#f59e0b;color:#0a1f3a}
+  .cert-locked-msg{font-size:11px;color:var(--muted);text-align:center;font-style:italic;margin-top:auto;padding-top:6px}
+  .cert-progress-banner{background:linear-gradient(135deg,var(--badge-open-bg),transparent);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .cert-progress-info{flex:1;min-width:200px}
+  .cert-progress-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .cert-progress-text{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+  .cert-progress-bar-wrap{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-top:4px}
+  .cert-progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#f59e0b);border-radius:99px;transition:width .5s ease}
+  .cert-empty{text-align:center;padding:48px 24px;color:var(--muted);background:var(--bg2);border-radius:14px;border:2px dashed var(--border)}
+  .cert-empty-icon{font-size:48px;opacity:.4;margin-bottom:8px}
+  .cert-empty-title{font-family:'Fraunces',serif;font-size:20px;color:var(--text);margin-bottom:6px}
+
   /* ═══ AULAS (vídeos) ═══ */
   .aulas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
   .aula-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,transform .15s,background .25s}
@@ -555,6 +591,7 @@
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 const SUPA_URL = 'https://uuzuyiydkfugccgpjwnl.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1enV5aXlka2Z1Z2NjZ3Bqd25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMTY4NjYsImV4cCI6MjA5NDg5Mjg2Nn0.SNFwLyRAdaDS3XJifpXezTjv9qLZatPBsHZVAgC1h9k';
@@ -660,6 +697,7 @@ function initials(nome) {
           <div class="nav-section-label">Estudos</div>
           <a class="nav-item" data-section="apostilas"><span class="icon">📚</span> Apostilas</a>
           <a class="nav-item" data-section="aulas"><span class="icon">🎬</span> Aulas</a>
+          <a class="nav-item" data-section="certificados"><span class="icon">🎓</span> Certificados</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-label">Perfil</div>
@@ -910,6 +948,11 @@ function initials(nome) {
               <div class="card-label">Aulas</div>
               <div class="card-desc">Videoaulas do programa</div>
             </div>
+            <div class="dash-card" data-goto="certificados">
+              <div class="card-icon">🎓</div>
+              <div class="card-label">Certificados</div>
+              <div class="card-desc">Conclusões e diplomas</div>
+            </div>
             <div class="dash-card" data-goto="perfil">
               <div class="card-icon">👤</div>
               <div class="card-label">Meu Perfil</div>
@@ -946,6 +989,18 @@ function initials(nome) {
             ${isAdmin ? `<button class="btn-add-modulo" onclick="abrirModalAula()">＋ Novo vídeo</button>` : ''}
           </div>
           <div class="aulas-grid" id="aulas-grid"></div>
+        </div>
+
+        <!-- ── CERTIFICADOS ── -->
+        <div class="section" id="sec-certificados">
+          <div class="section-header">
+            <div class="section-header-text">
+              <h2>Certificados 🎓</h2>
+              <p>Seus diplomas de conclusão. Conclua módulos e aulas para desbloquear novos certificados.</p>
+            </div>
+          </div>
+          <div id="cert-progress-banner"></div>
+          <div class="cert-grid" id="cert-grid"></div>
         </div>
 
         <!-- ── PERFIL ── -->
@@ -1224,9 +1279,10 @@ function initials(nome) {
   window._isAdmin = isAdmin;
 
   /* ── Navegação ── */
-  const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', perfil:'Meu Perfil', config:'Configurações' };
-  /* expõe _currentUserId para o módulo de feedback */
-  window._currentUserId = _currentUserId;
+  const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', certificados:'Certificados', perfil:'Meu Perfil', config:'Configurações' };
+  /* expõe _currentUserId e _currentUserNome para módulos auxiliares */
+  window._currentUserId   = _currentUserId;
+  window._currentUserNome = nome;
   window.navigate = function navigate(sec) {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1235,6 +1291,9 @@ function initials(nome) {
     document.querySelector(`[data-section="${sec}"]`)?.classList.add('active');
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
+    if (sec === 'certificados') {
+      renderCertificados();
+    }
     if (sec==='config' && isAdmin) {
       // Garante que a aba Usuários está ativa e carrega os dados
       switchConfigTab('usuarios', document.querySelector('.config-tab'));
@@ -2978,6 +3037,263 @@ async function enviarFeedback() {
   s.textContent = '@keyframes eip-toast{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}';
   document.head.appendChild(s);
 })();
+
+/* ══════════════════════════════════════
+   CERTIFICADOS
+══════════════════════════════════════ */
+function _fmtDataExtenso(iso) {
+  const d = iso ? new Date(iso) : new Date();
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function renderCertificados() {
+  const grid   = document.getElementById('cert-grid');
+  const banner = document.getElementById('cert-progress-banner');
+  if (!grid) return;
+
+  const apostilasConcluidas = _apostilasCache.filter(a => _progressoApostMap[a.id]?.concluida);
+  const aulasConcluidas     = _aulasCache.filter(a => _progressoMap[a.id]?.concluida && a.disponivel);
+  const totalConteudo  = _apostilasCache.filter(a => a.disponivel).length + _aulasCache.filter(a => a.disponivel).length;
+  const totalConcluido = apostilasConcluidas.length + aulasConcluidas.length;
+  const programaCompleto = totalConteudo > 0 && totalConcluido === totalConteudo;
+  const pct = totalConteudo ? Math.round((totalConcluido / totalConteudo) * 100) : 0;
+
+  if (banner) {
+    banner.innerHTML = totalConteudo === 0 ? '' : `
+      <div class="cert-progress-banner">
+        <div style="font-size:32px">🎓</div>
+        <div class="cert-progress-info">
+          <div class="cert-progress-label">Seu progresso no programa</div>
+          <div class="cert-progress-text">${totalConcluido} de ${totalConteudo} conteúdos concluídos${programaCompleto ? ' 🎉' : ''}</div>
+          <div class="cert-progress-bar-wrap"><div class="cert-progress-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div style="font-family:'Fraunces',serif;font-size:32px;color:var(--text);font-weight:600">${pct}%</div>
+      </div>`;
+  }
+
+  if (totalConcluido === 0) {
+    grid.innerHTML = `
+      <div class="cert-empty" style="grid-column:1/-1">
+        <div class="cert-empty-icon">🎓</div>
+        <div class="cert-empty-title">Você ainda não tem certificados</div>
+        <p>Conclua módulos e aulas para desbloquear seus certificados de conclusão.</p>
+      </div>`;
+    return;
+  }
+
+  const cards = [];
+
+  if (programaCompleto) {
+    cards.push(`
+      <div class="cert-card programa">
+        <div class="cert-seal">🏆</div>
+        <div class="cert-tipo">CERTIFICADO MASTER</div>
+        <div class="cert-titulo">Programa Completo de Comércio Exterior</div>
+        <div class="cert-data">Conquistado em ${_fmtDataExtenso()}</div>
+        <div class="cert-actions">
+          <button onclick="visualizarCertificado('programa',0)">👁️ Visualizar</button>
+          <button class="primary" onclick="baixarCertificado('programa',0)">⬇ Baixar PDF</button>
+        </div>
+      </div>`);
+  }
+
+  apostilasConcluidas.forEach(ap => {
+    const data = _fmtDataExtenso(_progressoApostMap[ap.id]?.atualizado_em);
+    cards.push(`
+      <div class="cert-card">
+        <div class="cert-seal">📘</div>
+        <div class="cert-tipo">CONCLUSÃO DE MÓDULO</div>
+        <div class="cert-titulo">${escapeHtml(ap.titulo || '')}</div>
+        <div class="cert-data">${ap.num ? escapeHtml(ap.num) + ' · ' : ''}Concluído em ${data}</div>
+        <div class="cert-actions">
+          <button onclick="visualizarCertificado('apostila',${ap.id})">👁️ Visualizar</button>
+          <button class="primary" onclick="baixarCertificado('apostila',${ap.id})">⬇ Baixar PDF</button>
+        </div>
+      </div>`);
+  });
+
+  aulasConcluidas.forEach(au => {
+    const data = _fmtDataExtenso(_progressoMap[au.id]?.atualizado_em);
+    cards.push(`
+      <div class="cert-card">
+        <div class="cert-seal">🎬</div>
+        <div class="cert-tipo">CONCLUSÃO DE AULA</div>
+        <div class="cert-titulo">${escapeHtml(au.titulo || '')}</div>
+        <div class="cert-data">${au.num ? escapeHtml(au.num) + ' · ' : ''}Concluído em ${data}</div>
+        <div class="cert-actions">
+          <button onclick="visualizarCertificado('aula',${au.id})">👁️ Visualizar</button>
+          <button class="primary" onclick="baixarCertificado('aula',${au.id})">⬇ Baixar PDF</button>
+        </div>
+      </div>`);
+  });
+
+  grid.innerHTML = cards.join('');
+}
+
+/* Gera o PDF do certificado e retorna o doc do jsPDF (não salva) */
+function _gerarCertificadoPDF({ nome, titulo, subtitulo, data, codigo, master }) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('Biblioteca de PDF ainda carregando. Tente novamente em alguns segundos.');
+    return null;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  /* A4 landscape: 842 x 595 pt */
+  const W = 842, H = 595;
+
+  /* Fundo levemente creme */
+  doc.setFillColor(252, 251, 247);
+  doc.rect(0, 0, W, H, 'F');
+
+  /* Bordas duplas (azul-marinho ou dourado para master) */
+  const borderColor = master ? [245, 158, 11] : [10, 31, 58];
+  doc.setDrawColor(...borderColor);
+  doc.setLineWidth(8);
+  doc.rect(30, 30, W - 60, H - 60);
+  doc.setLineWidth(1.5);
+  doc.rect(48, 48, W - 96, H - 96);
+
+  /* Selo decorativo nos cantos */
+  doc.setFillColor(...borderColor);
+  [[60, 60], [W - 60, 60], [60, H - 60], [W - 60, H - 60]].forEach(([x, y]) => {
+    doc.circle(x, y, 6, 'F');
+  });
+
+  /* Cabeçalho — brand */
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(200, 16, 46);
+  doc.text('EXECUTIVE IMPORT PROGRAM', W / 2, 95, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(91, 107, 125);
+  doc.text('HKTC DO BRASIL · CASSETARI EDUCAÇÃO INTERNACIONAL', W / 2, 113, { align: 'center' });
+
+  /* Faixa decorativa */
+  doc.setDrawColor(...borderColor);
+  doc.setLineWidth(0.7);
+  doc.line(W / 2 - 100, 122, W / 2 + 100, 122);
+
+  /* Tipo do certificado */
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...borderColor);
+  doc.text(master ? 'CERTIFICADO MASTER DE CONCLUSÃO' : 'CERTIFICADO DE CONCLUSÃO',
+           W / 2, 155, { align: 'center' });
+
+  /* Texto introdutório */
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(13);
+  doc.setTextColor(28, 39, 51);
+  doc.text('Certificamos que', W / 2, 200, { align: 'center' });
+
+  /* Nome do aluno — destaque */
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(36);
+  doc.setTextColor(10, 31, 58);
+  doc.text((nome || '').toUpperCase(), W / 2, 250, { align: 'center' });
+
+  /* Linha sob o nome */
+  doc.setLineWidth(1.5);
+  doc.setDrawColor(200, 16, 46);
+  doc.line(W / 2 - 180, 268, W / 2 + 180, 268);
+
+  /* Texto descritivo */
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(13);
+  doc.setTextColor(28, 39, 51);
+  doc.text('concluiu com aproveitamento', W / 2, 305, { align: 'center' });
+
+  /* Título do conteúdo */
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(10, 31, 58);
+  const tituloLines = doc.splitTextToSize(titulo || '', W - 200);
+  doc.text(tituloLines, W / 2, 345, { align: 'center' });
+
+  /* Subtítulo */
+  if (subtitulo) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(91, 107, 125);
+    doc.text(subtitulo, W / 2, 372 + (tituloLines.length - 1) * 22, { align: 'center' });
+  }
+
+  /* Data */
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(11);
+  doc.setTextColor(28, 39, 51);
+  doc.text(`São Paulo, ${data}`, W / 2, 440, { align: 'center' });
+
+  /* Assinatura */
+  doc.setLineWidth(0.8);
+  doc.setDrawColor(10, 31, 58);
+  doc.line(W / 2 - 110, 490, W / 2 + 110, 490);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(10, 31, 58);
+  doc.text('Daniel Cassetari', W / 2, 508, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(91, 107, 125);
+  doc.text('Diretor — Executive Import Program', W / 2, 522, { align: 'center' });
+
+  /* Código de verificação */
+  doc.setFontSize(8);
+  doc.setTextColor(91, 107, 125);
+  doc.text(`Código de verificação: ${codigo}`, W / 2, 555, { align: 'center' });
+
+  return doc;
+}
+
+function _prepararCert(tipo, contentId) {
+  const nome = window._currentUserNome || 'Aluno';
+  let titulo = '', subtitulo = '', data = '', codigo = '', master = false;
+
+  if (tipo === 'apostila') {
+    const ap = _apostilasCache.find(x => x.id === contentId);
+    const prog = _progressoApostMap[contentId];
+    if (!ap || !prog?.concluida) { alert('Conclua o módulo primeiro.'); return null; }
+    titulo    = ap.titulo;
+    subtitulo = ap.num ? `Módulo ${ap.num}` : 'Conclusão de módulo';
+    data      = _fmtDataExtenso(prog.atualizado_em);
+  } else if (tipo === 'aula') {
+    const au = _aulasCache.find(x => x.id === contentId);
+    const prog = _progressoMap[contentId];
+    if (!au || !prog?.concluida) { alert('Conclua a aula primeiro.'); return null; }
+    titulo    = au.titulo;
+    subtitulo = au.num ? `Aula ${au.num}` : 'Conclusão de aula';
+    data      = _fmtDataExtenso(prog.atualizado_em);
+  } else if (tipo === 'programa') {
+    titulo    = 'Programa Completo de Comércio Exterior';
+    subtitulo = 'Executive Import Program — Todas as aulas e módulos concluídos';
+    data      = _fmtDataExtenso();
+    master    = true;
+  } else {
+    return null;
+  }
+
+  codigo = `EIP-${(window._currentUserId || '').slice(0,8).toUpperCase()}-${tipo[0].toUpperCase()}${contentId || 'PRG'}`;
+  return { nome, titulo, subtitulo, data, codigo, master };
+}
+
+function baixarCertificado(tipo, contentId) {
+  const info = _prepararCert(tipo, contentId);
+  if (!info) return;
+  const doc = _gerarCertificadoPDF(info);
+  if (!doc) return;
+  const safe = info.titulo.replace(/[^A-Za-z0-9À-ÿ]+/g, '-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  doc.save(`Certificado-${safe}.pdf`);
+}
+
+function visualizarCertificado(tipo, contentId) {
+  const info = _prepararCert(tipo, contentId);
+  if (!info) return;
+  const doc = _gerarCertificadoPDF(info);
+  if (!doc) return;
+  const blobUrl = doc.output('bloburl');
+  window.open(blobUrl, '_blank', 'noopener');
+}
 
 /* ══════════════════════════════════════
    LGPD — Exportar / Excluir minha conta
