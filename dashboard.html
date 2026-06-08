@@ -349,6 +349,42 @@
   .coment-actions button:hover{color:var(--blue)}
   .coment-actions button.danger:hover{color:#dc2626}
 
+  /* ═══ MODAL DE FEEDBACK / AVALIAÇÃO ═══ */
+  .fb-stars{display:flex;gap:6px;justify-content:center;margin:8px 0 14px}
+  .fb-star{font-size:36px;line-height:1;color:#cbd5e1;background:none;border:none;cursor:pointer;padding:4px;transition:transform .12s,color .12s;font-family:Arial,sans-serif}
+  .fb-star:hover{transform:scale(1.15)}
+  .fb-star.active{color:#f59e0b;text-shadow:0 0 6px rgba(245,158,11,.35)}
+  [data-theme="dark"] .fb-star{color:#475569}
+  [data-theme="dark"] .fb-star.active{color:#fbbf24}
+  .fb-rating-label{text-align:center;font-size:13px;color:var(--muted);min-height:18px;margin-bottom:14px;font-weight:600}
+  .fb-content-info{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--text)}
+  .fb-content-info strong{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .fb-categorias{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .fb-cat{flex:1;min-width:90px;padding:9px 8px;border-radius:8px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--text);cursor:pointer;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;transition:all .15s;text-align:center}
+  .fb-cat:hover{border-color:var(--blue)}
+  .fb-cat.active{border-color:var(--blue);background:var(--badge-open-bg);color:var(--badge-open-clr)}
+
+  /* ═══ FEEDBACKS ADMIN ═══ */
+  .fb-stat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+  .fb-stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .fb-stat-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .fb-stat-value{font-family:'Fraunces',serif;font-size:24px;color:var(--text)}
+  .fb-stat-value.gold{color:#f59e0b}
+  [data-theme="dark"] .fb-stat-value.gold{color:#fbbf24}
+  .fb-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .fb-filter{padding:6px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+  .fb-filter.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .fb-filter:hover:not(.active){border-color:var(--blue)}
+  .fb-table-stars{color:#f59e0b;letter-spacing:1px;font-family:Arial,sans-serif}
+  [data-theme="dark"] .fb-table-stars{color:#fbbf24}
+  .fb-cat-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .fb-cat-elogio{background:rgba(21,128,61,.12);color:#15803d}
+  .fb-cat-sugestao{background:rgba(43,111,181,.15);color:var(--blue)}
+  .fb-cat-reclamacao{background:rgba(220,38,38,.12);color:#dc2626}
+  .fb-cat-outro{background:var(--badge-lock-bg);color:var(--badge-lock-clr)}
+  [data-theme="dark"] .fb-cat-elogio{background:rgba(74,222,128,.12);color:#4ade80}
+  .fb-coment-cell{max-width:300px;font-size:12.5px;color:var(--muted);line-height:1.4;white-space:pre-wrap;word-break:break-word}
+
   /* ═══ MODAL AULA (admin) — usa as classes .modal-* já existentes ═══ */
   .mtxt{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Manrope',sans-serif;font-size:14px;color:var(--text);background:var(--input-bg);outline:none;resize:vertical;min-height:80px;transition:border-color .15s}
   .mtxt:focus{border-color:var(--blue)}
@@ -525,17 +561,24 @@ function initials(nome) {
 
   const user = session.user;
 
-  const [perfilRes, apostilasRes, aulasRes, progressoRes] = await Promise.all([
+  const [perfilRes, apostilasRes, aulasRes, progressoRes, progressoApRes, feedbacksRes] = await Promise.all([
     sb.from('perfis').select('nome,cpf,role,plano,email,avatar_url').eq('id',user.id).single(),
     sb.from('apostilas').select('*').order('ordem'),
     sb.from('aulas').select('*').order('ordem'),
-    sb.from('progresso_aulas').select('*').eq('user_id', user.id)
+    sb.from('progresso_aulas').select('*').eq('user_id', user.id),
+    sb.from('progresso_apostilas').select('*').eq('user_id', user.id),
+    sb.from('feedbacks').select('id,tipo,aula_id,apostila_id,nota,categoria,comentario').eq('user_id', user.id),
   ]);
 
   const perfil    = perfilRes.data;
   const apostilas = apostilasRes.data || [];
   const aulas     = aulasRes.data || [];
-  (progressoRes.data || []).forEach(p => { _progressoMap[p.aula_id] = p; });
+  (progressoRes.data   || []).forEach(p => { _progressoMap[p.aula_id]         = p; });
+  (progressoApRes.data || []).forEach(p => { _progressoApostMap[p.apostila_id] = p; });
+  (feedbacksRes.data   || []).forEach(f => {
+    const k = f.tipo + ':' + (f.aula_id || f.apostila_id);
+    _meusFeedbacks[k] = f;
+  });
 
   /* ── Usuário desativado? ── */
   if (perfil && perfil.ativo === false) {
@@ -620,6 +663,7 @@ function initials(nome) {
               <div class="pdf-header-title" id="pdf-title-lbl"></div>
             </div>
             <div class="pdf-header-actions">
+              <button class="btn-pdf-dl" id="btn-pdf-concluir" onclick="concluirApostila()" title="Marcar como lida e avaliar">✓ Concluí a leitura</button>
               <a class="btn-pdf-dl" id="pdf-dl" href="#" download>⬇ Baixar PDF</a>
               <button class="btn-pdf-close" onclick="fecharPDF()">✕ Fechar</button>
             </div>
@@ -751,6 +795,45 @@ function initials(nome) {
         </div>
       </div>
 
+      <!-- MODAL FEEDBACK (avaliação de conteúdo) -->
+      <div class="modal-overlay" id="modal-feedback">
+        <div class="modal-box" style="max-width:520px">
+          <div class="modal-title">🎉 Conteúdo concluído!</div>
+          <div class="fb-content-info" id="fb-content-info">
+            <strong id="fb-content-tipo">CONTEÚDO</strong>
+            <span id="fb-content-titulo"></span>
+          </div>
+          <p style="font-size:14px;color:var(--muted);text-align:center;margin-bottom:6px">Como foi sua experiência?</p>
+          <div class="fb-stars" id="fb-stars">
+            <button type="button" class="fb-star" data-value="1" onclick="setFbRating(1)">★</button>
+            <button type="button" class="fb-star" data-value="2" onclick="setFbRating(2)">★</button>
+            <button type="button" class="fb-star" data-value="3" onclick="setFbRating(3)">★</button>
+            <button type="button" class="fb-star" data-value="4" onclick="setFbRating(4)">★</button>
+            <button type="button" class="fb-star" data-value="5" onclick="setFbRating(5)">★</button>
+          </div>
+          <div class="fb-rating-label" id="fb-rating-label">Toque nas estrelas para avaliar</div>
+          <input type="hidden" id="fb-rating" value="0">
+          <input type="hidden" id="fb-tipo" value="">
+          <input type="hidden" id="fb-conteudo-id" value="">
+          <div class="mrow">
+            <label>Tipo de feedback</label>
+            <div class="fb-categorias">
+              <button type="button" class="fb-cat" data-cat="elogio"     onclick="setFbCategoria('elogio',this)">👍 Elogio</button>
+              <button type="button" class="fb-cat" data-cat="sugestao"   onclick="setFbCategoria('sugestao',this)">💡 Sugestão</button>
+              <button type="button" class="fb-cat" data-cat="reclamacao" onclick="setFbCategoria('reclamacao',this)">⚠️ Reclamação</button>
+            </div>
+          </div>
+          <div class="mrow">
+            <label>Conte mais (opcional)</label>
+            <textarea class="mtxt" id="fb-comentario" placeholder="Compartilhe o motivo da sua avaliação..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-mcancel" onclick="fecharModalFeedback()">Avaliar depois</button>
+            <button class="btn-msave" id="btn-fb-save" onclick="enviarFeedback()">Enviar avaliação</button>
+          </div>
+        </div>
+      </div>
+
       <div class="content">
 
         <!-- ── HOME ── -->
@@ -875,6 +958,7 @@ function initials(nome) {
           <!-- Abas -->
           <div class="config-tabs">
             <button class="config-tab active" onclick="switchConfigTab('usuarios',this)">👥 Usuários</button>
+            <button class="config-tab" onclick="switchConfigTab('feedbacks',this)">⭐ Feedbacks</button>
             <button class="config-tab" onclick="switchConfigTab('apis',this)">🔌 APIs</button>
           </div>
 
@@ -927,6 +1011,35 @@ function initials(nome) {
                   <button class="btn-msave" id="btn-cu-save" onclick="cadastrarUsuario()">Cadastrar</button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Painel: Feedbacks -->
+          <div class="config-pane" id="cpane-feedbacks">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+              <div class="config-section-title" style="margin-bottom:0">Feedbacks dos Usuários</div>
+            </div>
+            <div class="fb-stat-cards" id="fb-stat-cards"></div>
+            <div class="fb-filters" id="fb-filters">
+              <button class="fb-filter active" data-fb-filter="todos"      onclick="filterFeedbacks('todos',this)">Todos</button>
+              <button class="fb-filter"        data-fb-filter="aula"       onclick="filterFeedbacks('aula',this)">🎬 Aulas</button>
+              <button class="fb-filter"        data-fb-filter="apostila"   onclick="filterFeedbacks('apostila',this)">📘 Apostilas</button>
+              <button class="fb-filter"        data-fb-filter="elogio"     onclick="filterFeedbacks('elogio',this)">👍 Elogios</button>
+              <button class="fb-filter"        data-fb-filter="sugestao"   onclick="filterFeedbacks('sugestao',this)">💡 Sugestões</button>
+              <button class="fb-filter"        data-fb-filter="reclamacao" onclick="filterFeedbacks('reclamacao',this)">⚠️ Reclamações</button>
+              <button class="fb-filter"        data-fb-filter="baixas"     onclick="filterFeedbacks('baixas',this)">★ ≤ 2 (Atenção)</button>
+            </div>
+            <div class="table-wrap">
+              <table class="users-table" id="fb-table">
+                <thead>
+                  <tr>
+                    <th>Usuário</th><th>Conteúdo</th><th>Nota</th><th>Tipo</th><th>Comentário</th><th>Data</th>
+                  </tr>
+                </thead>
+                <tbody id="fb-tbody">
+                  <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -1058,6 +1171,8 @@ function initials(nome) {
 
   /* ── Navegação ── */
   const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', perfil:'Meu Perfil', config:'Configurações' };
+  /* expõe _currentUserId para o módulo de feedback */
+  window._currentUserId = _currentUserId;
   window.navigate = function navigate(sec) {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1282,19 +1397,33 @@ async function salvarPerfil() {
 ══════════════════════════════════════ */
 let _apostilasCache = [];
 
+const APOSTILA_TARGET_SEC = 300; // 5 min = 100% (heurística antes de "Concluí")
+
 function renderApostilas(data, isAdmin) {
   _apostilasCache = data;
   const grid = document.getElementById('apostilas-grid');
   if (!grid) return;
   if (!data.length) { grid.innerHTML='<p style="color:var(--muted)">Nenhum módulo cadastrado.</p>'; return; }
-  grid.innerHTML = data.map(m => `
+  grid.innerHTML = data.map(m => {
+    const prog = _progressoApostMap[m.id];
+    const concluida = !!prog?.concluida;
+    const pct = concluida ? 100
+              : prog ? Math.min(95, Math.floor((prog.segundos / APOSTILA_TARGET_SEC) * 100))
+              : 0;
+    return `
     <div class="apostila-card" id="acard-${m.id}">
       <div class="apostila-cover">${m.emoji||'📘'}</div>
-      <div><div class="apostila-title">${m.titulo}</div></div>
+      <div>
+        <div class="apostila-title">${escapeHtml(m.titulo||'')}</div>
+        ${pct > 0 ? `
+          <div class="aula-progress" style="margin-top:6px"><div class="aula-progress-fill" style="width:${pct}%"></div></div>
+          <div class="aula-pct">${concluida ? '<span class="aula-concluida-tag">✓ Lida</span>' : pct + '% lido'}</div>
+        ` : ''}
+      </div>
       <span class="apostila-badge ${m.disponivel?'badge-open':'badge-locked'}">
         ${m.disponivel?'🔓 Disponível':'🔒 Em breve'}
       </span>
-      <button class="btn-apostila" ${m.disponivel&&m.pdf_path?`onclick="abrirPDF('${m.pdf_path}','${m.num}','${m.titulo}')"`:''} ${!m.disponivel||!m.pdf_path?'disabled':''}>
+      <button class="btn-apostila" ${m.disponivel&&m.pdf_path?`onclick="abrirPDF('${m.pdf_path}',${m.id},'${escapeHtml(m.num||'').replace(/'/g,"\\'")}','${escapeHtml(m.titulo||'').replace(/'/g,"\\'")}')"`:''} ${!m.disponivel||!m.pdf_path?'disabled':''}>
         ${m.disponivel&&m.pdf_path?'Ler apostila':'Aguardando liberação'}
       </button>
       ${isAdmin ? `
@@ -1305,7 +1434,8 @@ function renderApostilas(data, isAdmin) {
         <button class="btn-ap-adm" onclick="abrirModalApostila(${m.id})" title="Editar">✏️ Editar</button>
         <button class="btn-ap-adm danger" onclick="deletarApostila(${m.id})" title="Excluir">🗑️</button>
       </div>` : ''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 async function recarregarApostilas() {
@@ -1390,19 +1520,106 @@ async function toggleDisponivel(id, current) {
 /* ══════════════════════════════════════
    PDF VIEWER
 ══════════════════════════════════════ */
-function abrirPDF(src, num, titulo) {
-  document.getElementById('pdf-num').textContent      = num;
-  document.getElementById('pdf-title-lbl').textContent = titulo;
+let _currentApostila = null;     // { id, titulo, num }
+let _apostilaTimer   = null;
+let _apostilaTickAccum = 0;      // segundos acumulados nesta sessão
+
+function abrirPDF(src, idOrNum, num, titulo) {
+  /* Compat: assinatura antiga (src, num, titulo) sem id.
+     Quando id é uma string e num/titulo undefined, é a chamada antiga. */
+  let apostilaId = null;
+  if (typeof idOrNum === 'number') {
+    apostilaId = idOrNum;
+  } else {
+    /* chamada antiga: (src, num, titulo) */
+    titulo = num;
+    num    = idOrNum;
+  }
+  const ap = apostilaId ? _apostilasCache.find(a => a.id === apostilaId) : null;
+  _currentApostila = ap ? { id: ap.id, titulo: ap.titulo, num: ap.num } : null;
+  _apostilaTickAccum = 0;
+
+  document.getElementById('pdf-num').textContent       = num || '';
+  document.getElementById('pdf-title-lbl').textContent = titulo || '';
   document.getElementById('pdf-frame').src             = src;
   document.getElementById('pdf-dl').href               = src;
-  document.getElementById('pdf-dl').download           = titulo + '.pdf';
+  document.getElementById('pdf-dl').download           = (titulo || 'apostila') + '.pdf';
+  /* Esconde botão "Concluí" se já concluiu */
+  const btnConcluir = document.getElementById('btn-pdf-concluir');
+  if (btnConcluir) {
+    const ja = _currentApostila && _progressoApostMap[_currentApostila.id]?.concluida;
+    btnConcluir.style.display = (_currentApostila && !ja) ? '' : 'none';
+    btnConcluir.textContent   = '✓ Concluí a leitura';
+    btnConcluir.disabled = false;
+  }
   document.getElementById('pdf-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  /* Inicia timer de leitura — salva tempo a cada 30s */
+  if (_apostilaTimer) clearInterval(_apostilaTimer);
+  if (_currentApostila) {
+    _apostilaTimer = setInterval(() => {
+      _apostilaTickAccum += 30;
+      _salvarProgressoApostila();
+    }, 30000);
+  }
 }
+
+async function _salvarProgressoApostila() {
+  if (!_currentApostila) return;
+  const id = _currentApostila.id;
+  const prev = _progressoApostMap[id] || { segundos: 0, concluida: false };
+  const novosSegundos = (prev.segundos || 0) + _apostilaTickAccum;
+  _apostilaTickAccum = 0;
+  const payload = {
+    user_id:    _currentUserId,
+    apostila_id: id,
+    segundos:   novosSegundos,
+    concluida:  !!prev.concluida,
+    atualizado_em: new Date().toISOString(),
+  };
+  _progressoApostMap[id] = payload;
+  await sb.from('progresso_apostilas').upsert(payload, { onConflict: 'user_id,apostila_id' });
+}
+
+async function concluirApostila() {
+  if (!_currentApostila) return;
+  const btn = document.getElementById('btn-pdf-concluir');
+  if (btn) { btn.disabled = true; btn.textContent = 'Salvando…'; }
+
+  const id = _currentApostila.id;
+  const prev = _progressoApostMap[id] || { segundos: 0 };
+  const payload = {
+    user_id:    _currentUserId,
+    apostila_id: id,
+    segundos:   Math.max(prev.segundos || 0, _apostilaTickAccum, 30),
+    concluida:  true,
+    atualizado_em: new Date().toISOString(),
+  };
+  _progressoApostMap[id] = payload;
+  const { error } = await sb.from('progresso_apostilas').upsert(payload, { onConflict: 'user_id,apostila_id' });
+  if (btn) { btn.disabled = false; btn.textContent = '✓ Concluí a leitura'; btn.style.display = 'none'; }
+  if (error) { alert('Erro: ' + error.message); return; }
+  renderApostilas(_apostilasCache, !!window._isAdmin);
+
+  /* Abre modal de feedback se ainda não avaliou */
+  if (!jaAvaliou('apostila', id)) {
+    setTimeout(() => abrirModalFeedback('apostila', id, _currentApostila.titulo, _currentApostila.num), 400);
+  }
+}
+
 function fecharPDF() {
+  /* Salva o tempo acumulado antes de fechar */
+  if (_currentApostila && _apostilaTickAccum > 0) {
+    _salvarProgressoApostila().catch(() => {});
+  }
+  if (_apostilaTimer) { clearInterval(_apostilaTimer); _apostilaTimer = null; }
   document.getElementById('pdf-overlay').classList.remove('open');
   document.getElementById('pdf-frame').src = '';
   document.body.style.overflow = '';
+  _currentApostila = null;
+  /* Atualiza grid pra refletir progresso */
+  if (_apostilasCache.length) renderApostilas(_apostilasCache, !!window._isAdmin);
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { fecharPDF(); fecharModalApostila?.(); fecharAula(); fecharModalAula?.(); }
@@ -1417,7 +1634,112 @@ function switchConfigTab(tab, btn) {
   if (btn) btn.classList.add('active');
   const pane = document.getElementById('cpane-' + tab);
   if (pane) pane.classList.add('active');
-  if (tab === 'usuarios') carregarUsuarios();
+  if (tab === 'usuarios')  carregarUsuarios();
+  if (tab === 'feedbacks') carregarFeedbacksAdmin();
+}
+
+/* ══════════════════════════════════════
+   CONFIGURAÇÕES — Feedbacks (admin)
+══════════════════════════════════════ */
+let _feedbacksAdminCache = [];
+let _fbFilter            = 'todos';
+
+async function carregarFeedbacksAdmin() {
+  const tbody = document.getElementById('fb-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Carregando…</td></tr>';
+  const { data, error } = await sb.rpc('admin_list_feedbacks');
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);padding:16px">Erro: ${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  _feedbacksAdminCache = data || [];
+  renderFeedbackStats();
+  renderFeedbacksTable();
+}
+
+function renderFeedbackStats() {
+  const wrap = document.getElementById('fb-stat-cards');
+  if (!wrap) return;
+  const total = _feedbacksAdminCache.length;
+  const media = total ? (_feedbacksAdminCache.reduce((a, f) => a + f.nota, 0) / total) : 0;
+  const aulas     = _feedbacksAdminCache.filter(f => f.tipo === 'aula').length;
+  const apostilas = _feedbacksAdminCache.filter(f => f.tipo === 'apostila').length;
+  const baixas    = _feedbacksAdminCache.filter(f => f.nota <= 2).length;
+  wrap.innerHTML = `
+    <div class="fb-stat-card"><div class="fb-stat-label">Total</div><div class="fb-stat-value">${total}</div></div>
+    <div class="fb-stat-card"><div class="fb-stat-label">Nota média</div><div class="fb-stat-value gold">${media ? media.toFixed(1) + ' ★' : '—'}</div></div>
+    <div class="fb-stat-card"><div class="fb-stat-label">Aulas avaliadas</div><div class="fb-stat-value">${aulas}</div></div>
+    <div class="fb-stat-card"><div class="fb-stat-label">Apostilas avaliadas</div><div class="fb-stat-value">${apostilas}</div></div>
+    <div class="fb-stat-card"><div class="fb-stat-label">Baixas (≤ 2 ★)</div><div class="fb-stat-value" style="color:#dc2626">${baixas}</div></div>
+  `;
+}
+
+function filterFeedbacks(filter, btn) {
+  _fbFilter = filter;
+  document.querySelectorAll('.fb-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderFeedbacksTable();
+}
+
+function _fbFmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function renderFeedbacksTable() {
+  const tbody = document.getElementById('fb-tbody');
+  if (!tbody) return;
+
+  let list = _feedbacksAdminCache;
+  if (_fbFilter === 'aula' || _fbFilter === 'apostila') {
+    list = list.filter(f => f.tipo === _fbFilter);
+  } else if (_fbFilter === 'elogio' || _fbFilter === 'sugestao' || _fbFilter === 'reclamacao') {
+    list = list.filter(f => f.categoria === _fbFilter);
+  } else if (_fbFilter === 'baixas') {
+    list = list.filter(f => f.nota <= 2);
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum feedback nesta categoria.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = list.map(f => {
+    const nome = formatNome(f.autor_nome || '');
+    const av   = initials(nome || f.autor_email || '?');
+    const avHtml = f.autor_avatar
+      ? `<img src="${escapeHtml(f.autor_avatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : av;
+    const stars = '★'.repeat(f.nota) + '☆'.repeat(5 - f.nota);
+    const tipoIco = f.tipo === 'aula' ? '🎬' : '📘';
+    return `
+    <tr>
+      <td>
+        <div class="user-cell">
+          <div class="av-sm" style="overflow:hidden">${avHtml}</div>
+          <div>
+            <div style="font-weight:600">${nome || '—'}</div>
+            <div style="font-size:11px;color:var(--muted)">${escapeHtml(f.autor_email || '')}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div style="font-weight:600">${tipoIco} ${escapeHtml(f.conteudo_num || '')}</div>
+        <div style="font-size:12px;color:var(--muted)">${escapeHtml(f.conteudo_titulo || '(removido)')}</div>
+      </td>
+      <td><span class="fb-table-stars">${stars}</span></td>
+      <td><span class="fb-cat-tag fb-cat-${f.categoria}">${
+        f.categoria === 'elogio'     ? '👍 Elogio'    :
+        f.categoria === 'sugestao'   ? '💡 Sugestão'  :
+        f.categoria === 'reclamacao' ? '⚠️ Reclamação' :
+                                       '—'
+      }</span></td>
+      <td><div class="fb-coment-cell">${f.comentario ? escapeHtml(f.comentario) : '<em style="color:var(--muted)">— sem comentário —</em>'}</div></td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap">${_fbFmtDate(f.criado_em)}</td>
+    </tr>`;
+  }).join('');
 }
 
 /* ══════════════════════════════════════
@@ -1541,9 +1863,10 @@ async function cadastrarUsuario() {
 /* ══════════════════════════════════════
    AULAS — RENDER
 ══════════════════════════════════════ */
-let _aulasCache    = [];
-let _progressoMap  = {};  // aula_id → { segundos, duracao, concluida }
-let _ytApiPromise  = null;
+let _aulasCache       = [];
+let _progressoMap     = {};  // aula_id → { segundos, duracao, concluida }
+let _progressoApostMap = {}; // apostila_id → { segundos, concluida }
+let _ytApiPromise     = null;
 
 function escapeHtml(s='') {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1841,6 +2164,8 @@ async function _salvarProgressoTick() {
   if (!duration || !current) return;
   if (Math.abs(current - _lastSavedSec) < 5) return;
   _lastSavedSec = current;
+
+  const previousConcluida = !!_progressoMap[_currentAula.id]?.concluida;
   const concluida = (current / duration) >= 0.95;
   const payload = {
     user_id:   _currentUserId,
@@ -1854,6 +2179,13 @@ async function _salvarProgressoTick() {
   const fill = document.getElementById('video-progress-fill');
   if (fill) fill.style.width = Math.min(100, (current / duration) * 100) + '%';
   await sb.from('progresso_aulas').upsert(payload, { onConflict: 'user_id,aula_id' });
+
+  /* Concluiu agora E ainda não avaliou → abre modal de feedback */
+  if (concluida && !previousConcluida && !jaAvaliou('aula', _currentAula.id)) {
+    setTimeout(() => {
+      if (_currentAula) abrirModalFeedback('aula', _currentAula.id, _currentAula.titulo, _currentAula.num);
+    }, 600);
+  }
 }
 
 async function abrirAula(id) {
@@ -2305,6 +2637,110 @@ async function deletarComentario(id) {
   if (error) { alert('Erro: ' + error.message); return; }
   await carregarComentarios(_currentAula.id);
 }
+
+/* ══════════════════════════════════════
+   FEEDBACK — Avaliação 1‑5 estrelas
+══════════════════════════════════════ */
+const _ratingLabels = ['Toque nas estrelas para avaliar','Muito ruim 😞','Ruim 😕','Ok 😐','Bom 😊','Excelente! 🤩'];
+let _meusFeedbacks  = {};  // chave "aula:5" / "apostila:3" → feedback
+
+async function carregarMeusFeedbacks() {
+  const { data } = await sb.from('feedbacks').select('id,tipo,aula_id,apostila_id,nota,categoria,comentario').eq('user_id', _currentUserId);
+  _meusFeedbacks = {};
+  (data || []).forEach(f => {
+    const key = f.tipo + ':' + (f.aula_id || f.apostila_id);
+    _meusFeedbacks[key] = f;
+  });
+}
+
+function jaAvaliou(tipo, id) {
+  return !!_meusFeedbacks[tipo + ':' + id];
+}
+
+function abrirModalFeedback(tipo, conteudoId, titulo, num) {
+  document.getElementById('fb-tipo').value          = tipo;
+  document.getElementById('fb-conteudo-id').value   = conteudoId;
+  document.getElementById('fb-content-tipo').textContent = tipo === 'aula' ? '🎬 AULA' : '📘 APOSTILA';
+  document.getElementById('fb-content-titulo').textContent = (num ? num + ' · ' : '') + (titulo || '');
+  document.getElementById('fb-comentario').value    = '';
+  setFbRating(0);
+  document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
+  document.getElementById('modal-feedback').classList.add('open');
+}
+
+function fecharModalFeedback() {
+  document.getElementById('modal-feedback')?.classList.remove('open');
+}
+
+function setFbRating(v) {
+  document.getElementById('fb-rating').value = v;
+  document.querySelectorAll('.fb-star').forEach((s, i) => {
+    s.classList.toggle('active', i < v);
+  });
+  document.getElementById('fb-rating-label').textContent = _ratingLabels[v] || _ratingLabels[0];
+}
+
+function setFbCategoria(cat, btn) {
+  document.querySelectorAll('.fb-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.selected = '1';
+}
+
+async function enviarFeedback() {
+  const nota       = parseInt(document.getElementById('fb-rating').value, 10);
+  const tipo       = document.getElementById('fb-tipo').value;
+  const conteudoId = parseInt(document.getElementById('fb-conteudo-id').value, 10);
+  const comentario = document.getElementById('fb-comentario').value.trim();
+  const catBtn     = document.querySelector('.fb-cat.active');
+  const categoria  = catBtn ? catBtn.dataset.cat : 'outro';
+
+  if (!nota || nota < 1) {
+    alert('Por favor, selecione de 1 a 5 estrelas.');
+    return;
+  }
+  const btn = document.getElementById('btn-fb-save');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+
+  const payload = {
+    user_id:    _currentUserId,
+    tipo,
+    aula_id:     tipo === 'aula'     ? conteudoId : null,
+    apostila_id: tipo === 'apostila' ? conteudoId : null,
+    nota,
+    categoria,
+    comentario:  comentario || null,
+  };
+
+  /* Upsert manual: tenta insert, se já existir → update */
+  const filter = tipo === 'aula' ? { aula_id: conteudoId } : { apostila_id: conteudoId };
+  const existing = _meusFeedbacks[tipo + ':' + conteudoId];
+  let error;
+  if (existing) {
+    ({ error } = await sb.from('feedbacks').update({ nota, categoria, comentario: comentario || null }).eq('id', existing.id));
+  } else {
+    ({ error } = await sb.from('feedbacks').insert(payload));
+  }
+
+  btn.disabled = false; btn.textContent = 'Enviar avaliação';
+  if (error) { alert('Erro: ' + error.message); return; }
+
+  await carregarMeusFeedbacks();
+  fecharModalFeedback();
+
+  /* Toast simples */
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#15803d;color:#fff;padding:12px 22px;border-radius:99px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:eip-toast .35s ease';
+  toast.textContent = '✓ Obrigado pelo feedback!';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* Anima toast (definido aqui pra reuso futuro) */
+(function(){
+  const s = document.createElement('style');
+  s.textContent = '@keyframes eip-toast{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}';
+  document.head.appendChild(s);
+})();
 
 /* ══════════════════════════════════════
    LGPD — Exportar / Excluir minha conta
