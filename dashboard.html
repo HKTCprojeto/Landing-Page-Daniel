@@ -232,6 +232,58 @@
   .btn-msave:hover{background:#1d5fa0}
   .btn-msave:disabled{opacity:.6;cursor:not-allowed}
 
+  /* ═══ FÓRUM / TIRE SUA DÚVIDA ═══ */
+  .topicos-list{display:flex;flex-direction:column;gap:10px}
+  .topico-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;cursor:pointer;transition:border-color .15s,transform .12s,box-shadow .15s}
+  .topico-card:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.07)}
+  .topico-card.fixado{border-left:4px solid #f59e0b}
+  .topico-card.resolvido{border-left:4px solid #15803d}
+  .topico-card.fechado{opacity:.6}
+  .topico-av{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy-3));display:grid;place-items:center;font-size:14px;font-weight:700;color:#fff;overflow:hidden}
+  .topico-av img{width:100%;height:100%;object-fit:cover}
+  .topico-body{flex:1;min-width:0}
+  .topico-head-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .topico-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px}
+  .topico-tag.fixado{background:rgba(245,158,11,.15);color:#d97706}
+  .topico-tag.resolvido{background:rgba(21,128,61,.15);color:#15803d}
+  .topico-tag.fechado{background:var(--badge-lock-bg);color:var(--badge-lock-clr)}
+  [data-theme="dark"] .topico-tag.fixado{color:#fbbf24}
+  [data-theme="dark"] .topico-tag.resolvido{color:#4ade80}
+  .topico-titulo{font-size:15.5px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:3px;word-break:break-word}
+  .topico-preview{font-size:13px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:6px}
+  .topico-meta{display:flex;gap:12px;align-items:center;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+  .topico-meta strong{color:var(--text);font-weight:600}
+  .topico-stats{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;min-width:60px;text-align:center}
+  .topico-stats-num{font-family:'Fraunces',serif;font-size:22px;color:var(--text);font-weight:600;line-height:1}
+  .topico-stats-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .topicos-empty{text-align:center;padding:40px 20px;color:var(--muted);background:var(--bg2);border-radius:14px;border:2px dashed var(--border)}
+  .topicos-empty-icon{font-size:42px;opacity:.4;margin-bottom:6px}
+
+  /* Modal de visualização */
+  .topico-view-head{padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:16px}
+  .topico-view-tipo{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+  .topico-autor-row{display:flex;align-items:center;gap:10px}
+  .topico-view-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .topico-view-actions button{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Manrope',sans-serif;font-size:11px;font-weight:600;transition:all .12s}
+  .topico-view-actions button:hover{border-color:var(--blue);color:var(--blue)}
+  .topico-view-actions button.danger:hover{border-color:#dc2626;color:#dc2626}
+  .topico-view-actions button.solucao{border-color:rgba(21,128,61,.5);color:#15803d}
+  .topico-view-actions button.solucao:hover{background:rgba(21,128,61,.08)}
+  [data-theme="dark"] .topico-view-actions button.solucao{color:#4ade80;border-color:rgba(74,222,128,.5)}
+  .topico-view-texto{font-size:14.5px;color:var(--text);line-height:1.65;white-space:pre-wrap;word-break:break-word;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)}
+  .topico-respostas-list{display:flex;flex-direction:column;gap:10px}
+  .resposta-item{display:flex;gap:10px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;transition:border-color .15s}
+  .resposta-item.solucao{border-color:#15803d;background:linear-gradient(135deg,rgba(21,128,61,.06),transparent)}
+  [data-theme="dark"] .resposta-item.solucao{border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,.07),transparent)}
+  .resposta-solucao-tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(21,128,61,.15);color:#15803d;margin-bottom:4px}
+  [data-theme="dark"] .resposta-solucao-tag{color:#4ade80}
+  .resposta-acoes{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .resposta-acoes button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-weight:600;padding:0;transition:color .12s}
+  .resposta-acoes button:hover{color:var(--blue)}
+  .resposta-acoes button.danger:hover{color:#dc2626}
+  .resposta-acoes button.solucao:hover{color:#15803d}
+  [data-theme="dark"] .resposta-acoes button.solucao:hover{color:#4ade80}
+
   /* ═══ CERTIFICADOS ═══ */
   .cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
   .cert-card{background:linear-gradient(135deg,#fff,#fafafa);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
@@ -700,6 +752,11 @@ function initials(nome) {
           <a class="nav-item" data-section="certificados"><span class="icon">🎓</span> Certificados</a>
         </div>
         <div class="nav-section">
+          <div class="nav-section-label">Comunidade</div>
+          <a class="nav-item" data-section="forum"><span class="icon">💬</span> Fórum</a>
+          <a class="nav-item" data-section="duvidas"><span class="icon">❓</span> Tire sua dúvida</a>
+        </div>
+        <div class="nav-section">
           <div class="nav-section-label">Perfil</div>
           <a class="nav-item" data-section="perfil"><span class="icon">👤</span> Meu Perfil</a>
         </div>
@@ -896,6 +953,57 @@ function initials(nome) {
         </div>
       </div>
 
+      <!-- MODAL NOVO TÓPICO (Fórum / Dúvidas) -->
+      <div class="modal-overlay" id="modal-topico-novo">
+        <div class="modal-box" style="max-width:560px">
+          <div class="modal-title" id="topico-novo-title">Novo tópico</div>
+          <input type="hidden" id="topico-novo-area" value="forum">
+          <div class="mrow"><label>Título</label><input class="minp" id="topico-novo-titulo" placeholder="Resuma seu tópico em uma frase" maxlength="200" /></div>
+          <div class="mrow"><label>Mensagem (opcional)</label><textarea class="mtxt" id="topico-novo-texto" placeholder="Desenvolva sua ideia, pergunta ou debate..." style="min-height:140px"></textarea></div>
+          <div class="modal-footer">
+            <button class="btn-mcancel" onclick="fecharNovoTopico()">Cancelar</button>
+            <button class="btn-msave" id="btn-topico-novo-save" onclick="salvarNovoTopico()">Publicar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL VISUALIZAR TÓPICO -->
+      <div class="modal-overlay" id="modal-topico-view">
+        <div class="modal-box" style="max-width:760px;max-height:calc(100vh - 40px);overflow-y:auto">
+          <div class="topico-view-head">
+            <div class="topico-view-tipo" id="topico-view-tipo"></div>
+            <div class="modal-title" id="topico-view-titulo" style="margin-bottom:8px"></div>
+            <div class="topico-autor-row">
+              <div class="coment-av" id="topico-view-avatar"></div>
+              <div>
+                <div class="coment-author" id="topico-view-autor"></div>
+                <div class="coment-time" id="topico-view-data"></div>
+              </div>
+              <div style="flex:1"></div>
+              <div class="topico-view-actions" id="topico-view-actions"></div>
+            </div>
+          </div>
+          <div class="topico-view-texto" id="topico-view-texto"></div>
+
+          <div style="margin:18px 0 10px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase">
+            💬 Respostas <span id="topico-view-resp-count" style="color:var(--blue)">(0)</span>
+          </div>
+          <div id="topico-view-respostas" class="topico-respostas-list"></div>
+
+          <form class="coment-form" id="topico-resp-form" onsubmit="enviarRespostaTopico(event)" style="margin-top:18px">
+            <textarea class="mtxt" id="topico-resp-texto" placeholder="Escreva sua resposta..." required></textarea>
+            <div class="coment-form-actions">
+              <span style="flex:1"></span>
+              <button type="submit" class="btn-msave">Responder</button>
+            </div>
+          </form>
+
+          <div class="modal-footer">
+            <button class="btn-mcancel" onclick="fecharTopico()">Fechar</button>
+          </div>
+        </div>
+      </div>
+
       <!-- MODAL FEEDBACK (avaliação de conteúdo) -->
       <div class="modal-overlay" id="modal-feedback">
         <div class="modal-box" style="max-width:520px">
@@ -953,6 +1061,16 @@ function initials(nome) {
               <div class="card-label">Certificados</div>
               <div class="card-desc">Conclusões e diplomas</div>
             </div>
+            <div class="dash-card" data-goto="forum">
+              <div class="card-icon">💬</div>
+              <div class="card-label">Fórum</div>
+              <div class="card-desc">Debates e discussões</div>
+            </div>
+            <div class="dash-card" data-goto="duvidas">
+              <div class="card-icon">❓</div>
+              <div class="card-label">Tire sua dúvida</div>
+              <div class="card-desc">Perguntas e respostas</div>
+            </div>
             <div class="dash-card" data-goto="perfil">
               <div class="card-icon">👤</div>
               <div class="card-label">Meu Perfil</div>
@@ -1001,6 +1119,30 @@ function initials(nome) {
           </div>
           <div id="cert-progress-banner"></div>
           <div class="cert-grid" id="cert-grid"></div>
+        </div>
+
+        <!-- ── FÓRUM ── -->
+        <div class="section" id="sec-forum">
+          <div class="section-header">
+            <div class="section-header-text">
+              <h2>Fórum 💬</h2>
+              <p>Debates, discussões e troca de experiências da turma. Qualquer aluno pode abrir um tópico.</p>
+            </div>
+            <button class="btn-add-modulo" onclick="abrirNovoTopico('forum')">＋ Novo tópico</button>
+          </div>
+          <div class="topicos-list" id="forum-list"></div>
+        </div>
+
+        <!-- ── TIRE SUA DÚVIDA ── -->
+        <div class="section" id="sec-duvidas">
+          <div class="section-header">
+            <div class="section-header-text">
+              <h2>Tire sua dúvida ❓</h2>
+              <p>Faça perguntas e ajude colegas com respostas. O autor pode marcar a melhor resposta como solução.</p>
+            </div>
+            <button class="btn-add-modulo" onclick="abrirNovoTopico('duvidas')">＋ Nova pergunta</button>
+          </div>
+          <div class="topicos-list" id="duvidas-list"></div>
         </div>
 
         <!-- ── PERFIL ── -->
@@ -1279,7 +1421,7 @@ function initials(nome) {
   window._isAdmin = isAdmin;
 
   /* ── Navegação ── */
-  const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', certificados:'Certificados', perfil:'Meu Perfil', config:'Configurações' };
+  const titles = { home:'Início', apostilas:'Apostilas', aulas:'Aulas', certificados:'Certificados', forum:'Fórum', duvidas:'Tire sua dúvida', perfil:'Meu Perfil', config:'Configurações' };
   /* expõe _currentUserId e _currentUserNome para módulos auxiliares */
   window._currentUserId   = _currentUserId;
   window._currentUserNome = nome;
@@ -1293,6 +1435,9 @@ function initials(nome) {
     document.getElementById('overlay').classList.remove('open');
     if (sec === 'certificados') {
       renderCertificados();
+    }
+    if (sec === 'forum' || sec === 'duvidas') {
+      carregarTopicos(sec);
     }
     if (sec==='config' && isAdmin) {
       // Garante que a aba Usuários está ativa e carrega os dados
@@ -1756,7 +1901,10 @@ function fecharPDF() {
   if (_apostilasCache.length) renderApostilas(_apostilasCache, !!window._isAdmin);
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { fecharPDF(); fecharModalApostila?.(); fecharAula(); fecharModalAula?.(); }
+  if (e.key === 'Escape') {
+    fecharPDF(); fecharModalApostila?.(); fecharAula(); fecharModalAula?.();
+    fecharTopico?.(); fecharNovoTopico?.();
+  }
 });
 
 /* ══════════════════════════════════════
@@ -3048,6 +3196,291 @@ async function enviarFeedback() {
   s.textContent = '@keyframes eip-toast{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}';
   document.head.appendChild(s);
 })();
+
+/* ══════════════════════════════════════
+   FÓRUM / TIRE SUA DÚVIDA
+══════════════════════════════════════ */
+let _topicosCache = { forum: [], duvidas: [] };
+let _currentTopico = null;
+let _respostasCache = [];
+
+function _formatDataTopico(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60)     return 'agora';
+  if (diff < 3600)   return Math.floor(diff/60) + ' min atrás';
+  if (diff < 86400)  return Math.floor(diff/3600) + ' h atrás';
+  if (diff < 604800) return Math.floor(diff/86400) + ' dias atrás';
+  return d.toLocaleDateString('pt-BR');
+}
+
+async function carregarTopicos(area) {
+  const listEl = document.getElementById(area + '-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<p style="color:var(--muted);padding:14px">Carregando…</p>';
+  const { data, error } = await sb.from('forum_topicos_view')
+    .select('*').eq('area', area)
+    .order('fixado', { ascending: false })
+    .order('ultima_atividade', { ascending: false });
+  if (error) {
+    listEl.innerHTML = `<p style="color:#dc2626;padding:14px">Erro: ${escapeHtml(error.message)}</p>`;
+    return;
+  }
+  _topicosCache[area] = data || [];
+  renderTopicos(area);
+}
+
+function renderTopicos(area) {
+  const listEl = document.getElementById(area + '-list');
+  if (!listEl) return;
+  const data = _topicosCache[area] || [];
+  if (!data.length) {
+    const labelEmpty = area === 'forum'
+      ? { ico:'💬', titulo:'Nenhum tópico aberto ainda', cta:'Seja o primeiro a abrir um debate.' }
+      : { ico:'❓', titulo:'Nenhuma dúvida por aqui',   cta:'Comece fazendo a primeira pergunta da turma.' };
+    listEl.innerHTML = `
+      <div class="topicos-empty">
+        <div class="topicos-empty-icon">${labelEmpty.ico}</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--text);margin-bottom:4px">${labelEmpty.titulo}</div>
+        <p>${labelEmpty.cta}</p>
+      </div>`;
+    return;
+  }
+  listEl.innerHTML = data.map(t => {
+    const nome = formatNome(t.autor_nome || '');
+    const av = t.autor_avatar
+      ? `<img src="${escapeHtml(t.autor_avatar)}" alt="">`
+      : initials(nome || '?');
+    const isAdm = t.autor_role === 'admin';
+    const classes = ['topico-card'];
+    if (t.fixado)  classes.push('fixado');
+    if (t.fechado) classes.push('fechado');
+    if (t.resolvido_resposta_id) classes.push('resolvido');
+    const tags = [];
+    if (t.fixado)               tags.push('<span class="topico-tag fixado">📌 Fixado</span>');
+    if (t.resolvido_resposta_id)tags.push('<span class="topico-tag resolvido">✓ Resolvido</span>');
+    if (t.fechado)              tags.push('<span class="topico-tag fechado">🔒 Fechado</span>');
+    if (isAdm)                  tags.push('<span class="coment-admin-tag">Instrutor</span>');
+    return `
+      <div class="${classes.join(' ')}" onclick="abrirTopico(${t.id},'${area}')">
+        <div class="topico-av">${av}</div>
+        <div class="topico-body">
+          <div class="topico-head-row">${tags.join('')}</div>
+          <div class="topico-titulo">${escapeHtml(t.titulo || '')}</div>
+          ${t.texto ? `<div class="topico-preview">${escapeHtml(t.texto)}</div>` : ''}
+          <div class="topico-meta">
+            <span>por <strong>${escapeHtml(nome)}</strong></span>
+            <span>· ${_formatDataTopico(t.criado_em)}</span>
+            ${t.ultima_atividade && t.ultima_atividade !== t.criado_em ? `<span>· última atividade ${_formatDataTopico(t.ultima_atividade)}</span>` : ''}
+          </div>
+        </div>
+        <div class="topico-stats">
+          <div class="topico-stats-num">${t.respostas_count || 0}</div>
+          <div class="topico-stats-label">${(t.respostas_count == 1) ? 'resposta' : 'respostas'}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ── Novo tópico ─────────────────────────────────── */
+function abrirNovoTopico(area) {
+  document.getElementById('topico-novo-area').value = area;
+  document.getElementById('topico-novo-titulo').value = '';
+  document.getElementById('topico-novo-texto').value = '';
+  document.getElementById('topico-novo-title').textContent =
+    area === 'forum' ? 'Novo tópico no Fórum' : 'Nova pergunta';
+  document.getElementById('btn-topico-novo-save').textContent =
+    area === 'forum' ? 'Publicar' : 'Perguntar';
+  document.getElementById('modal-topico-novo').classList.add('open');
+  setTimeout(() => document.getElementById('topico-novo-titulo').focus(), 50);
+}
+function fecharNovoTopico() {
+  document.getElementById('modal-topico-novo')?.classList.remove('open');
+}
+async function salvarNovoTopico() {
+  const area    = document.getElementById('topico-novo-area').value;
+  const titulo  = document.getElementById('topico-novo-titulo').value.trim();
+  const texto   = document.getElementById('topico-novo-texto').value.trim();
+  if (!titulo) { alert('Informe um título.'); return; }
+  const btn = document.getElementById('btn-topico-novo-save');
+  btn.disabled = true; btn.textContent = 'Publicando…';
+  const { error } = await sb.from('forum_topicos').insert({
+    user_id: _currentUserId,
+    area, titulo, texto: texto || null,
+  });
+  btn.disabled = false;
+  btn.textContent = area === 'forum' ? 'Publicar' : 'Perguntar';
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharNovoTopico();
+  await carregarTopicos(area);
+}
+
+/* ── Visualizar tópico ───────────────────────────── */
+async function abrirTopico(topicoId, area) {
+  /* Encontra o tópico no cache (tem todos os dados de autor já) */
+  const t = (_topicosCache[area] || []).find(x => x.id === topicoId);
+  if (!t) return;
+  _currentTopico = { ...t, area };
+
+  /* Header */
+  document.getElementById('topico-view-tipo').textContent = area === 'forum' ? '💬 TÓPICO DO FÓRUM' : '❓ PERGUNTA';
+  document.getElementById('topico-view-titulo').textContent = t.titulo || '';
+  const av = t.autor_avatar
+    ? `<img src="${escapeHtml(t.autor_avatar)}" alt="">`
+    : initials(formatNome(t.autor_nome || '?'));
+  document.getElementById('topico-view-avatar').innerHTML = av;
+  document.getElementById('topico-view-autor').textContent = formatNome(t.autor_nome || '');
+  document.getElementById('topico-view-data').textContent  = _formatDataTopico(t.criado_em);
+  document.getElementById('topico-view-texto').textContent = t.texto || '(sem mensagem adicional)';
+
+  /* Ações: admin/autor podem deletar, autor/admin podem fixar/fechar */
+  const isOwner = t.user_id === _currentUserId;
+  const isAdmin = !!window._isAdmin;
+  const actions = [];
+  if (isOwner || isAdmin) {
+    actions.push(`<button class="danger" onclick="deletarTopico(${t.id},'${area}')">🗑️ Excluir</button>`);
+  }
+  if (isAdmin) {
+    actions.push(`<button onclick="toggleFixadoTopico(${t.id},${t.fixado},'${area}')">${t.fixado ? '📌 Desafixar' : '📌 Fixar'}</button>`);
+    actions.push(`<button onclick="toggleFechadoTopico(${t.id},${t.fechado},'${area}')">${t.fechado ? '🔓 Reabrir' : '🔒 Fechar'}</button>`);
+  }
+  document.getElementById('topico-view-actions').innerHTML = actions.join('');
+
+  /* Form de resposta — esconde se fechado */
+  document.getElementById('topico-resp-form').style.display = t.fechado ? 'none' : '';
+  document.getElementById('topico-resp-texto').value = '';
+
+  /* Carrega respostas */
+  await carregarRespostas(topicoId);
+
+  document.getElementById('modal-topico-view').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharTopico() {
+  document.getElementById('modal-topico-view')?.classList.remove('open');
+  document.body.style.overflow = '';
+  _currentTopico = null;
+}
+
+async function carregarRespostas(topicoId) {
+  const wrap = document.getElementById('topico-view-respostas');
+  if (!wrap) return;
+  wrap.innerHTML = '<p style="color:var(--muted);padding:14px;text-align:center">Carregando…</p>';
+  const { data, error } = await sb.from('forum_respostas_view')
+    .select('*').eq('topico_id', topicoId).order('criado_em');
+  if (error) {
+    wrap.innerHTML = `<p style="color:#dc2626;padding:14px">Erro: ${escapeHtml(error.message)}</p>`;
+    return;
+  }
+  _respostasCache = data || [];
+  document.getElementById('topico-view-resp-count').textContent = '(' + _respostasCache.length + ')';
+  renderRespostas();
+}
+
+function renderRespostas() {
+  const wrap = document.getElementById('topico-view-respostas');
+  if (!wrap || !_currentTopico) return;
+  if (!_respostasCache.length) {
+    wrap.innerHTML = '<p style="color:var(--muted);padding:18px 0;text-align:center;font-size:13px">Nenhuma resposta ainda. Seja o primeiro a responder!</p>';
+    return;
+  }
+  const isAdmin     = !!window._isAdmin;
+  const isOwnerTopico = _currentTopico.user_id === _currentUserId;
+  const showSolucaoBtn = _currentTopico.area === 'duvidas' && (isOwnerTopico || isAdmin) && !_currentTopico.fechado;
+  wrap.innerHTML = _respostasCache.map(r => {
+    const nome = formatNome(r.autor_nome || '');
+    const av = r.autor_avatar
+      ? `<img src="${escapeHtml(r.autor_avatar)}" alt="">`
+      : initials(nome || '?');
+    const isAdmAutor = r.autor_role === 'admin';
+    const podeDeletar = (r.user_id === _currentUserId) || isAdmin;
+    const ehSolucao = r.id === _currentTopico.resolvido_resposta_id;
+    return `
+      <div class="resposta-item ${ehSolucao?'solucao':''}">
+        <div class="coment-av">${av}</div>
+        <div class="coment-body">
+          ${ehSolucao ? '<div class="resposta-solucao-tag">✓ Solução</div>' : ''}
+          <div class="coment-head">
+            <span class="coment-author">${escapeHtml(nome)}</span>
+            ${isAdmAutor ? '<span class="coment-admin-tag">Instrutor</span>' : ''}
+            <span class="coment-time">${_formatDataTopico(r.criado_em)}</span>
+          </div>
+          <div class="coment-text">${escapeHtml(r.texto || '')}</div>
+          <div class="resposta-acoes">
+            ${showSolucaoBtn ? (
+              ehSolucao
+                ? `<button class="solucao" onclick="marcarSolucao(null)">↶ Remover marcação de solução</button>`
+                : `<button class="solucao" onclick="marcarSolucao(${r.id})">✓ Marcar como solução</button>`
+            ) : ''}
+            ${podeDeletar ? `<button class="danger" onclick="deletarResposta(${r.id})">Excluir</button>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function enviarRespostaTopico(ev) {
+  ev.preventDefault();
+  if (!_currentTopico) return;
+  if (_currentTopico.fechado) { alert('Este tópico está fechado.'); return; }
+  const texto = document.getElementById('topico-resp-texto').value.trim();
+  if (!texto) return;
+  const { error } = await sb.from('forum_respostas').insert({
+    topico_id: _currentTopico.id,
+    user_id:   _currentUserId,
+    texto,
+  });
+  if (error) { alert('Erro: ' + error.message); return; }
+  document.getElementById('topico-resp-texto').value = '';
+  await carregarRespostas(_currentTopico.id);
+  /* Atualiza count da lista de fundo */
+  await carregarTopicos(_currentTopico.area);
+}
+
+async function deletarResposta(respId) {
+  if (!confirm('Excluir esta resposta?')) return;
+  const { error } = await sb.from('forum_respostas').delete().eq('id', respId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  /* Se era a solução marcada, FK ON DELETE SET NULL já cuida */
+  await carregarRespostas(_currentTopico.id);
+  await carregarTopicos(_currentTopico.area);
+}
+
+async function deletarTopico(topicoId, area) {
+  if (!confirm('Excluir este tópico e todas as respostas?')) return;
+  const { error } = await sb.from('forum_topicos').delete().eq('id', topicoId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharTopico();
+  await carregarTopicos(area);
+}
+
+async function toggleFixadoTopico(topicoId, atual, area) {
+  const { error } = await sb.from('forum_topicos').update({ fixado: !atual }).eq('id', topicoId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  await carregarTopicos(area);
+  /* re-abre modal pro estado refletir */
+  abrirTopico(topicoId, area);
+}
+
+async function toggleFechadoTopico(topicoId, atual, area) {
+  const { error } = await sb.from('forum_topicos').update({ fechado: !atual }).eq('id', topicoId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  await carregarTopicos(area);
+  abrirTopico(topicoId, area);
+}
+
+async function marcarSolucao(respId) {
+  if (!_currentTopico) return;
+  const { error } = await sb.from('forum_topicos')
+    .update({ resolvido_resposta_id: respId })
+    .eq('id', _currentTopico.id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  _currentTopico.resolvido_resposta_id = respId;
+  renderRespostas();
+  await carregarTopicos(_currentTopico.area);
+}
 
 /* ══════════════════════════════════════
    CERTIFICADOS
